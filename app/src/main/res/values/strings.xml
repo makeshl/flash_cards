@@ -1,0 +1,13 @@
+<resources>
+    <string name="app_name">Lesson_Plans</string>
+    <string name="l1">apple</string>
+    <string name="l2">pear</string>
+    <string name="l3">banana</string>
+    <string name="l4">papaya</string>
+    <string name="l5">jackfruit</string>
+    <string name="l6">orange</string>
+    <string name="l7">peach</string>
+    <string name="l8">strawberry</string>
+    <string name="l9">watermelon</string>
+    <string name="l10">grapes</string>
+</resources>

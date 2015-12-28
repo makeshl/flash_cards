@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:orientation = "vertical"
+    >
+
+    <EditText
+        android:id="@+id/lesson1"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Select lesson"
+        android:textSize="16sp"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        />
+
+    <EditText
+        android:id="@+id/lesson2"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Select lesson"
+        android:textSize="16sp"
+        android:layout_below="@id/lesson1"
+        android:layout_alignParentLeft="true"
+        />
+
+    <EditText
+        android:id="@+id/lesson3"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Select lesson"
+        android:textSize="16sp"
+        android:layout_below="@id/lesson2"
+        android:layout_alignParentLeft="true"
+        />
+
+    <EditText
+        android:id="@+id/lesson4"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Select lesson"
+        android:textSize="16sp"
+        android:layout_below="@id/lesson3"
+        android:layout_alignParentLeft="true"
+        />
+
+    <EditText
+        android:id="@+id/lesson5"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:hint="Select lesson"
+        android:textSize="16sp"
+        android:layout_below="@id/lesson4"
+        android:layout_alignParentLeft="true"
+        />
+
+    <EditText
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:id="@+id/speed"
+        android:hint="Enter wait period 1-10"
+        android:textSize="16sp"
+        android:layout_below="@id/lesson5"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Done!"
+        android:id="@+id/button"
+        android:clickable="true"
+        android:onClick="selectioncomplete"
+        android:layout_below="@id/speed"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:text="Fruits"
+        android:id="@+id/buttonfruits"
+        android:clickable="true"
+        android:onClick="selectFruits"
+        android:layout_alignParentRight="true"
+        android:background="@drawable/apple"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:text="Wild Animals"
+        android:id="@+id/buttonwildAnimals"
+        android:clickable="true"
+        android:onClick="selectwildAnimals"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/buttonfruits"
+        android:background="@drawable/tiger"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:text="Pets"
+        android:id="@+id/buttonpets"
+        android:clickable="true"
+        android:onClick="selectpets"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/buttonwildAnimals"
+        android:background="@drawable/cat"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:text="Birds"
+        android:id="@+id/buttonbirds"
+        android:clickable="true"
+        android:onClick="selectbirds"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/buttonpets"
+        android:background="@drawable/eagle"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:text="Body Parts"
+        android:id="@+id/buttonbodyParts"
+        android:clickable="true"
+        android:onClick="selectbodyParts"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/buttonbirds"
+        android:background="@drawable/eyes"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:text="Vehicles"
+        android:id="@+id/buttonvehicles"
+        android:clickable="true"
+        android:onClick="selectvehicles"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/buttonbodyParts"
+        android:background="@drawable/car"
+        />
+
+    <Button
+        style="?android:attr/buttonStyleSmall"
+        android:layout_width="100dp"
+        android:layout_height="32dp"
+        android:text="Shapes"
+        android:id="@+id/buttonshapes"
+        android:clickable="true"
+        android:onClick="selectshapes"
+        android:layout_alignParentRight="true"
+        android:layout_below="@id/buttonvehicles"
+        android:background="@drawable/rectangle"
+        />
+
+</RelativeLayout>
