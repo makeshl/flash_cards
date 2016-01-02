@@ -346,8 +346,14 @@ public class MainActivity extends AppCompatActivity {
 
         EditText mspeed = (EditText) findViewById(R.id.speed);
         String tempspeed = mspeed.getText().toString();  // Gets the text value from that pointer (user input)
-        displaytime = Integer.parseInt(tempspeed);
-        Log.e("displaytime = ", "  "+displaytime);
+        if ((tempspeed !=null) && ( !tempspeed.isEmpty()) ){
+            Log.e("flash_card", " displaytime =  "+displaytime + " input from user = "+ tempspeed);
+            displaytime = Integer.parseInt(tempspeed);
+        } else {
+            // toast a warning about default?
+            displaytime = 3;
+        }
+        Log.e("flash_card", " displaytime =  "+displaytime);
         if (displaytime == 0) {displaytime =3;} //default time to be 3 sec
 
         setContentView(R.layout.activity_main);
