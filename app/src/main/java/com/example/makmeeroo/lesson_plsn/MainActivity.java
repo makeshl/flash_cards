@@ -60,17 +60,20 @@ public class MainActivity extends AppCompatActivity {
             Log.e("flash_card", " mUpdate called. stopCounter = " + stopCounter);
             nextTextMessage(stopCounter);
             nextImage(stopCounter);
-            if (stopCounter<chosenLesssonLength)
-                mHandler.postDelayed(this, displaytime*1000);
-            stopCounter ++;
+            if (stopCounter<chosenLesssonLength) {
+                mHandler.postDelayed(this, displaytime * 1000);
+                stopCounter++;
+            }
         }
     };
 
     public void nextTextMessage(int counter){
         String selectedWord= chosenLesson[counter];
-        Log.e("flash_card ", " selectedWord "+ selectedWord);
-        TextView temp2 = (TextView) findViewById(R.id.textView);
-        temp2.setText(selectedWord);
+        Log.e("flash_card ", " selectedWord " + selectedWord);
+        if (!selectedWord.isEmpty()){
+            TextView temp2 = (TextView) findViewById(R.id.textView);
+            temp2.setText(selectedWord);
+        }
     }
 
     public void nextImage(int counter) {
@@ -92,7 +95,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button mStartStop = (Button) findViewById(R.id.button2);
         String temp1 = mStartStop.getText().toString();
-        Log.e("startstop = ", temp1);
+        Log.e("flash_card", "startstop = " + temp1);
         switch (temp1) {
             case STOP_STRING:
                 mHandler.removeCallbacksAndMessages (null); // fix this to stop only mUpdate; also stop media player first (perhaps add a function for mHandler)
@@ -346,7 +349,7 @@ public class MainActivity extends AppCompatActivity {
 
         EditText mspeed = (EditText) findViewById(R.id.speed);
         String tempspeed = mspeed.getText().toString();  // Gets the text value from that pointer (user input)
-        if ((tempspeed !=null) && ( !tempspeed.isEmpty()) ){
+        if ( !tempspeed.isEmpty()) {
             Log.e("flash_card", " displaytime =  "+displaytime + " input from user = "+ tempspeed);
             displaytime = Integer.parseInt(tempspeed);
         } else {
