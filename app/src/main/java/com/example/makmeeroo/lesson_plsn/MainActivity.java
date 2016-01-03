@@ -39,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     String[] vehicles = {"car","train","bus","van","plane","rocket","motorcycle","truck","ambulance"};
     String[] shapes = {"square","circle","rectangle","triangle","diamond","hexagon"};
 
-    String[] chosenLesson = fruits;
+    String[] chosenLesson = pets;
     int chosenLesssonLength = chosenLesson.length -1;
     int nooflessons;
     String[] lessonlist = new String[5];
@@ -110,10 +110,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void changeselections(View v) {
         mHandler.removeCallbacksAndMessages(null);
-        setContentView(R.layout.adjustments);
+        setContentView(R.layout.adjustments); // TODO add a gear box instead of button; include a sound on/off option
         nooflessons = 0;
     }
-    
+
     public void selectLesson(View v) {
         Log.e("flash_card", "Came to selectLesson; curent # lessons is "+nooflessons);
         if (nooflessons <4) {
