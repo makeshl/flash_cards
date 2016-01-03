@@ -113,132 +113,22 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.adjustments);
         nooflessons = 0;
     }
-
-    public void selectFruits(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-//        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-
+    
+    public void selectLesson(View v) {
+        Log.e("flash_card", "Came to selectLesson; curent # lessons is "+nooflessons);
         if (nooflessons <4) {
-            lessonlist[nooflessons] = LESSON_FRUITS;
+            String currentLesson = (String) v.getTag();
+            Log.e("flash_card", "curent lesson is "+currentLesson+" ; is it empty? "+currentLesson.isEmpty());
+            lessonlist[nooflessons] = currentLesson;
+            EditText mlesson1 = (EditText) findViewById(R.id.lesson1); // TODO fix this with a list of buttons
+            EditText mlesson2= (EditText) findViewById(R.id.lesson2);
+            EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
+            EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
             switch (nooflessons) {
-                case 0: mlesson1.setText(LESSON_FRUITS);break;
-                case 1: mlesson2.setText(LESSON_FRUITS);break;
-                case 2: mlesson3.setText(LESSON_FRUITS);break;
-                case 3: mlesson4.setText(LESSON_FRUITS);break;
-            }
-            nooflessons++;
-            Log.e("fruits = ", " "+nooflessons);
-        }
-    }
-
-    public void selectwildAnimals(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-//        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = LESSON_WILD_ANIMALS;
-            switch (nooflessons) {
-                case 0:mlesson1.setText(LESSON_WILD_ANIMALS);break;
-                case 1:mlesson2.setText(LESSON_WILD_ANIMALS);break;
-                case 2:mlesson3.setText(LESSON_WILD_ANIMALS);break;
-                case 3:mlesson4.setText(LESSON_WILD_ANIMALS);break;
-            }
-            nooflessons++;
-            Log.e("wildanimals = ", " "+nooflessons);
-        }
-    }
-
-    public void selectpets(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-//        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = LESSON_PETS;
-            switch (nooflessons) {
-                case 0:mlesson1.setText(LESSON_PETS);break;
-                case 1:mlesson2.setText(LESSON_PETS);break;
-                case 2:mlesson3.setText(LESSON_PETS);break;
-                case 3:mlesson4.setText(LESSON_PETS);break;
-            }
-            nooflessons++;
-        }
-    }
-
-    public void selectbirds(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2 = (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-//        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = LESSON_BIRDS;
-            switch (nooflessons) {
-                case 0:mlesson1.setText(LESSON_BIRDS);break;
-                case 1:mlesson2.setText(LESSON_BIRDS);break;
-                case 2:mlesson3.setText(LESSON_BIRDS);break;
-                case 3:mlesson4.setText(LESSON_BIRDS);break;
-            }
-            nooflessons++;
-        }
-    }
-
-    public void selectbodyParts(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-//        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = LESSON_BODY_PARTS;
-            switch (nooflessons) {
-                case 0:mlesson1.setText(LESSON_BODY_PARTS);break;
-                case 1:mlesson2.setText(LESSON_BODY_PARTS);break;
-                case 2:mlesson3.setText(LESSON_BODY_PARTS);break;
-                case 3:mlesson4.setText(LESSON_BODY_PARTS);break;
-            }
-            nooflessons++;
-        }
-    }
-
-    public void selectvehicles(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-//        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = LESSON_VEHICLES;
-            switch (nooflessons) {
-                case 0:mlesson1.setText(LESSON_VEHICLES);break;
-                case 1:mlesson2.setText(LESSON_VEHICLES);break;
-                case 2:mlesson3.setText(LESSON_VEHICLES);break;
-                case 3:mlesson4.setText(LESSON_VEHICLES);break;
-            }
-            nooflessons++;
-        }
-    }
-
-    public void selectshapes(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-//        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = LESSON_SHAPES;
-            switch (nooflessons) {
-                case 0:mlesson1.setText(LESSON_SHAPES);break;
-                case 1:mlesson2.setText(LESSON_SHAPES);break;
-                case 2:mlesson3.setText(LESSON_SHAPES);break;
-                case 3:mlesson4.setText(LESSON_SHAPES);break;
+                case 0:mlesson1.setText(currentLesson);break;
+                case 1:mlesson2.setText(currentLesson);break;
+                case 2:mlesson3.setText(currentLesson);break;
+                case 3:mlesson4.setText(currentLesson);break;
             }
             nooflessons++;
         }
