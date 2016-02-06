@@ -272,7 +272,7 @@ public class MainActivity extends AppCompatActivity {
                 case "pets":
                     if(ilooper ==0) {
                         System.arraycopy(pets, 0, arrbig, 0, pets.length);
-                        unitcounter = unitcounter + pets.length -1;}
+                        unitcounter = unitcounter + pets.length;}
                     else {
                         System.arraycopy(pets, 0, arrbig, unitcounter, pets.length);
                         unitcounter = unitcounter + pets.length;
@@ -281,7 +281,7 @@ public class MainActivity extends AppCompatActivity {
                 case "birds":
                     if(ilooper ==0) {
                         System.arraycopy(birds, 0, arrbig, 0, birds.length);
-                        unitcounter = unitcounter + birds.length -1;}
+                        unitcounter = unitcounter + birds.length;}
                     else {
                         System.arraycopy(birds, 0, arrbig, unitcounter, birds.length);
                         unitcounter = unitcounter + birds.length;
@@ -290,7 +290,7 @@ public class MainActivity extends AppCompatActivity {
                 case "bodyParts":
                     if(ilooper ==0) {
                         System.arraycopy(bodyParts, 0, arrbig, 0, bodyParts.length);
-                        unitcounter = unitcounter + bodyParts.length -1;
+                        unitcounter = unitcounter + bodyParts.length;
                     }
                     else {
                         System.arraycopy(bodyParts, 0, arrbig, unitcounter, bodyParts.length);
@@ -300,7 +300,7 @@ public class MainActivity extends AppCompatActivity {
                 case "vehicles":
                     if(ilooper ==0) {
                         System.arraycopy(vehicles, 0, arrbig, 0, vehicles.length);
-                        unitcounter = unitcounter + vehicles.length -1;
+                        unitcounter = unitcounter + vehicles.length;
                     }
                     else {
                         System.arraycopy(vehicles, 0, arrbig, unitcounter, vehicles.length);
@@ -310,7 +310,7 @@ public class MainActivity extends AppCompatActivity {
                 case "shapes":
                     if(ilooper ==0) {
                         System.arraycopy(shapes, 0, arrbig, 0, shapes.length);
-                        unitcounter = unitcounter + shapes.length -1;
+                        unitcounter = unitcounter + shapes.length;
                     }
                     else {
                         System.arraycopy(shapes, 0, arrbig, unitcounter, shapes.length);
@@ -320,7 +320,7 @@ public class MainActivity extends AppCompatActivity {
                 default:
                     if(ilooper ==0) {
                         System.arraycopy(fruits, 0, arrbig, 0, fruits.length);
-                        unitcounter = unitcounter + fruits.length -1;}
+                        unitcounter = unitcounter + fruits.length;}
                     else {
                         System.arraycopy(fruits, 0, arrbig, unitcounter, fruits.length);
                         unitcounter = unitcounter + fruits.length;
@@ -328,7 +328,7 @@ public class MainActivity extends AppCompatActivity {
                     break;
             }
         }
-            Log.e("bigaray10= ",arrbig[10]+"  length=  "+arrbig.length+ "unit counter ="+ unitcounter);
+            Log.e("bigaray10= ",arrbig[10]+"  length=  "+arrbig.length+ "unit counter =  "+ unitcounter);
         chosenLesson = arrbig;
         chosenLesssonLength = unitcounter -1;
             Log.e("chosenlesson= ", chosenLesson[10]+"length = "+ chosenLesson.length);
