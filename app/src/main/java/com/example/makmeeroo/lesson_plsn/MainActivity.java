@@ -2,9 +2,9 @@ package com.example.makmeeroo.lesson_plsn;
 
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
-import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.View;
@@ -13,12 +13,19 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.IOException;
-import java.util.Arrays;
-import java.lang.*;
+//import android.net.Uri;
 
 public class MainActivity extends AppCompatActivity {
 
+    public static final String RESUME_STRING = "Resume";
+    public static final String STOP_STRING = "Stop";
+    public static final String LESSON_SHAPES = "shapes";
+    public static final String LESSON_VEHICLES = "vehicles";
+    public static final String LESSON_BODY_PARTS = "bodyParts";
+    public static final String LESSON_BIRDS = "birds";
+    public static final String LESSON_PETS = "pets";
+    public static final String LESSON_WILD_ANIMALS = "wildAnimals";
+    public static final String LESSON_FRUITS = "fruits";
     int stopCounter = 0;
 //    int stopLimit = 9; // No. of cards in that lesson: needs to be a user input, or something that can be automatically counted
     private Handler mHandler;
@@ -32,7 +39,7 @@ public class MainActivity extends AppCompatActivity {
     String[] vehicles = {"car","train","bus","van","plane","rocket","motorcycle","truck","ambulance"};
     String[] shapes = {"square","circle","rectangle","triangle","diamond","hexagon"};
 
-    String[] chosenLesson = fruits;
+    String[] chosenLesson = pets;
     int chosenLesssonLength = chosenLesson.length -1;
     int nooflessons;
     String[] lessonlist = new String[5];
@@ -43,39 +50,43 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-        Log.e("t11", "t1");
+        Log.e("flash_card", " arrived at onCreate");
         mHandler = new Handler();
         mHandler.post(mUpdate);
     }
 
     private Runnable mUpdate = new Runnable() {
         public void run() {
-            Log.e("error", "check stopCounter " + stopCounter);
+            Log.e("flash_card", " mUpdate called. stopCounter = " + stopCounter);
             nextTextMessage(stopCounter);
             nextImage(stopCounter);
-            if (stopCounter<chosenLesssonLength)
-                mHandler.postDelayed(this, displaytime*1000);
-            stopCounter ++;
+            if (stopCounter<chosenLesssonLength) {
+                mHandler.postDelayed(this, displaytime * 1000);
+                stopCounter++;
+            }
         }
     };
 
     public void nextTextMessage(int counter){
         String selectedWord= chosenLesson[counter];
-            Log.e("selectedWord","  "+ selectedWord);
-        TextView temp2 = (TextView) findViewById(R.id.textView);
-        temp2.setText(selectedWord);
+        Log.e("flash_card ", " selectedWord " + selectedWord);
+        if (!selectedWord.isEmpty()){
+            TextView temp2 = (TextView) findViewById(R.id.textView);
+            temp2.setText(selectedWord);
+        }
     }
 
     public void nextImage(int counter) {
         String selectedPicture = "@drawable/" + chosenLesson[counter];
         int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
-        Drawable pic = getResources().getDrawable(pic_id);  // take picture from that location and save it in a drawable pic
+//        Drawable pic = getResources().getDrawable(pic_id);  // take picture from that location and save it in a drawable pic
+        Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
         ImageView temp1 = (ImageView) findViewById(R.id.imageView1);
         temp1.setImageDrawable(pic);        //display pic in the image
 
         String voiceFile = chosenLesson[counter];
         int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
-            Log.e("resid", "resid = " + resID);
+        Log.e("flash_card ", "resID = " + resID);
         pronouncePlay = MediaPlayer.create(this, resID);
         pronouncePlay.start();
     }
@@ -84,14 +95,14 @@ public class MainActivity extends AppCompatActivity {
 
         Button mStartStop = (Button) findViewById(R.id.button2);
         String temp1 = mStartStop.getText().toString();
-        Log.e("startstop = ", temp1);
+        Log.e("flash_card", "startstop = " + temp1);
         switch (temp1) {
-            case "Stop":
-                mHandler.removeCallbacksAndMessages (null);
-                mStartStop.setText("Resume");
+            case STOP_STRING:
+                mHandler.removeCallbacksAndMessages (null); // fix this to stop only mUpdate; also stop media player first (perhaps add a function for mHandler)
+                mStartStop.setText(RESUME_STRING);
                 break;
-            case "Resume":
-                mStartStop.setText("Stop");
+            case RESUME_STRING:
+                mStartStop.setText(STOP_STRING);
                 mHandler.post(mUpdate);
                 break;
         }
@@ -99,135 +110,25 @@ public class MainActivity extends AppCompatActivity {
 
     public void changeselections(View v) {
         mHandler.removeCallbacksAndMessages(null);
-        setContentView(R.layout.adjustments);
+        setContentView(R.layout.adjustments); // TODO add a gear box instead of button; include a sound on/off option
         nooflessons = 0;
     }
 
-    public void selectFruits(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-
+    public void selectLesson(View v) {
+        Log.e("flash_card", "Came to selectLesson; curent # lessons is "+nooflessons);
         if (nooflessons <4) {
-            lessonlist[nooflessons] = "fruits";
+            String currentLesson = (String) v.getTag();
+            Log.e("flash_card", "curent lesson is "+currentLesson+" ; is it empty? "+currentLesson.isEmpty());
+            lessonlist[nooflessons] = currentLesson;
+            EditText mlesson1 = (EditText) findViewById(R.id.lesson1); // TODO fix this with a list of buttons
+            EditText mlesson2= (EditText) findViewById(R.id.lesson2);
+            EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
+            EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
             switch (nooflessons) {
-                case 0: mlesson1.setText("fruits");break;
-                case 1: mlesson2.setText("fruits");break;
-                case 2: mlesson3.setText("fruits");break;
-                case 3: mlesson4.setText("fruits");break;
-            }
-            nooflessons++;
-            Log.e("fruits = ", " "+nooflessons);
-        };
-    }
-
-    public void selectwildAnimals(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = "wildAnimals";
-            switch (nooflessons) {
-                case 0:mlesson1.setText("wildAnimals");break;
-                case 1:mlesson2.setText("wildAnimals");break;
-                case 2:mlesson3.setText("wildAnimals");break;
-                case 3:mlesson4.setText("wildAnimals");break;
-            }
-            nooflessons++;
-            Log.e("wildanimals = ", " "+nooflessons);
-        }
-    }
-
-    public void selectpets(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = "pets";
-            switch (nooflessons) {
-                case 0:mlesson1.setText("pets");break;
-                case 1:mlesson2.setText("pets");break;
-                case 2:mlesson3.setText("pets");break;
-                case 3:mlesson4.setText("pets");break;
-            }
-            nooflessons++;
-        }
-    }
-
-    public void selectbirds(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2 = (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = "birds";
-            switch (nooflessons) {
-                case 0:mlesson1.setText("birds");break;
-                case 1:mlesson2.setText("birds");break;
-                case 2:mlesson3.setText("birds");break;
-                case 3:mlesson4.setText("birds");break;
-            }
-            nooflessons++;
-        }
-    }
-
-    public void selectbodyParts(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = "bodyParts";
-            switch (nooflessons) {
-                case 0:mlesson1.setText("bodyParts");break;
-                case 1:mlesson2.setText("bodyParts");break;
-                case 2:mlesson3.setText("bodyParts");break;
-                case 3:mlesson4.setText("bodyParts");break;
-            }
-            nooflessons++;
-        }
-    }
-
-    public void selectvehicles(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = "vehicles";
-            switch (nooflessons) {
-                case 0:mlesson1.setText("vehicles");break;
-                case 1:mlesson2.setText("vehicles");break;
-                case 2:mlesson3.setText("vehicles");break;
-                case 3:mlesson4.setText("vehicles");break;
-            }
-            nooflessons++;
-        }
-    }
-
-    public void selectshapes(View v) {
-        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-        EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-        EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-        EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-        EditText mlesson5 = (EditText) findViewById(R.id.lesson5);
-        if (nooflessons <4) {
-            lessonlist[nooflessons] = "shapes";
-            switch (nooflessons) {
-                case 0:mlesson1.setText("shapes");break;
-                case 1:mlesson2.setText("shapes");break;
-                case 2:mlesson3.setText("shapes");break;
-                case 3:mlesson4.setText("shapes");break;
+                case 0:mlesson1.setText(currentLesson);break;
+                case 1:mlesson2.setText(currentLesson);break;
+                case 2:mlesson3.setText(currentLesson);break;
+                case 3:mlesson4.setText(currentLesson);break;
             }
             nooflessons++;
         }
@@ -240,15 +141,15 @@ public class MainActivity extends AppCompatActivity {
 
         if (nooflessons == 0) {                 // in case the user didn't select anything
             nooflessons =1;
-            lessonlist[0] = "fruits";
+            lessonlist[0] = LESSON_FRUITS;
         }
         else {nooflessons = Math.min(4,nooflessons);}
 
-        Log.e("nooflessons = "," "+nooflessons);
+        Log.e("flash_cards"," nooflessons = "+nooflessons);
 
         for (int ilooper = 0;  ilooper < nooflessons; ilooper++ ) {
             switch (lessonlist[ilooper]) {
-                case "fruits":
+                case LESSON_FRUITS:
                     Log.e("lessonlist = ",lessonlist[ilooper]);
                     if(ilooper ==0) {
                         System.arraycopy(fruits, 0, arrbig, 0, fruits.length);
@@ -259,7 +160,7 @@ public class MainActivity extends AppCompatActivity {
                         unitcounter = unitcounter + fruits.length;
                     }
                     break;
-                case "wildAnimals":
+                case LESSON_WILD_ANIMALS:
                     if(ilooper ==0) {
                         System.arraycopy(wildAnimals, 0, arrbig, 0, wildAnimals.length);
                         unitcounter = unitcounter + wildAnimals.length;
@@ -269,7 +170,7 @@ public class MainActivity extends AppCompatActivity {
                         unitcounter = unitcounter + wildAnimals.length;
                     }
                     break;
-                case "pets":
+                case LESSON_PETS:
                     if(ilooper ==0) {
                         System.arraycopy(pets, 0, arrbig, 0, pets.length);
                         unitcounter = unitcounter + pets.length;}
@@ -278,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
                         unitcounter = unitcounter + pets.length;
                     }
                     break;
-                case "birds":
+                case LESSON_BIRDS:
                     if(ilooper ==0) {
                         System.arraycopy(birds, 0, arrbig, 0, birds.length);
                         unitcounter = unitcounter + birds.length;}
@@ -287,7 +188,7 @@ public class MainActivity extends AppCompatActivity {
                         unitcounter = unitcounter + birds.length;
                     }
                     break;
-                case "bodyParts":
+                case LESSON_BODY_PARTS:
                     if(ilooper ==0) {
                         System.arraycopy(bodyParts, 0, arrbig, 0, bodyParts.length);
                         unitcounter = unitcounter + bodyParts.length;
@@ -297,7 +198,7 @@ public class MainActivity extends AppCompatActivity {
                         unitcounter = unitcounter + bodyParts.length;
                     }
                     break;
-                case "vehicles":
+                case LESSON_VEHICLES:
                     if(ilooper ==0) {
                         System.arraycopy(vehicles, 0, arrbig, 0, vehicles.length);
                         unitcounter = unitcounter + vehicles.length;
@@ -307,7 +208,7 @@ public class MainActivity extends AppCompatActivity {
                         unitcounter = unitcounter + vehicles.length;
                     }
                     break;
-                case "shapes":
+                case LESSON_SHAPES:
                     if(ilooper ==0) {
                         System.arraycopy(shapes, 0, arrbig, 0, shapes.length);
                         unitcounter = unitcounter + shapes.length;
@@ -338,8 +239,14 @@ public class MainActivity extends AppCompatActivity {
 
         EditText mspeed = (EditText) findViewById(R.id.speed);
         String tempspeed = mspeed.getText().toString();  // Gets the text value from that pointer (user input)
-        displaytime = Integer.parseInt(tempspeed);
-        Log.e("displaytime = ", "  "+displaytime);
+        if ( !tempspeed.isEmpty()) {
+            Log.e("flash_card", " displaytime =  "+displaytime + " input from user = "+ tempspeed);
+            displaytime = Integer.parseInt(tempspeed);
+        } else {
+            // toast a warning about default?
+            displaytime = 3;
+        }
+        Log.e("flash_card", " displaytime =  "+displaytime);
         if (displaytime == 0) {displaytime =3;} //default time to be 3 sec
 
         setContentView(R.layout.activity_main);

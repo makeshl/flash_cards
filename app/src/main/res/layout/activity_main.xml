@@ -17,6 +17,17 @@
         android:layout_centerHorizontal="true"
         />
 
+    <!--<ImageButton-->
+        <!--android:layout_width="wrap_content"-->
+        <!--android:layout_height="wrap_content"-->
+        <!--android:id="@+id/imageButton1"-->
+        <!--android:layout_alignParentBottom="true"-->
+        <!--android:layout_alignParentRight="true"-->
+        <!--android:clickable="true"-->
+        <!--android:onClick="changeselections"-->
+        <!--android:icon="@drawable/ic_settings_black_24dp"-->
+        <!--/>-->
+
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
@@ -58,4 +69,5 @@
 
 
   />
+
 </RelativeLayout>
