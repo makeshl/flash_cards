@@ -1,0 +1,93 @@
+vehicles - ambulance
+fruits - apple
+fruits - apricot
+fruits - banana
+wildanimals - bear
+wildanimals - bison
+brocolli - brocoli
+vehicles - bus
+vehicles - car
+household - carpet
+vegetables- carrot
+pets- cat
+vegetables- cauliflower
+household - chair
+wildanimals - cheetah
+shapes- circle
+household - clock
+pets- cow
+wildanimals - crocodile
+household - curtains
+wildanimals - deer
+shapes- diamond
+pets- dog
+birds - eagle
+vegetables- eggplant
+wildanimals - elephant
+body - eyes
+body - feet
+vehicles - fireengine
+household - fireplace
+birds - flamingo
+wildanimals - fox
+wildanimals - giraffe
+fruits - grapes
+vegetables- greenbeans
+body - hands
+birds - hawk
+birds - hen
+shapes- hexagon
+wildanimals - hippo
+fruits - jackfruit
+wildanimals - kangaroo
+vegetables - kidneybeans
+birds - kiwi
+wildanimals - koala
+household - lamp
+vegetables - lemon
+wildanimals - lion
+wildanimals - monkey
+vehicles - motorcycle
+body - mouth
+body - nose
+vegetables- onion
+fruits- orange
+wildanimals - orangutan
+birds - ostrich
+wildanimals - panda
+fruits - papaya
+pets- parrot
+fruits - peach
+fruits - pear
+vegetables- peas
+vegetables- pepper
+vehicles - pickup
+pets- pig
+vehicles - plane
+fruits - plum
+vegetables- potato
+vegetables- pumpkin
+pets- rabbit
+shapes- rectangle
+wildanimals - rhinoceros
+vehicles - rocket
+vehicles - scooter
+wildanimals - sheep
+wildanimals - snake
+household - sofa
+birds - sparrow
+household - speaker
+shapes- square
+fruits - strawberry
+sun
+household - table
+wildanimals - tiger
+vegetables- tomato
+vehicles - train
+shapes- triangle
+vehicles - truck
+household - tv
+vehicles - van
+fruits - watermelon
+wildanimals - wolf
+wildanimals - zebra
