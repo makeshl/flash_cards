@@ -86,7 +86,7 @@
         android:tag="fruits"
         android:layout_alignParentRight="true"
         android:background="@drawable/apple"
-        />
+        android:allowUndo="false" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -113,8 +113,7 @@
         android:tag="pets"
         android:layout_alignParentRight="true"
         android:layout_below="@id/buttonwildAnimals"
-        android:background="@drawable/cat"
-        />
+        android:background="@drawable/cat" />
 
     <Button
         style="?android:attr/buttonStyleSmall"
@@ -171,5 +170,6 @@
         android:layout_below="@id/buttonvehicles"
         android:background="@drawable/rectangle"
         />
+
 
 </RelativeLayout>

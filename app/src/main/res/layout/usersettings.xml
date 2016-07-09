@@ -1,0 +1,298 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent" android:layout_height="match_parent">
+
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="DONE!"
+        android:id="@+id/buttonDone"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:onClick="selectionDone" />
+    <Button
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Reset"
+        android:id="@+id/buttonReset"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        />
+
+    <RelativeLayout
+        android:id="@+id/options"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/buttonDone"
+        android:layout_alignParentTop="true"
+        android:layout_alignParentLeft="true"
+        android:layout_alignParentStart="true">
+
+
+        <ScrollView
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            android:id="@+id/scrollView"
+            android:layout_alignParentTop="true"
+            android:layout_centerHorizontal="true"
+            android:scrollIndicators="right">
+
+            <RelativeLayout
+                android:orientation="vertical"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent">
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0000"
+                    android:src="@drawable/lion"
+                    android:clickable="true"
+                    android:onClick="selectSet"
+                    android:tag="0000"
+                    android:alpha="1"
+                    android:layout_alignParentLeft="true"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginLeft="20dp"
+                    />
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0001"
+                    android:src="@drawable/apple"
+                    android:onClick="selectSet"
+                    android:tag="0001"
+                    android:alpha="1"
+                    android:layout_alignParentTop="true"
+                    android:layout_centerHorizontal="true" />
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0002"
+                    android:src="@drawable/car"
+                    android:onClick="selectSet"
+                    android:tag="0002"
+                    android:alpha="1"
+                    android:layout_alignParentTop="true"
+                    android:layout_alignParentRight = "true"
+                    android:layout_marginRight="20dp"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0100"
+                    android:src="@drawable/nose"
+                    android:onClick="selectSet"
+                    android:tag="0100"
+                    android:alpha="1"
+                    android:layout_below="@id/image0000"
+                    android:layout_alignLeft="@id/image0000"
+                    />
+
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0101"
+                    android:src="@drawable/dog"
+                    android:onClick="selectSet"
+                    android:tag="0101"
+                    android:alpha="1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/image0001" />
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0102"
+                    android:src="@drawable/rectangle"
+                    android:onClick="selectSet"
+                    android:tag="0101"
+                    android:alpha="1"
+                    android:layout_alignLeft="@id/image0002"
+                    android:layout_below="@id/image0002"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0200"
+                    android:src="@drawable/nose"
+                    android:onClick="selectSet"
+                    android:tag="0200"
+                    android:alpha="1"
+                    android:layout_below="@id/image0100"
+                    android:layout_alignLeft="@id/image0000"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0201"
+                    android:src="@drawable/dog"
+                    android:onClick="selectSet"
+                    android:tag="0201"
+                    android:alpha="1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/image0101"
+                    />
+
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0202"
+                    android:src="@drawable/rectangle"
+                    android:onClick="selectSet"
+                    android:tag="0101"
+                    android:alpha="1"
+                    android:layout_alignLeft="@id/image0002"
+                    android:layout_below="@id/image0102"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0300"
+                    android:src="@drawable/nose"
+                    android:onClick="selectSet"
+                    android:tag="0300"
+                    android:alpha="1"
+                    android:layout_below="@id/image0200"
+                    android:layout_alignLeft="@id/image0000"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0301"
+                    android:src="@drawable/dog"
+                    android:onClick="selectSet"
+                    android:tag="0301"
+                    android:alpha="1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/image0201"
+                    />
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0302"
+                    android:src="@drawable/rectangle"
+                    android:onClick="selectSet"
+                    android:tag="0302"
+                    android:alpha="1"
+                    android:layout_alignLeft="@id/image0002"
+                    android:layout_below="@id/image0202"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0400"
+                    android:src="@drawable/nose"
+                    android:onClick="selectSet"
+                    android:tag="0400"
+                    android:alpha="1"
+                    android:layout_below="@id/image0300"
+                    android:layout_alignLeft="@id/image0000"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0401"
+                    android:src="@drawable/dog"
+                    android:onClick="selectSet"
+                    android:tag="0401"
+                    android:alpha="1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/image0301"
+                    />
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0402"
+                    android:src="@drawable/rectangle"
+                    android:onClick="selectSet"
+                    android:tag="0402"
+                    android:alpha="1"
+                    android:layout_alignLeft="@id/image0002"
+                    android:layout_below="@id/image0302"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0500"
+                    android:src="@drawable/nose"
+                    android:onClick="selectSet"
+                    android:tag="0500"
+                    android:alpha="1"
+                    android:layout_below="@id/image0400"
+                    android:layout_alignLeft="@id/image0000"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0501"
+                    android:src="@drawable/dog"
+                    android:onClick="selectSet"
+                    android:tag="0501"
+                    android:alpha="1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/image0401"
+                    />
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0502"
+                    android:src="@drawable/rectangle"
+                    android:onClick="selectSet"
+                    android:tag="0502"
+                    android:alpha="1"
+                    android:layout_alignLeft="@id/image0002"
+                    android:layout_below="@id/image0402"/>
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0600"
+                    android:src="@drawable/nose"
+                    android:onClick="selectSet"
+                    android:tag="0600"
+                    android:alpha="1"
+                    android:layout_below="@id/image0500"
+                    android:layout_alignLeft="@id/image0000"/>
+
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0601"
+                    android:src="@drawable/dog"
+                    android:onClick="selectSet"
+                    android:tag="0601"
+                    android:alpha="1"
+                    android:layout_centerHorizontal="true"
+                    android:layout_below="@id/image0501"
+                    />
+
+                <ImageView
+                    android:layout_width="80dp"
+                    android:layout_height="80dp"
+                    android:id="@+id/image0602"
+                    android:src="@drawable/rectangle"
+                    android:onClick="selectSet"
+                    android:tag="0602"
+                    android:alpha="1"
+                    android:layout_alignLeft="@id/image0002"
+                    android:layout_below="@id/image0502"/>
+
+            </RelativeLayout>
+        </ScrollView>
+
+
+    </RelativeLayout>
+
+
+
+
+</RelativeLayout>

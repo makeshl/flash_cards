@@ -1,93 +1,116 @@
-vehicles - ambulance
-fruits - apple
-fruits - apricot
-fruits - banana
-wildanimals - bear
-wildanimals - bison
-brocolli - brocoli
-vehicles - bus
-vehicles - car
-household - carpet
-vegetables- carrot
-pets- cat
-vegetables- cauliflower
-household - chair
-wildanimals - cheetah
-shapes- circle
-household - clock
-pets- cow
-wildanimals - crocodile
-household - curtains
-wildanimals - deer
-shapes- diamond
-pets- dog
-birds - eagle
-vegetables- eggplant
-wildanimals - elephant
-body - eyes
-body - feet
-vehicles - fireengine
-household - fireplace
+birds - eagle -
 birds - flamingo
-wildanimals - fox
-wildanimals - giraffe
-fruits - grapes
-vegetables- greenbeans
-body - hands
 birds - hawk
 birds - hen
-shapes- hexagon
-wildanimals - hippo
-fruits - jackfruit
-wildanimals - kangaroo
-vegetables - kidneybeans
 birds - kiwi
-wildanimals - koala
-household - lamp
-vegetables - lemon
-wildanimals - lion
-wildanimals - monkey
-vehicles - motorcycle
+birds - ostrich
+birds - sparrow
+
+body - eyes - 1000
+body - feet
+body - hands
 body - mouth
 body - nose
-vegetables- onion
+
+countries - america
+countries - australia
+countries - canada
+countries - china
+countries - india
+countries - russia
+countries - spain
+
+fruits - apple - 0001
+fruits - apricot
+fruits - banana
+fruits - grapes
+fruits - jackfruit
 fruits- orange
-wildanimals - orangutan
-birds - ostrich
-wildanimals - panda
 fruits - papaya
-pets- parrot
 fruits - peach
 fruits - pear
+fruits - plum
+fruits - strawberry
+fruits - watermelon
+
+home - carpet
+home - chair
+home - clock
+home - curtains
+home - fireplace
+home - lamp
+home - sofa
+home - speaker
+home - table
+home - tv
+
+pets- cat
+pets- cow
+pets- dog
+pets- parrot
+pets- pig
+pets- rabbit
+
+shapes- circle
+shapes- diamond
+shapes- hexagon
+shapes- rectangle
+shapes- square
+shapes- triangle
+
+universe - earth
+universe - jupiter
+universe - sun
+
+vegetables- carrot
+vegetables- cauliflower
+vegetables- eggplant
+vegetables- greenbeans
+vegetables - kidneybeans
+vegetables - lemon
+vegetables- onion
 vegetables- peas
 vegetables- pepper
-vehicles - pickup
-pets- pig
-vehicles - plane
-fruits - plum
 vegetables- potato
 vegetables- pumpkin
-pets- rabbit
-shapes- rectangle
-wildanimals - rhinoceros
+vegetables- tomato
+
+vehicles - ambulance -0002
+vehicles - bus
+vehicles - car
+vehicles - fireengine
+vehicles - motorcycle
 vehicles - rocket
 vehicles - scooter
+vehicles - pickup
+vehicles - plane
+vehicles - train
+vehicles - truck
+vehicles - van
+
+wildanimals - bear - 0000
+wildanimals - bison
+wildanimals - cheetah
+wildanimals - crocodile
+wildanimals - deer
+wildanimals - elephant
+wildanimals - fox
+wildanimals - giraffe
+wildanimals - hippo
+wildanimals - kangaroo
+wildanimals - koala
+wildanimals - lion
+wildanimals - monkey
+wildanimals - orangutan
+wildanimals - panda
+wildanimals - rhinoceros
+wildanimals - tiger
 wildanimals - sheep
 wildanimals - snake
-household - sofa
-birds - sparrow
-household - speaker
-shapes- square
-fruits - strawberry
-sun
-household - table
-wildanimals - tiger
-vegetables- tomato
-vehicles - train
-shapes- triangle
-vehicles - truck
-household - tv
-vehicles - van
-fruits - watermelon
 wildanimals - wolf
 wildanimals - zebra
+
+brocolli - brocoli
+
+
+
