@@ -14,6 +14,9 @@ import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.util.HashMap;
+import java.util.Map;
+
 //import android.net.Uri;
 
 public class MainActivity extends AppCompatActivity {
@@ -33,25 +36,37 @@ public class MainActivity extends AppCompatActivity {
     int displaytime = 4;
 
     // Added on Juy 4 - for new UI//
-    String[] masterlistofLessons = {"wildAnimals","fruits","vehicles"};
-    String[] masterlistofTags = {"0000","0001","0002"};
-    int [] selectedvalueofLessons = {0,0,0};
+    String[] masterlistofLessons = {"wildAnimals","fruits","vehicles","pets","birds","bodyParts","shapes"};
+    String[] masterlistofTags = {"1000","1001","1002","1003","1004","1005","1006"};
+    int [] selectedvalueofLessons = {0,0,0,0,0,0,0};
     String [] selectedlistofLessons = new String[3];
     int masternoofLessons = masterlistofLessons.length;
     int position;
+    String[] fullList = new String[100];
     //
-    String[] fruits = { "apple", "pear", "banana","papaya", "jackfruit",  "orange", "peach","strawberry","watermelon","grapes"};
+
     String[] wildAnimals = {"tiger","lion","elephant","cow","sheep","giraffe","zebra","snake","monkey","kangaroo"};
+    String[] fruits = { "apple", "pear", "banana","papaya", "jackfruit",  "orange", "peach","strawberry","watermelon","grapes"};
+    String[] vehicles = {"car","train","bus","van","plane","rocket","motorcycle","truck","ambulance"};
     String[] pets = {"dog","cat","pig","rabbit"};
     String[] birds = {"parrot","hen","ostrich","eagle","flamingo","sparrow","hawk"};
     String[] bodyParts = {"hands","nose","mouth","feet","eyes"};
-    String[] vehicles = {"car","train","bus","van","plane","rocket","motorcycle","truck","ambulance"};
     String[] shapes = {"square","circle","rectangle","triangle","diamond","hexagon"};
 
     String[] chosenLesson = pets;
     int chosenLesssonLength = chosenLesson.length -1;
     int nooflessons;
     String[] lessonlist = new String[5];
+
+//    Map<String, String[]> strtoArrMaps = new HashMap<>();
+//    strtoArrMaps.put("fruits", fruits);
+//    strtoArrMaps.put("wildAnimals", wildAnimals);
+//    strtoArrMaps.put("pets", pets);
+//    strtoArrMaps.put("birds", birds);
+//    strtoArrMaps.put("bodyParts", bodyParts);
+//    strtoArrMaps.put("vehicles", vehicles);
+//    strtoArrMaps.put("shapes", shapes);
+//    Log.e("completed", " hashtags");
 
     int lessonposition = 0;
 
@@ -275,38 +290,75 @@ public class MainActivity extends AppCompatActivity {
 
     public void selectSet(View v) {
         String clickedLesson =  (String) v.getTag();
-        Log.e("flash_card", "Came to lesson selections " + clickedLesson);
-        float alpha = v.getAlpha();
-        if (alpha==1) {alpha = alpha/2;}    else {alpha = alpha *2;}
-        v.setAlpha(alpha);
+        int tagValue = Integer.parseInt(clickedLesson) - 1000;
+        Log.e("clciked Tag =", " "+tagValue);
+
         position ++;
-        for (int itemp = 0;  itemp < masternoofLessons; itemp++ ) {
-            if (masterlistofTags[itemp].equals(clickedLesson))
-                {if (alpha!=1){
-                    selectedvalueofLessons[itemp] = position;}
-                    else {selectedvalueofLessons[itemp] = 0;}
-                    Log.e(masterlistofLessons[itemp], ";alpha= " + alpha + "; position= "+ position + ";value ="+selectedvalueofLessons[itemp]);
-                }
-        }
+        float alpha = v.getAlpha();
+        if (alpha==1) {alpha = alpha / 2;} else {alpha = alpha * 2;}
+        v.setAlpha(alpha);
+
+        if (alpha!=1) {
+            selectedvalueofLessons[tagValue] = position;}
+        else{
+            selectedvalueofLessons[tagValue] = 0;};
+        Log.e("tag= " + tagValue +";a = " + alpha + ";pos= "+ position, "selectedvalue["+ tagValue + "] =" +selectedvalueofLessons[tagValue]);
+
+//        for (int i = 0;  i < masternoofLessons; i++ ) {
+//            if (masterlistofTags[i].equals(clickedLesson))
+//                {if (alpha!=1){
+//                    selectedvalueofLessons[i] = position;}
+//                    else {selectedvalueofLessons[i] = 0;}
+//                    Log.e(masterlistofLessons[i], ";alpha= " + alpha + "; position= "+ position + ";value ="+selectedvalueofLessons[i]);
+//                }
+//        }
     }
 
     public void selectionDone(View v) {
         int j =0;
         position =0;
-        for (int itemp2 =0; itemp2<masternoofLessons; itemp2 ++) {
-            Log.e("masterlistofLessons = "+ masterlistofLessons[itemp2],"itemp2 = " + itemp2);
-            if (selectedvalueofLessons[itemp2] >0)
+        for (int i =0; i<masternoofLessons; i++) {
+            Log.e("masterlistofLessons = "+ masterlistofLessons[i],"itemp2 = " + i);
+            if (selectedvalueofLessons[i] >0)
             {
-                System.arraycopy(masterlistofLessons, itemp2, selectedlistofLessons, j, 1);
-                //selectedlistofLessons[j]=masterlistofLessons[itemp2]+"";
+                System.arraycopy(masterlistofLessons, i, selectedlistofLessons, j, 1);
                 Log.e("slctdlistofLe[" +j+ "] = "+selectedlistofLessons[j],"pos = " + j);
                 j++;
             }
+            Log.e("i= "+i,"j ="+j);
         }
 
+        Log.e("started ", " hashtags");
+        Map<String, String[]> strtoArrMaps = new HashMap<>();
+        strtoArrMaps.put("fruits", fruits);
+        strtoArrMaps.put("wildAnimals", wildAnimals);
+        strtoArrMaps.put("pets", pets);
+        Log.e("50% complete ", " hashtags");
+        strtoArrMaps.put("birds", birds);
+        strtoArrMaps.put("bodyParts", bodyParts);
+        strtoArrMaps.put("vehicles", vehicles);
+        strtoArrMaps.put("shapes", shapes);
+        Log.e("completed ", " hashtags");
 
+        int k =0;
+        if (j == 0) {
+            System.arraycopy(fruits,0,fullList,0,fruits.length);
+            k= fruits.length;
+        }   else
+        {   for (int i = 0; i < j; i++) {
+                if (i == 0) {
+                    System.arraycopy(strtoArrMaps.get(selectedlistofLessons[i]), 0, fullList, 0, strtoArrMaps.get(selectedlistofLessons[i]).length);
+                    k = k + strtoArrMaps.get(selectedlistofLessons[i]).length;
+                } else {
+                    System.arraycopy(strtoArrMaps.get(selectedlistofLessons[i]), 0, fullList, k, strtoArrMaps.get(selectedlistofLessons[i]).length);
+                    k = k + strtoArrMaps.get(selectedlistofLessons[i]).length;
+                }
+            }
+        }
 
+        for (int l =0; l<k;l++) {
+            Log.e("fulllist[" +l+ "] = ", fullList[l]);
+        }
     }
-
 }
 

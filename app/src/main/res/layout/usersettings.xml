@@ -45,11 +45,11 @@
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0000"
+                    android:id="@+id/image1000"
                     android:src="@drawable/lion"
                     android:clickable="true"
                     android:onClick="selectSet"
-                    android:tag="0000"
+                    android:tag="1000"
                     android:alpha="1"
                     android:layout_alignParentLeft="true"
                     android:layout_alignParentTop="true"
@@ -59,10 +59,10 @@
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0001"
+                    android:id="@+id/image1001"
                     android:src="@drawable/apple"
                     android:onClick="selectSet"
-                    android:tag="0001"
+                    android:tag="1001"
                     android:alpha="1"
                     android:layout_alignParentTop="true"
                     android:layout_centerHorizontal="true" />
@@ -70,10 +70,10 @@
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0002"
+                    android:id="@+id/image1002"
                     android:src="@drawable/car"
                     android:onClick="selectSet"
-                    android:tag="0002"
+                    android:tag="1002"
                     android:alpha="1"
                     android:layout_alignParentTop="true"
                     android:layout_alignParentRight = "true"
@@ -82,209 +82,209 @@
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0100"
-                    android:src="@drawable/nose"
+                    android:id="@+id/image1003"
+                    android:src="@drawable/dog"
                     android:onClick="selectSet"
-                    android:tag="0100"
+                    android:tag="1003"
                     android:alpha="1"
-                    android:layout_below="@id/image0000"
-                    android:layout_alignLeft="@id/image0000"
+                    android:layout_below="@id/image1000"
+                    android:layout_alignLeft="@id/image1000"
                     />
 
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0101"
-                    android:src="@drawable/dog"
+                    android:id="@+id/image1004"
+                    android:src="@drawable/eagle"
                     android:onClick="selectSet"
-                    android:tag="0101"
+                    android:tag="1004"
                     android:alpha="1"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@id/image0001" />
+                    android:layout_below="@id/image1001" />
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0102"
-                    android:src="@drawable/rectangle"
+                    android:id="@+id/image1005"
+                    android:src="@drawable/eyes"
                     android:onClick="selectSet"
-                    android:tag="0101"
+                    android:tag="1005"
                     android:alpha="1"
-                    android:layout_alignLeft="@id/image0002"
-                    android:layout_below="@id/image0002"/>
+                    android:layout_alignLeft="@id/image1002"
+                    android:layout_below="@id/image1002"/>
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0200"
-                    android:src="@drawable/nose"
+                    android:id="@+id/image1006"
+                    android:src="@drawable/circle"
                     android:onClick="selectSet"
-                    android:tag="0200"
+                    android:tag="1006"
                     android:alpha="1"
-                    android:layout_below="@id/image0100"
-                    android:layout_alignLeft="@id/image0000"/>
+                    android:layout_below="@id/image1003"
+                    android:layout_alignLeft="@id/image1003"/>
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0201"
-                    android:src="@drawable/dog"
+                    android:id="@+id/image1007"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0201"
+                    android:tag="1000"
                     android:alpha="1"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@id/image0101"
+                    android:layout_below="@id/image1004"
                     />
 
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0202"
-                    android:src="@drawable/rectangle"
+                    android:id="@+id/image1008"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0101"
+                    android:tag="1000"
                     android:alpha="1"
-                    android:layout_alignLeft="@id/image0002"
-                    android:layout_below="@id/image0102"/>
+                    android:layout_alignLeft="@id/image1005"
+                    android:layout_below="@id/image1005"/>
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0300"
-                    android:src="@drawable/nose"
+                    android:id="@+id/image1009"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0300"
+                    android:tag="1000"
                     android:alpha="1"
-                    android:layout_below="@id/image0200"
-                    android:layout_alignLeft="@id/image0000"/>
+                    android:layout_below="@id/image1006"
+                    android:layout_alignLeft="@id/image1006"/>
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0301"
-                    android:src="@drawable/dog"
+                    android:id="@+id/image1010"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0301"
+                    android:tag="1000"
                     android:alpha="1"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@id/image0201"
+                    android:layout_below="@id/image1007"
                     />
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0302"
-                    android:src="@drawable/rectangle"
+                    android:id="@+id/image1011"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0302"
+                    android:tag="1000"
                     android:alpha="1"
-                    android:layout_alignLeft="@id/image0002"
-                    android:layout_below="@id/image0202"/>
+                    android:layout_alignLeft="@id/image1008"
+                    android:layout_below="@id/image1008"/>
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0400"
-                    android:src="@drawable/nose"
+                    android:id="@+id/image1012"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0400"
+                    android:tag="1000"
                     android:alpha="1"
-                    android:layout_below="@id/image0300"
-                    android:layout_alignLeft="@id/image0000"/>
+                    android:layout_below="@id/image1009"
+                    android:layout_alignLeft="@id/image1009"/>
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0401"
-                    android:src="@drawable/dog"
+                    android:id="@+id/image1013"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0401"
+                    android:tag="1000"
                     android:alpha="1"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@id/image0301"
+                    android:layout_below="@id/image1010"
                     />
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0402"
-                    android:src="@drawable/rectangle"
+                    android:id="@+id/image1014"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0402"
+                    android:tag="1000"
                     android:alpha="1"
-                    android:layout_alignLeft="@id/image0002"
-                    android:layout_below="@id/image0302"/>
+                    android:layout_alignLeft="@id/image1011"
+                    android:layout_below="@id/image1011"/>
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0500"
-                    android:src="@drawable/nose"
+                    android:id="@+id/image1015"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0500"
+                    android:tag="1000"
                     android:alpha="1"
-                    android:layout_below="@id/image0400"
-                    android:layout_alignLeft="@id/image0000"/>
+                    android:layout_below="@id/image1012"
+                    android:layout_alignLeft="@id/image1012"/>
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0501"
-                    android:src="@drawable/dog"
+                    android:id="@+id/image1016"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0501"
+                    android:tag="1000"
                     android:alpha="1"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@id/image0401"
+                    android:layout_below="@id/image1013"
                     />
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0502"
-                    android:src="@drawable/rectangle"
+                    android:id="@+id/image1017"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0502"
+                    android:tag="1000"
                     android:alpha="1"
-                    android:layout_alignLeft="@id/image0002"
-                    android:layout_below="@id/image0402"/>
+                    android:layout_alignLeft="@id/image1014"
+                    android:layout_below="@id/image1014"/>
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0600"
-                    android:src="@drawable/nose"
+                    android:id="@+id/image1018"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0600"
+                    android:tag="1000"
                     android:alpha="1"
-                    android:layout_below="@id/image0500"
-                    android:layout_alignLeft="@id/image0000"/>
+                    android:layout_below="@id/image1015"
+                    android:layout_alignLeft="@id/image1015"/>
 
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0601"
-                    android:src="@drawable/dog"
+                    android:id="@+id/image1019"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0601"
+                    android:tag="1000"
                     android:alpha="1"
                     android:layout_centerHorizontal="true"
-                    android:layout_below="@id/image0501"
+                    android:layout_below="@id/image1016"
                     />
 
                 <ImageView
                     android:layout_width="80dp"
                     android:layout_height="80dp"
-                    android:id="@+id/image0602"
-                    android:src="@drawable/rectangle"
+                    android:id="@+id/image1020"
+                    android:src="@drawable/lion"
                     android:onClick="selectSet"
-                    android:tag="0602"
+                    android:tag="1000"
                     android:alpha="1"
-                    android:layout_alignLeft="@id/image0002"
-                    android:layout_below="@id/image0502"/>
+                    android:layout_alignLeft="@id/image1017"
+                    android:layout_below="@id/image1017"/>
 
             </RelativeLayout>
         </ScrollView>
