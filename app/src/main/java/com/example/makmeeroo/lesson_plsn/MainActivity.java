@@ -10,14 +10,11 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
-import android.widget.EditText;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.Map;
-
-//import android.net.Uri;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -31,19 +28,17 @@ public class MainActivity extends AppCompatActivity {
     public static final String LESSON_WILD_ANIMALS = "wildAnimals";
     public static final String LESSON_FRUITS = "fruits";
     int stopCounter = 0;
-//    int stopLimit = 9; // No. of cards in that lesson: needs to be a user input, or something that can be automatically counted
     private Handler mHandler;
     int displaytime = 4;
 
     // Added on Juy 4 - for new UI//
-    String[] masterlistofLessons = {"wildAnimals","fruits","vehicles","pets","birds","bodyParts","shapes"};
+    String[] masterlistofLessons = {"wildAnimals","fruits",LESSON_VEHICLES,"pets","birds","bodyParts","shapes"};
     String[] masterlistofTags = {"1000","1001","1002","1003","1004","1005","1006"};
     int [] selectedvalueofLessons = {0,0,0,0,0,0,0};
     String [] selectedlistofLessons = new String[3];
     int masternoofLessons = masterlistofLessons.length;
     int position;
     String[] fullList = new String[100];
-    //
 
     String[] wildAnimals = {"tiger","lion","elephant","cow","sheep","giraffe","zebra","snake","monkey","kangaroo"};
     String[] fruits = { "apple", "pear", "banana","papaya", "jackfruit",  "orange", "peach","strawberry","watermelon","grapes"};
@@ -56,19 +51,6 @@ public class MainActivity extends AppCompatActivity {
     String[] chosenLesson = pets;
     int chosenLesssonLength = chosenLesson.length -1;
     int nooflessons;
-    String[] lessonlist = new String[5];
-
-//    Map<String, String[]> strtoArrMaps = new HashMap<>();
-//    strtoArrMaps.put("fruits", fruits);
-//    strtoArrMaps.put("wildAnimals", wildAnimals);
-//    strtoArrMaps.put("pets", pets);
-//    strtoArrMaps.put("birds", birds);
-//    strtoArrMaps.put("bodyParts", bodyParts);
-//    strtoArrMaps.put("vehicles", vehicles);
-//    strtoArrMaps.put("shapes", shapes);
-//    Log.e("completed", " hashtags");
-
-    int lessonposition = 0;
 
     MediaPlayer pronouncePlay;
 
@@ -76,9 +58,7 @@ public class MainActivity extends AppCompatActivity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-
         Log.e("flash_card", " arrived at onCreate");
         mHandler = new Handler();
         mHandler.post(mUpdate);
@@ -87,7 +67,7 @@ public class MainActivity extends AppCompatActivity {
     private Runnable mUpdate = new Runnable() {
         public void run() {
             Log.e("flash_card", " mUpdate called. stopCounter = " + stopCounter);
-            nextTextMessage(stopCounter);
+//            nextTextMessage(stopCounter);     ML changed this on 7/9
             nextImage(stopCounter);
             if (stopCounter<chosenLesssonLength) {
                 mHandler.postDelayed(this, displaytime * 1000);
@@ -144,150 +124,6 @@ public class MainActivity extends AppCompatActivity {
         nooflessons = 0;
     }
 
-    public void selectLesson(View v) {
-        Log.e("flash_card", "Came to selectLesson; curent # lessons is "+nooflessons);
-        if (nooflessons <4) {
-            String currentLesson = (String) v.getTag();
-            Log.e("flash_card", "curent lesson is "+currentLesson+" ; is it empty? "+currentLesson.isEmpty());
-            lessonlist[nooflessons] = currentLesson;
-            EditText mlesson1 = (EditText) findViewById(R.id.lesson1); // TODO fix this with a list of buttons
-            EditText mlesson2= (EditText) findViewById(R.id.lesson2);
-            EditText mlesson3 = (EditText) findViewById(R.id.lesson3);
-            EditText mlesson4 = (EditText) findViewById(R.id.lesson4);
-            switch (nooflessons) {
-                case 0:mlesson1.setText(currentLesson);break;
-                case 1:mlesson2.setText(currentLesson);break;
-                case 2:mlesson3.setText(currentLesson);break;
-                case 3:mlesson4.setText(currentLesson);break;
-            }
-            nooflessons++;
-        }
-    }
-
-    public void selectioncomplete(View v) {
-
-        String[] arrbig = new String[100];
-        int unitcounter =0;
-
-        if (nooflessons == 0) {                 // in case the user didn't select anything
-            nooflessons =1;
-            lessonlist[0] = LESSON_FRUITS;
-        }
-        else {nooflessons = Math.min(4,nooflessons);}
-
-        Log.e("flash_cards"," nooflessons = "+nooflessons);
-
-        for (int ilooper = 0;  ilooper < nooflessons; ilooper++ ) {
-            switch (lessonlist[ilooper]) {
-                case LESSON_FRUITS:
-                    Log.e("lessonlist = ",lessonlist[ilooper]);
-                    if(ilooper ==0) {
-                        System.arraycopy(fruits, 0, arrbig, 0, fruits.length);
-                        unitcounter = unitcounter + fruits.length;
-                    }
-                    else {
-                        System.arraycopy(fruits, 0, arrbig, unitcounter, fruits.length);
-                        unitcounter = unitcounter + fruits.length;
-                    }
-                    break;
-                case LESSON_WILD_ANIMALS:
-                    if(ilooper ==0) {
-                        System.arraycopy(wildAnimals, 0, arrbig, 0, wildAnimals.length);
-                        unitcounter = unitcounter + wildAnimals.length;
-                    }
-                    else {
-                        System.arraycopy(wildAnimals, 0, arrbig, unitcounter, wildAnimals.length);
-                        unitcounter = unitcounter + wildAnimals.length;
-                    }
-                    break;
-                case LESSON_PETS:
-                    if(ilooper ==0) {
-                        System.arraycopy(pets, 0, arrbig, 0, pets.length);
-                        unitcounter = unitcounter + pets.length;}
-                    else {
-                        System.arraycopy(pets, 0, arrbig, unitcounter, pets.length);
-                        unitcounter = unitcounter + pets.length;
-                    }
-                    break;
-                case LESSON_BIRDS:
-                    if(ilooper ==0) {
-                        System.arraycopy(birds, 0, arrbig, 0, birds.length);
-                        unitcounter = unitcounter + birds.length;}
-                    else {
-                        System.arraycopy(birds, 0, arrbig, unitcounter, birds.length);
-                        unitcounter = unitcounter + birds.length;
-                    }
-                    break;
-                case LESSON_BODY_PARTS:
-                    if(ilooper ==0) {
-                        System.arraycopy(bodyParts, 0, arrbig, 0, bodyParts.length);
-                        unitcounter = unitcounter + bodyParts.length;
-                    }
-                    else {
-                        System.arraycopy(bodyParts, 0, arrbig, unitcounter, bodyParts.length);
-                        unitcounter = unitcounter + bodyParts.length;
-                    }
-                    break;
-                case LESSON_VEHICLES:
-                    if(ilooper ==0) {
-                        System.arraycopy(vehicles, 0, arrbig, 0, vehicles.length);
-                        unitcounter = unitcounter + vehicles.length;
-                    }
-                    else {
-                        System.arraycopy(vehicles, 0, arrbig, unitcounter, vehicles.length);
-                        unitcounter = unitcounter + vehicles.length;
-                    }
-                    break;
-                case LESSON_SHAPES:
-                    if(ilooper ==0) {
-                        System.arraycopy(shapes, 0, arrbig, 0, shapes.length);
-                        unitcounter = unitcounter + shapes.length;
-                    }
-                    else {
-                        System.arraycopy(shapes, 0, arrbig, unitcounter, shapes.length);
-                        unitcounter = unitcounter + shapes.length;
-                    }
-                    break;
-                default:
-                    if(ilooper ==0) {
-                        System.arraycopy(fruits, 0, arrbig, 0, fruits.length);
-                        unitcounter = unitcounter + fruits.length;}
-                    else {
-                        System.arraycopy(fruits, 0, arrbig, unitcounter, fruits.length);
-                        unitcounter = unitcounter + fruits.length;
-                    }
-                    break;
-            }
-        }
-            Log.e("bigaray10= ",arrbig[10]+"  length=  "+arrbig.length+ "unit counter =  "+ unitcounter);
-        chosenLesson = arrbig;
-        chosenLesssonLength = unitcounter -1;
-            Log.e("chosenlesson= ", chosenLesson[10]+"length = "+ chosenLesson.length);
-
-//        EditText mlesson1 = (EditText) findViewById(R.id.lesson1);
-//        String temp1 = mlesson1.getText().toString();
-
-        EditText mspeed = (EditText) findViewById(R.id.speed);
-        String tempspeed = mspeed.getText().toString();  // Gets the text value from that pointer (user input)
-        if ( !tempspeed.isEmpty()) {
-            Log.e("flash_card", " displaytime =  "+displaytime + " input from user = "+ tempspeed);
-            displaytime = Integer.parseInt(tempspeed);
-        } else {
-            // toast a warning about default?
-            displaytime = 3;
-        }
-        Log.e("flash_card", " displaytime =  "+displaytime);
-        if (displaytime == 0) {displaytime =3;} //default time to be 3 sec
-
-        setContentView(R.layout.activity_main);
-        stopCounter = 0;
-
-        mHandler = new Handler();
-        mHandler.post(mUpdate);
-    }
-
-
-
     public void selectSet(View v) {
         String clickedLesson =  (String) v.getTag();
         int tagValue = Integer.parseInt(clickedLesson) - 1000;
@@ -298,20 +134,8 @@ public class MainActivity extends AppCompatActivity {
         if (alpha==1) {alpha = alpha / 2;} else {alpha = alpha * 2;}
         v.setAlpha(alpha);
 
-        if (alpha!=1) {
-            selectedvalueofLessons[tagValue] = position;}
-        else{
-            selectedvalueofLessons[tagValue] = 0;};
+        if (alpha!=1) {selectedvalueofLessons[tagValue] = position;} else{selectedvalueofLessons[tagValue] = 0;};
         Log.e("tag= " + tagValue +";a = " + alpha + ";pos= "+ position, "selectedvalue["+ tagValue + "] =" +selectedvalueofLessons[tagValue]);
-
-//        for (int i = 0;  i < masternoofLessons; i++ ) {
-//            if (masterlistofTags[i].equals(clickedLesson))
-//                {if (alpha!=1){
-//                    selectedvalueofLessons[i] = position;}
-//                    else {selectedvalueofLessons[i] = 0;}
-//                    Log.e(masterlistofLessons[i], ";alpha= " + alpha + "; position= "+ position + ";value ="+selectedvalueofLessons[i]);
-//                }
-//        }
     }
 
     public void selectionDone(View v) {
@@ -356,9 +180,18 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        for (int l =0; l<k;l++) {
-            Log.e("fulllist[" +l+ "] = ", fullList[l]);
-        }
+        for (int l =0; l<k;l++) {Log.e("fulllist[" +l+ "] = ", fullList[l]);}
+
+        displaytime = 3;
+        setContentView(R.layout.activity_main);
+        stopCounter = 0;
+
+        chosenLesson = fullList;
+        chosenLesssonLength = k -1;
+        Log.e("chosen lesson length =", " "+ chosenLesssonLength);
+
+        mHandler = new Handler();
+        mHandler.post(mUpdate);
     }
 }
 
