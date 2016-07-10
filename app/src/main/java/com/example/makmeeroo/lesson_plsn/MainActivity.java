@@ -27,26 +27,29 @@ public class MainActivity extends AppCompatActivity {
     public static final String LESSON_PETS = "pets";
     public static final String LESSON_WILD_ANIMALS = "wildAnimals";
     public static final String LESSON_FRUITS = "fruits";
+    public static final String LESSON_HOME = "home";
+    public static final String LESSON_VEGETABLES = "vegetables";
     int stopCounter = 0;
     private Handler mHandler;
     int displaytime = 4;
 
     // Added on Juy 4 - for new UI//
-    String[] masterlistofLessons = {"wildAnimals","fruits",LESSON_VEHICLES,"pets","birds","bodyParts","shapes"};
-    String[] masterlistofTags = {"1000","1001","1002","1003","1004","1005","1006"};
-    int [] selectedvalueofLessons = {0,0,0,0,0,0,0};
+    String[] masterlistofLessons = {LESSON_WILD_ANIMALS,LESSON_FRUITS,LESSON_VEHICLES,LESSON_PETS,LESSON_BIRDS,LESSON_BODY_PARTS,LESSON_SHAPES,LESSON_HOME,LESSON_VEGETABLES};
+    int [] selectedvalueofLessons = {0,0,0,0,0,0,0,0,0};
     String [] selectedlistofLessons = new String[3];
     int masternoofLessons = masterlistofLessons.length;
     int position;
     String[] fullList = new String[100];
 
-    String[] wildAnimals = {"tiger","lion","elephant","cow","sheep","giraffe","zebra","snake","monkey","kangaroo"};
-    String[] fruits = { "apple", "pear", "banana","papaya", "jackfruit",  "orange", "peach","strawberry","watermelon","grapes"};
-    String[] vehicles = {"car","train","bus","van","plane","rocket","motorcycle","truck","ambulance"};
-    String[] pets = {"dog","cat","pig","rabbit"};
-    String[] birds = {"parrot","hen","ostrich","eagle","flamingo","sparrow","hawk"};
-    String[] bodyParts = {"hands","nose","mouth","feet","eyes"};
-    String[] shapes = {"square","circle","rectangle","triangle","diamond","hexagon"};
+    String[] wildAnimals = {"bear","bison","cheetah","crocodile","deer","elephant","fox","giraffe","hippo","kangaroo","koala","lion","monkey","orangutan","panda","rhinoceros","sheep","snake","tiger","wolf","zebra"};
+    String[] fruits = { "apple","apricot","banana","grapes","jackfruit","orange","papaya","peach","pear","plum","strawberry","watermelon",};
+    String[] vehicles = {"ambulance","bus","car","motorcycle","plane","rocket","train","truck","van"};
+    String[] pets = {"cat","cow","dog","pig","rabbit"};
+    String[] birds = {"eagle","flamingo","hawk","hen","ostrich","parrot" ,"sparrow"};
+    String[] bodyParts = {"eyes","feet","hands","mouth","nose"};
+    String[] shapes = {"circle","diamond","hexagon","rectangle","square","triangle"};
+    String[] home = {"carpet","chair","clock","curtains","fireplace","lamp","sofa","speaker","table","tv"};
+    String[] vegetables ={"carrot","cauliflower","eggplant","greenbeans","lemon","onion","peas","pepper","potato","pumpkin","tomato"};
 
     String[] chosenLesson = pets;
     int chosenLesssonLength = chosenLesson.length -1;
@@ -67,11 +70,12 @@ public class MainActivity extends AppCompatActivity {
     private Runnable mUpdate = new Runnable() {
         public void run() {
             Log.e("flash_card", " mUpdate called. stopCounter = " + stopCounter);
-//            nextTextMessage(stopCounter);     ML changed this on 7/9
+            nextTextMessage(stopCounter);     //ML changed this on 7/9
             nextImage(stopCounter);
             if (stopCounter<chosenLesssonLength) {
                 mHandler.postDelayed(this, displaytime * 1000);
                 stopCounter++;
+                if (stopCounter == chosenLesssonLength) {stopCounter =0;} // ML added for continuous looping
             }
         }
     };
@@ -121,6 +125,7 @@ public class MainActivity extends AppCompatActivity {
         mHandler.removeCallbacksAndMessages(null);
 //        setContentView(R.layout.adjustments); // TODO add a gear box instead of button; include a sound on/off option
         setContentView(R.layout.usersettings);
+        for (int i=0;i<selectedvalueofLessons.length;i++) {selectedvalueofLessons[i] = 0;}
         nooflessons = 0;
     }
 
@@ -154,15 +159,15 @@ public class MainActivity extends AppCompatActivity {
 
         Log.e("started ", " hashtags");
         Map<String, String[]> strtoArrMaps = new HashMap<>();
-        strtoArrMaps.put("fruits", fruits);
-        strtoArrMaps.put("wildAnimals", wildAnimals);
-        strtoArrMaps.put("pets", pets);
-        Log.e("50% complete ", " hashtags");
-        strtoArrMaps.put("birds", birds);
-        strtoArrMaps.put("bodyParts", bodyParts);
-        strtoArrMaps.put("vehicles", vehicles);
-        strtoArrMaps.put("shapes", shapes);
-        Log.e("completed ", " hashtags");
+        strtoArrMaps.put(LESSON_FRUITS, fruits);
+        strtoArrMaps.put(LESSON_WILD_ANIMALS, wildAnimals);
+        strtoArrMaps.put(LESSON_PETS, pets);
+        strtoArrMaps.put(LESSON_BIRDS, birds);
+        strtoArrMaps.put(LESSON_BODY_PARTS, bodyParts);
+        strtoArrMaps.put(LESSON_VEHICLES, vehicles);
+        strtoArrMaps.put(LESSON_SHAPES, shapes);
+        strtoArrMaps.put(LESSON_HOME, home);
+        strtoArrMaps.put(LESSON_VEGETABLES,vegetables);
 
         int k =0;
         if (j == 0) {

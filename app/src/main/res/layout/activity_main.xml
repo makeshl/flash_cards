@@ -10,23 +10,6 @@
     android:orientation = "vertical"
 >
 
-    <ImageView
-        android:layout_width= "match_parent"
-        android:layout_height="match_parent"
-        android:id="@+id/imageView1"
-        android:src="@drawable/art"/>
-
-    <!--<ImageButton-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:id="@+id/imageButton1"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:clickable="true"-->
-        <!--android:onClick="changeselections"-->
-        <!--android:icon="@drawable/ic_settings_black_24dp"-->
-        <!--/>-->
-
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
@@ -40,7 +23,6 @@
         android:textSize="12sp"
         android:background="#FFFFFF"
         />
-
     <Button
         style="?android:attr/buttonStyleSmall"
         android:layout_width="wrap_content"
@@ -55,6 +37,13 @@
         android:background="#FFFFFF"
         />
 
+    <ImageView
+        android:layout_width= "match_parent"
+        android:layout_height="match_parent"
+        android:layout_above="@id/button1"
+        android:id="@+id/imageView1"
+        android:src="@drawable/art"/>
+
     <TextView
         android:id="@+id/textView"
         android:layout_width="wrap_content"
@@ -62,7 +51,6 @@
         android:text="picture"
         android:textSize="12sp"
         android:layout_alignParentBottom="true"
-        android:layout_above="@id/imageView1"
         android:layout_centerHorizontal="true"
        />
 
