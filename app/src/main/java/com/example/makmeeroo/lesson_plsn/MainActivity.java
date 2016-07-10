@@ -32,7 +32,7 @@ public class MainActivity extends AppCompatActivity {
     int displaytime = 4;
 
     // Added on Juy 4 - for new UI//
-    String[] masterlistofLessons = {"wildAnimals","fruits",LESSON_VEHICLES,"pets","birds","bodyParts","shapes"};
+    String[] masterlistofLessons = {"wildAnimals","fruits",LESSON_VEHICLES,"pets","birds","bodyParts",LESSON_SHAPES};
     String[] masterlistofTags = {"1000","1001","1002","1003","1004","1005","1006"};
     int [] selectedvalueofLessons = {0,0,0,0,0,0,0};
     String [] selectedlistofLessons = new String[3];
