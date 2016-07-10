@@ -143,6 +143,18 @@ public class MainActivity extends AppCompatActivity {
         Log.e("tag= " + tagValue +";a = " + alpha + ";pos= "+ position, "selectedvalue["+ tagValue + "] =" +selectedvalueofLessons[tagValue]);
     }
 
+    public void selectionReset(View v) {
+        int[] picIds = new int[] {R.id.image1000,R.id.image1001,R.id.image1002,R.id.image1003,R.id.image1004,
+                R.id.image1005, R.id.image1006, R.id.image1007,R.id.image1008,R.id.image1009,R.id.image1010,
+                R.id.image1011,R.id.image1012,R.id.image1013,R.id.image1014,R.id.image1015,R.id.image1016,
+                R.id.image1017,R.id.image1018,R.id.image1019,R.id.image1020};
+        for (int i =0; i<21; i++) {
+            ImageView temp1 = (ImageView) findViewById(picIds[i]);
+            temp1.setAlpha(1.0f);
+        }
+        for (int i=0;i<selectedvalueofLessons.length;i++) {selectedvalueofLessons[i] = 0;}
+    }
+
     public void selectionDone(View v) {
         int j =0;
         position =0;
