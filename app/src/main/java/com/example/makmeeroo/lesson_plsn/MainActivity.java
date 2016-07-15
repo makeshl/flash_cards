@@ -15,6 +15,9 @@ import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.Map;
+import android.speech.tts.TextToSpeech;
+import java.util.List;
+import java.util.Locale;
 
 public class MainActivity extends AppCompatActivity {
 
@@ -29,13 +32,16 @@ public class MainActivity extends AppCompatActivity {
     public static final String LESSON_FRUITS = "fruits";
     public static final String LESSON_HOME = "home";
     public static final String LESSON_VEGETABLES = "vegetables";
+    public static final String LESSON_DINNER = "dinner";
+    public static final String LESSON_PARK = "park";
     int stopCounter = 0;
     private Handler mHandler;
     int displaytime = 4;
 
     // Added on Juy 4 - for new UI//
-    String[] masterlistofLessons = {LESSON_WILD_ANIMALS,LESSON_FRUITS,LESSON_VEHICLES,LESSON_PETS,LESSON_BIRDS,LESSON_BODY_PARTS,LESSON_SHAPES,LESSON_HOME,LESSON_VEGETABLES};
-    int [] selectedvalueofLessons = {0,0,0,0,0,0,0,0,0};
+    String[] masterlistofLessons = {LESSON_WILD_ANIMALS,LESSON_FRUITS,LESSON_VEHICLES,LESSON_PETS,LESSON_BIRDS,LESSON_BODY_PARTS,
+            LESSON_SHAPES,LESSON_HOME,LESSON_VEGETABLES,LESSON_DINNER, LESSON_PARK};
+    int [] selectedvalueofLessons = {0,0,0,0,0,0,0,0,0,0,0};
     String [] selectedlistofLessons = new String[3];
     int masternoofLessons = masterlistofLessons.length;
     int position;
@@ -46,16 +52,19 @@ public class MainActivity extends AppCompatActivity {
     String[] vehicles = {"ambulance","bus","car","motorcycle","plane","rocket","train","truck","van"};
     String[] pets = {"cat","cow","dog","pig","rabbit"};
     String[] birds = {"eagle","flamingo","hawk","hen","ostrich","parrot" ,"sparrow"};
-    String[] bodyParts = {"eyes","feet","hands","mouth","nose"};
+    String[] bodyParts = {"eyes","nose","mouth","teeth","tongue","chin","ear","head","hair","fingers","hands","feet","shoulders"};
     String[] shapes = {"circle","diamond","hexagon","rectangle","square","triangle"};
     String[] home = {"carpet","chair","clock","curtains","fireplace","lamp","sofa","speaker","table","tv"};
     String[] vegetables ={"carrot","cauliflower","eggplant","greenbeans","lemon","onion","peas","pepper","potato","pumpkin","tomato"};
+    String[] dinner = {"table","chair","spoon","bowl","bib","pasta","milk"};
+    String [] park = {"slide","swing","spinner"};
 
     String[] chosenLesson = pets;
     int chosenLesssonLength = chosenLesson.length -1;
     int nooflessons;
 
     MediaPlayer pronouncePlay;
+    TextToSpeech t1;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -63,6 +72,19 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.e("flash_card", " arrived at onCreate");
+
+        t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+            @Override
+            public void onInit(int status) {
+                if (status== TextToSpeech.SUCCESS) {
+                    Log.e("entered"," tts object");
+                    t1.setLanguage(Locale.UK);
+                    t1.setSpeechRate(1.0f);
+ //                   t1.setPitch(1.0f);
+                }
+            }
+        });
+
         mHandler = new Handler();
         mHandler.post(mUpdate);
     }
@@ -97,11 +119,13 @@ public class MainActivity extends AppCompatActivity {
         ImageView temp1 = (ImageView) findViewById(R.id.imageView1);
         temp1.setImageDrawable(pic);        //display pic in the image
 
-        String voiceFile = chosenLesson[counter];
-        int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
-        Log.e("flash_card ", "resID = " + resID);
-        pronouncePlay = MediaPlayer.create(this, resID);
-        pronouncePlay.start();
+//        String voiceFile = chosenLesson[counter];
+//        int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
+//        Log.e("flash_card ", "resID = " + resID);
+//        pronouncePlay = MediaPlayer.create(this, resID);
+//        pronouncePlay.start();
+
+        t1.speak(chosenLesson[counter], TextToSpeech.QUEUE_FLUSH, null);
     }
 
     public void stopresume(View v) {
@@ -123,7 +147,6 @@ public class MainActivity extends AppCompatActivity {
 
     public void changeselections(View v) {
         mHandler.removeCallbacksAndMessages(null);
-//        setContentView(R.layout.adjustments); // TODO add a gear box instead of button; include a sound on/off option
         setContentView(R.layout.usersettings);
         for (int i=0;i<selectedvalueofLessons.length;i++) {selectedvalueofLessons[i] = 0;}
         nooflessons = 0;
@@ -180,6 +203,8 @@ public class MainActivity extends AppCompatActivity {
         strtoArrMaps.put(LESSON_SHAPES, shapes);
         strtoArrMaps.put(LESSON_HOME, home);
         strtoArrMaps.put(LESSON_VEGETABLES,vegetables);
+        strtoArrMaps.put(LESSON_DINNER,dinner);
+        strtoArrMaps.put(LESSON_PARK,park);
 
         int k =0;
         if (j == 0) {

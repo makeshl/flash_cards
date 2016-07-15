@@ -7,10 +7,19 @@ birds - ostrich
 birds - sparrow
 
 body - eyes - 1000
-body - feet
-body - hands
-body - mouth
 body - nose
+body - mouth
+body - teeth
+body - tongue
+body - chin
+body - ear
+body - head
+body - hair
+body - hands
+body - feet
+body - fingers
+body - shoulders
+
 
 countries - america
 countries - australia
@@ -19,6 +28,15 @@ countries - china
 countries - india
 countries - russia
 countries - spain
+
+dinner - table
+dinner - chair
+dinner - high chair
+dinner - spoon
+dinner - bowl
+dinner - bib
+dinner - pasta
+dinner - milk
 
 fruits - apple - 0001
 fruits - apricot
@@ -43,6 +61,8 @@ home - sofa
 home - speaker
 home - table
 home - tv
+
+park - slide, swing, sand pit, roller slide, spinner
 
 pets- cat
 pets- cow
