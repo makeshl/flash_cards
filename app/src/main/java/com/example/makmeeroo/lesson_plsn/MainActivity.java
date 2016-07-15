@@ -4,6 +4,7 @@ import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
 import android.os.Handler;
+import android.speech.tts.TextToSpeech;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
@@ -14,11 +15,10 @@ import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
-import java.util.Map;
-import android.speech.tts.TextToSpeech;
-import java.util.List;
 import java.util.Locale;
+import java.util.Map;
 
+// TODO http://www.tutorialspoint.com/java/
 public class MainActivity extends AppCompatActivity {
 
     public static final String RESUME_STRING = "Resume";
@@ -124,8 +124,12 @@ public class MainActivity extends AppCompatActivity {
 //        Log.e("flash_card ", "resID = " + resID);
 //        pronouncePlay = MediaPlayer.create(this, resID);
 //        pronouncePlay.start();
+// TODO debug silent cat problem
+// TODO check voice file length, and set time based on that
 
+        // TODO use voice if available, if not use text to speech
         t1.speak(chosenLesson[counter], TextToSpeech.QUEUE_FLUSH, null);
+
     }
 
     public void stopresume(View v) {
@@ -162,7 +166,11 @@ public class MainActivity extends AppCompatActivity {
         if (alpha==1) {alpha = alpha / 2;} else {alpha = alpha * 2;}
         v.setAlpha(alpha);
 
-        if (alpha!=1) {selectedvalueofLessons[tagValue] = position;} else{selectedvalueofLessons[tagValue] = 0;};
+        if (alpha!=1) {
+            selectedvalueofLessons[tagValue] = position;// TODO use the saved position
+        } else{
+            selectedvalueofLessons[tagValue] = 0;
+        };
         Log.e("tag= " + tagValue +";a = " + alpha + ";pos= "+ position, "selectedvalue["+ tagValue + "] =" +selectedvalueofLessons[tagValue]);
     }
 
@@ -184,7 +192,7 @@ public class MainActivity extends AppCompatActivity {
         for (int i =0; i<masternoofLessons; i++) {
             Log.e("masterlistofLessons = "+ masterlistofLessons[i],"itemp2 = " + i);
             if (selectedvalueofLessons[i] >0)
-            {
+            {// TODO use position here
                 System.arraycopy(masterlistofLessons, i, selectedlistofLessons, j, 1);
                 Log.e("slctdlistofLe[" +j+ "] = "+selectedlistofLessons[j],"pos = " + j);
                 j++;
