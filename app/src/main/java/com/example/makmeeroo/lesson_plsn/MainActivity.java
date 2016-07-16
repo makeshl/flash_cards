@@ -14,9 +14,12 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.io.IOException;
 
 // TODO http://www.tutorialspoint.com/java/
 public class MainActivity extends AppCompatActivity {
@@ -112,24 +115,33 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void nextImage(int counter) {
+// TODO if picture file is not available, then move to the next picture
         String selectedPicture = "@drawable/" + chosenLesson[counter];
         int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
 //        Drawable pic = getResources().getDrawable(pic_id);  // take picture from that location and save it in a drawable pic
         Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
         ImageView temp1 = (ImageView) findViewById(R.id.imageView1);
         temp1.setImageDrawable(pic);        //display pic in the image
+        Log.e("selected picture = ", selectedPicture);
 
-//        String voiceFile = chosenLesson[counter];
-//        int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
-//        Log.e("flash_card ", "resID = " + resID);
-//        pronouncePlay = MediaPlayer.create(this, resID);
-//        pronouncePlay.start();
+        String voiceFile = chosenLesson[counter];
+
+        int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
+        Log.e("flash_card ", "resID = " + resID);
+
+        if (resID == 0) {
+            Log.e("voice file not found ",voiceFile);
+            t1.speak(chosenLesson[counter], TextToSpeech.QUEUE_FLUSH, null);
+        }else
+        {
+            Log.e("voice file found ",voiceFile);
+            pronouncePlay = MediaPlayer.create(this, resID);
+            pronouncePlay.start();
+        }
+
 // TODO debug silent cat problem
 // TODO check voice file length, and set time based on that
-
-        // TODO use voice if available, if not use text to speech
-        t1.speak(chosenLesson[counter], TextToSpeech.QUEUE_FLUSH, null);
-
+// TODO use voice if available, if not use text to speech - COMPLETE
     }
 
     public void stopresume(View v) {
