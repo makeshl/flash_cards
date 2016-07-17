@@ -14,12 +14,9 @@ import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.TextView;
 
-import java.io.FileNotFoundException;
-import java.io.IOException;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.io.IOException;
 
 // TODO http://www.tutorialspoint.com/java/
 public class MainActivity extends AppCompatActivity {
@@ -39,7 +36,7 @@ public class MainActivity extends AppCompatActivity {
     public static final String LESSON_PARK = "park";
     int stopCounter = 0;
     private Handler mHandler;
-    int displaytime = 4;
+    long displayMinTime = 2000; // milliseconds
 
     // Added on Juy 4 - for new UI//
     String[] masterlistofLessons = {LESSON_WILD_ANIMALS,LESSON_FRUITS,LESSON_VEHICLES,LESSON_PETS,LESSON_BIRDS,LESSON_BODY_PARTS,
@@ -51,14 +48,14 @@ public class MainActivity extends AppCompatActivity {
     String[] fullList = new String[100];
 
     String[] wildAnimals = {"bear","bison","cheetah","crocodile","deer","elephant","fox","giraffe","hippo","kangaroo","koala","lion","monkey","orangutan","panda","rhinoceros","sheep","snake","tiger","wolf","zebra"};
-    String[] fruits = { "apple","apricot","banana","grapes","jackfruit","orange","papaya","peach","pear","plum","strawberry","watermelon",};
+    String[] fruits = { "apple","apricot","banana","grapes","jack_fruit","orange","papaya","peach","pear","plum","strawberry","watermelon",};
     String[] vehicles = {"ambulance","bus","car","motorcycle","plane","rocket","train","truck","van"};
     String[] pets = {"cat","cow","dog","pig","rabbit"};
     String[] birds = {"eagle","flamingo","hawk","hen","ostrich","parrot" ,"sparrow"};
     String[] bodyParts = {"eyes","nose","mouth","teeth","tongue","chin","ear","head","hair","fingers","hands","feet","shoulders"};
     String[] shapes = {"circle","diamond","hexagon","rectangle","square","triangle"};
     String[] home = {"carpet","chair","clock","curtains","fireplace","lamp","sofa","speaker","table","tv"};
-    String[] vegetables ={"carrot","cauliflower","eggplant","greenbeans","lemon","onion","peas","pepper","potato","pumpkin","tomato"};
+    String[] vegetables ={"carrot","cauliflower","eggplant","green_beans","lemon","onion","peas","pepper","potato","pumpkin","tomato"};
     String[] dinner = {"table","chair","spoon","bowl","bib","pasta","milk"};
     String [] park = {"slide","swing","spinner"};
 
@@ -97,8 +94,12 @@ public class MainActivity extends AppCompatActivity {
             Log.e("flash_card", " mUpdate called. stopCounter = " + stopCounter);
             nextTextMessage(stopCounter);     //ML changed this on 7/9
             nextImage(stopCounter);
+            double soundLength = nextSound(stopCounter);
+            long currentDisplayTime = (long) (soundLength + 500); // add 0.5 seconds margin
+            if (currentDisplayTime<displayMinTime) // too short
+                currentDisplayTime= displayMinTime;
             if (stopCounter<chosenLesssonLength) {
-                mHandler.postDelayed(this, displaytime * 1000);
+                mHandler.postDelayed(this, currentDisplayTime);
                 stopCounter++;
                 if (stopCounter == chosenLesssonLength) {stopCounter =0;} // ML added for continuous looping
             }
@@ -123,22 +124,30 @@ public class MainActivity extends AppCompatActivity {
         ImageView temp1 = (ImageView) findViewById(R.id.imageView1);
         temp1.setImageDrawable(pic);        //display pic in the image
         Log.e("selected picture = ", selectedPicture);
+    }
+
+    public double nextSound(int counter) {
 
         String voiceFile = chosenLesson[counter];
 
         int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
         Log.e("flash_card ", "resID = " + resID);
 
+        double soundLength = 0;
         if (resID == 0) {
-            Log.e("voice file not found ",voiceFile);
-            t1.speak(chosenLesson[counter], TextToSpeech.QUEUE_FLUSH, null);
+            Log.e("voice file not found ", voiceFile);
+            String wordsToSpeak = chosenLesson[counter];
+            String wordsWithSpace = wordsToSpeak.replaceAll("_"," ");
+            t1.speak(wordsWithSpace, TextToSpeech.QUEUE_FLUSH, null);
         }else
         {
-            Log.e("voice file found ",voiceFile);
             pronouncePlay = MediaPlayer.create(this, resID);
             pronouncePlay.start();
+            soundLength = pronouncePlay.getDuration(); // returns duration in milliseconds
+            Log.e("voice file found ",voiceFile + soundLength);
         }
 
+        return soundLength;
 // TODO debug silent cat problem
 // TODO check voice file length, and set time based on that
 // TODO use voice if available, if not use text to speech - COMPLETE
@@ -152,6 +161,9 @@ public class MainActivity extends AppCompatActivity {
         switch (temp1) {
             case STOP_STRING:
                 mHandler.removeCallbacksAndMessages (null); // fix this to stop only mUpdate; also stop media player first (perhaps add a function for mHandler)
+                if (pronouncePlay.isPlaying()) {
+                    pronouncePlay.reset();
+                }
                 mStartStop.setText(RESUME_STRING);
                 break;
             case RESUME_STRING:
@@ -182,7 +194,7 @@ public class MainActivity extends AppCompatActivity {
             selectedvalueofLessons[tagValue] = position;// TODO use the saved position
         } else{
             selectedvalueofLessons[tagValue] = 0;
-        };
+        }
         Log.e("tag= " + tagValue +";a = " + alpha + ";pos= "+ position, "selectedvalue["+ tagValue + "] =" +selectedvalueofLessons[tagValue]);
     }
 
@@ -244,7 +256,6 @@ public class MainActivity extends AppCompatActivity {
 
         for (int l =0; l<k;l++) {Log.e("fulllist[" +l+ "] = ", fullList[l]);}
 
-        displaytime = 3;
         setContentView(R.layout.activity_main);
         stopCounter = 0;
 
