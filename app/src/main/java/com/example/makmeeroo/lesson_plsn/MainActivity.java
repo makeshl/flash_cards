@@ -11,12 +11,15 @@ import android.util.Log;
 import android.view.View;
 import android.view.WindowManager;
 import android.widget.Button;
+import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TextView;
 
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
+import java.io.IOException;
+import java.util.Random;
 
 // TODO http://www.tutorialspoint.com/java/
 public class MainActivity extends AppCompatActivity {
@@ -38,30 +41,38 @@ public class MainActivity extends AppCompatActivity {
     private Handler mHandler;
     long displayMinTime = 2000; // milliseconds
 
-    // Added on Juy 4 - for new UI//
-    String[] masterlistofLessons = {LESSON_WILD_ANIMALS,LESSON_FRUITS,LESSON_VEHICLES,LESSON_PETS,LESSON_BIRDS,LESSON_BODY_PARTS,
-            LESSON_SHAPES,LESSON_HOME,LESSON_VEGETABLES,LESSON_DINNER, LESSON_PARK};
-    int [] selectedvalueofLessons = {0,0,0,0,0,0,0,0,0,0,0};
-    String [] selectedlistofLessons = new String[3];
+    String[] masterlistofLessons = {LESSON_WILD_ANIMALS, LESSON_FRUITS, LESSON_VEHICLES, LESSON_PETS, LESSON_BIRDS, LESSON_BODY_PARTS,
+            LESSON_SHAPES, LESSON_HOME, LESSON_VEGETABLES, LESSON_DINNER, LESSON_PARK};
+    int[] selectedvalueofLessons = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+    String[] selectedlistofLessons = new String[3];
     int masternoofLessons = masterlistofLessons.length;
     int position;
     String[] fullList = new String[100];
 
-    String[] wildAnimals = {"bear","bison","cheetah","crocodile","deer","elephant","fox","giraffe","hippo","kangaroo","koala","lion","monkey","orangutan","panda","rhinoceros","sheep","snake","tiger","wolf","zebra"};
-    String[] fruits = { "apple","apricot","banana","grapes","jack_fruit","orange","papaya","peach","pear","plum","strawberry","watermelon",};
-    String[] vehicles = {"ambulance","bus","car","motorcycle","plane","rocket","train","truck","van"};
-    String[] pets = {"cat","cow","dog","pig","rabbit"};
-    String[] birds = {"eagle","flamingo","hawk","hen","ostrich","parrot" ,"sparrow"};
-    String[] bodyParts = {"eyes","nose","mouth","teeth","tongue","chin","ear","head","hair","fingers","hands","feet","shoulders"};
-    String[] shapes = {"circle","diamond","hexagon","rectangle","square","triangle"};
-    String[] home = {"carpet","chair","clock","curtains","fireplace","lamp","sofa","speaker","table","tv"};
-    String[] vegetables ={"carrot","cauliflower","eggplant","green_beans","lemon","onion","peas","pepper","potato","pumpkin","tomato"};
-    String[] dinner = {"table","chair","spoon","bowl","bib","pasta","milk"};
-    String [] park = {"slide","swing","spinner"};
+    String[] wildAnimals = {"bear", "bison", "cheetah", "crocodile", "deer", "elephant", "fox", "giraffe", "hippo", "kangaroo",
+            "koala", "lion", "monkey", "orangutan", "panda", "rhinoceros", "sheep", "snake", "tiger", "wolf", "zebra"};
+    String[] fruits = {"apple", "apricot", "banana", "grapes", "jack_fruit", "orange", "papaya", "peach", "pear", "plum", "strawberry", "watermelon",};
+    String[] vehicles = {"ambulance", "bus", "car", "motorcycle", "plane", "rocket", "train", "truck", "van"};
+    String[] pets = {"cat", "cow", "dog", "pig", "rabbit"};
+    String[] birds = {"eagle", "flamingo", "hawk", "hen", "ostrich", "parrot", "sparrow"};
+    String[] bodyParts = {"eyes", "nose", "mouth", "teeth", "tongue", "chin", "ear", "head", "hair", "fingers", "hands", "feet", "shoulders"};
+    String[] shapes = {"circle", "diamond", "hexagon", "rectangle", "square", "triangle"};
+    String[] home = {"carpet", "chair", "clock", "curtains", "fireplace", "lamp", "sofa", "speaker", "table", "tv"};
+    String[] vegetables = {"carrot", "cauliflower", "eggplant", "green_beans", "lemon", "onion", "peas", "pepper", "potato", "pumpkin", "tomato"};
+    String[] dinner = {"table", "chair", "spoon", "bowl", "bib", "pasta", "milk", "high_chair"};
+    String[] park = {"slide", "swing", "spinner", "roller_slide", "sand_pit"};
 
     String[] chosenLesson = pets;
-    int chosenLesssonLength = chosenLesson.length -1;
+    int chosenLesssonLength = chosenLesson.length;
     int nooflessons;
+
+    // added for memory game
+    int memoryGame =1;
+    String[] last_x = new String[20];
+    int count_last_x = 0;
+    Random r1 = new Random();
+    int card1, card2, card3, badvariable;
+    int gameFrequency =5;
 
     MediaPlayer pronouncePlay;
     TextToSpeech t1;
@@ -73,14 +84,14 @@ public class MainActivity extends AppCompatActivity {
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
         Log.e("flash_card", " arrived at onCreate");
 
-        t1=new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+        t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
-                if (status== TextToSpeech.SUCCESS) {
-                    Log.e("entered"," tts object");
-                    t1.setLanguage(Locale.UK);
-                    t1.setSpeechRate(1.0f);
- //                   t1.setPitch(1.0f);
+                if (status == TextToSpeech.SUCCESS) {
+                    Log.e("entered", " tts object");
+                    t1.setLanguage(Locale.US);
+                    t1.setSpeechRate(0.75f);
+                    t1.setPitch(1.0f);
                 }
             }
         });
@@ -92,24 +103,32 @@ public class MainActivity extends AppCompatActivity {
     private Runnable mUpdate = new Runnable() {
         public void run() {
             Log.e("flash_card", " mUpdate called. stopCounter = " + stopCounter);
-            nextTextMessage(stopCounter);     //ML changed this on 7/9
+            nextTextMessage(stopCounter);
             nextImage(stopCounter);
             double soundLength = nextSound(stopCounter);
             long currentDisplayTime = (long) (soundLength + 500); // add 0.5 seconds margin
             if (currentDisplayTime<displayMinTime) // too short
                 currentDisplayTime= displayMinTime;
-            if (stopCounter<chosenLesssonLength) {
+
+            if (stopCounter < chosenLesssonLength ) {
                 mHandler.postDelayed(this, currentDisplayTime);
+                Log.e("Request made for ", chosenLesson[stopCounter]);
+                if (memoryGame == 1) {
+                    memoryStore(stopCounter, gameFrequency);
+                }
                 stopCounter++;
-                if (stopCounter == chosenLesssonLength) {stopCounter =0;} // ML added for continuous looping
+                if (stopCounter == chosenLesssonLength) {
+                    stopCounter = 0;
+                    count_last_x = 0;
+                } // Added for continuous looping
             }
         }
     };
 
-    public void nextTextMessage(int counter){
-        String selectedWord= chosenLesson[counter];
+    public void nextTextMessage(int counter) {
+        String selectedWord = chosenLesson[counter];
         Log.e("flash_card ", " selectedWord " + selectedWord);
-        if (!selectedWord.isEmpty()){
+        if (!selectedWord.isEmpty()) {
             TextView temp2 = (TextView) findViewById(R.id.textView);
             temp2.setText(selectedWord);
         }
@@ -136,21 +155,22 @@ public class MainActivity extends AppCompatActivity {
         double soundLength = 0;
         if (resID == 0) {
             Log.e("voice file not found ", voiceFile);
-            String wordsToSpeak = chosenLesson[counter];
-            String wordsWithSpace = wordsToSpeak.replaceAll("_"," ");
-            t1.speak(wordsWithSpace, TextToSpeech.QUEUE_FLUSH, null);
-        }else
-        {
+            voiceFile = voiceFile.replaceAll("_", " ");
+            t1.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
+        } else {
+            Log.e("voice file found ", voiceFile);
             pronouncePlay = MediaPlayer.create(this, resID);
             pronouncePlay.start();
             soundLength = pronouncePlay.getDuration(); // returns duration in milliseconds
             Log.e("voice file found ",voiceFile + soundLength);
         }
+        Log.e("Finished playing ", voiceFile);
 
         return soundLength;
 // TODO debug silent cat problem
 // TODO check voice file length, and set time based on that
 // TODO use voice if available, if not use text to speech - COMPLETE
+// TODO MediaPlayer finalized without being released
     }
 
     public void stopresume(View v) {
@@ -176,52 +196,60 @@ public class MainActivity extends AppCompatActivity {
     public void changeselections(View v) {
         mHandler.removeCallbacksAndMessages(null);
         setContentView(R.layout.usersettings);
-        for (int i=0;i<selectedvalueofLessons.length;i++) {selectedvalueofLessons[i] = 0;}
+        for (int i = 0; i < selectedvalueofLessons.length; i++) {
+            selectedvalueofLessons[i] = 0;
+        }
         nooflessons = 0;
     }
 
     public void selectSet(View v) {
-        String clickedLesson =  (String) v.getTag();
+        String clickedLesson = (String) v.getTag();
         int tagValue = Integer.parseInt(clickedLesson) - 1000;
-        Log.e("clciked Tag =", " "+tagValue);
+        Log.e("clciked Tag =", " " + tagValue);
 
-        position ++;
+        position++;
         float alpha = v.getAlpha();
-        if (alpha==1) {alpha = alpha / 2;} else {alpha = alpha * 2;}
+        if (alpha == 1) {
+            alpha = alpha / 2;
+        } else {
+            alpha = alpha * 2;
+        }
         v.setAlpha(alpha);
 
-        if (alpha!=1) {
+        if (alpha != 1) {
             selectedvalueofLessons[tagValue] = position;// TODO use the saved position
-        } else{
+        } else {
             selectedvalueofLessons[tagValue] = 0;
         }
-        Log.e("tag= " + tagValue +";a = " + alpha + ";pos= "+ position, "selectedvalue["+ tagValue + "] =" +selectedvalueofLessons[tagValue]);
+        ;
+        Log.e("tag= " + tagValue + ";a = " + alpha + ";pos= " + position, "selectedvalue[" + tagValue + "] =" + selectedvalueofLessons[tagValue]);
     }
 
     public void selectionReset(View v) {
-        int[] picIds = new int[] {R.id.image1000,R.id.image1001,R.id.image1002,R.id.image1003,R.id.image1004,
-                R.id.image1005, R.id.image1006, R.id.image1007,R.id.image1008,R.id.image1009,R.id.image1010,
-                R.id.image1011,R.id.image1012,R.id.image1013,R.id.image1014,R.id.image1015,R.id.image1016,
-                R.id.image1017,R.id.image1018,R.id.image1019,R.id.image1020};
-        for (int i =0; i<21; i++) {
+        int[] picIds = new int[]{R.id.image1000, R.id.image1001, R.id.image1002, R.id.image1003, R.id.image1004,
+                R.id.image1005, R.id.image1006, R.id.image1007, R.id.image1008, R.id.image1009, R.id.image1010,
+                R.id.image1011, R.id.image1012, R.id.image1013, R.id.image1014, R.id.image1015, R.id.image1016,
+                R.id.image1017, R.id.image1018, R.id.image1019, R.id.image1020};
+        for (int i = 0; i < 21; i++) {
             ImageView temp1 = (ImageView) findViewById(picIds[i]);
             temp1.setAlpha(1.0f);
         }
-        for (int i=0;i<selectedvalueofLessons.length;i++) {selectedvalueofLessons[i] = 0;}
+        for (int i = 0; i < selectedvalueofLessons.length; i++) {
+            selectedvalueofLessons[i] = 0;
+        }
     }
 
     public void selectionDone(View v) {
-        int j =0;
-        position =0;
-        for (int i =0; i<masternoofLessons; i++) {
-            Log.e("masterlistofLessons = "+ masterlistofLessons[i],"itemp2 = " + i);
-            if (selectedvalueofLessons[i] >0)
-            {// TODO use position here
+        int j = 0;
+        position = 0;
+        for (int i = 0; i < masternoofLessons; i++) {
+            Log.e("masterlistofLessons = " + masterlistofLessons[i], "itemp2 = " + i);
+            if (selectedvalueofLessons[i] > 0) {// TODO use position here
                 System.arraycopy(masterlistofLessons, i, selectedlistofLessons, j, 1);
-                Log.e("slctdlistofLe[" +j+ "] = "+selectedlistofLessons[j],"pos = " + j);
+                Log.e("slctdlistofLe[" + j + "] = " + selectedlistofLessons[j], "pos = " + j);
                 j++;
             }
-            Log.e("i= "+i,"j ="+j);
+            Log.e("i= " + i, "j =" + j);
         }
 
         Log.e("started ", " hashtags");
@@ -234,16 +262,16 @@ public class MainActivity extends AppCompatActivity {
         strtoArrMaps.put(LESSON_VEHICLES, vehicles);
         strtoArrMaps.put(LESSON_SHAPES, shapes);
         strtoArrMaps.put(LESSON_HOME, home);
-        strtoArrMaps.put(LESSON_VEGETABLES,vegetables);
-        strtoArrMaps.put(LESSON_DINNER,dinner);
-        strtoArrMaps.put(LESSON_PARK,park);
+        strtoArrMaps.put(LESSON_VEGETABLES, vegetables);
+        strtoArrMaps.put(LESSON_DINNER, dinner);
+        strtoArrMaps.put(LESSON_PARK, park);
 
-        int k =0;
+        int k = 0;
         if (j == 0) {
-            System.arraycopy(fruits,0,fullList,0,fruits.length);
-            k= fruits.length;
-        }   else
-        {   for (int i = 0; i < j; i++) {
+            System.arraycopy(fruits, 0, fullList, 0, fruits.length);
+            k = fruits.length;
+        } else {
+            for (int i = 0; i < j; i++) {
                 if (i == 0) {
                     System.arraycopy(strtoArrMaps.get(selectedlistofLessons[i]), 0, fullList, 0, strtoArrMaps.get(selectedlistofLessons[i]).length);
                     k = k + strtoArrMaps.get(selectedlistofLessons[i]).length;
@@ -254,17 +282,82 @@ public class MainActivity extends AppCompatActivity {
             }
         }
 
-        for (int l =0; l<k;l++) {Log.e("fulllist[" +l+ "] = ", fullList[l]);}
+        for (int l = 0; l < k; l++) {
+            Log.e("fulllist[" + l + "] = ", fullList[l]);
+        }
+        CheckBox temp1 = (CheckBox) findViewById(R.id.memoryGameCheckBox);
+        if (temp1.isChecked()) {memoryGame = 1;} else {memoryGame = 0;}
+        Log.e("memory game =", " "+ memoryGame);
 
         setContentView(R.layout.activity_main);
         stopCounter = 0;
+        count_last_x = 0;
+
 
         chosenLesson = fullList;
-        chosenLesssonLength = k -1;
-        Log.e("chosen lesson length =", " "+ chosenLesssonLength);
+        chosenLesssonLength = k;
+        Log.e("chosen lesson length =", " " + chosenLesssonLength);
 
         mHandler = new Handler();
         mHandler.post(mUpdate);
     }
-}
 
+    public void memoryStore(int counter, int frequency) {
+        // memory game
+        //TODO: remove voice overlap from previous picture
+        last_x[count_last_x] = chosenLesson[counter];
+        Log.e("stored card " + count_last_x + " = ", last_x[count_last_x]);
+        if (count_last_x != frequency -1) {
+            count_last_x++;
+        } else {
+            mHandler.removeCallbacksAndMessages(null);
+            Log.e("removed callbacks","");
+            count_last_x = 0;
+            card1 = r1.nextInt(frequency);
+            card2 = r1.nextInt(frequency);
+            while (card1 == card2) {
+                card2 = r1.nextInt(frequency);
+            }
+            if (r1.nextInt(2) == 0) {card3 = card1; badvariable=0;} else {card3 = card2;badvariable=1;}
+            Log.e("r1= " + card1, "; r2 = " + card2 + "; sel = " + card3);
+            Log.e("c1 = " + last_x[card1], "; c2 = " + last_x[card2] + "; sel = " + last_x[card3]);
+
+            setContentView(R.layout.memory1);
+
+            String memoryPicture1= "@drawable/" + last_x[card1];
+            int pic1_id = getResources().getIdentifier(memoryPicture1, null, getPackageName());
+            Drawable pic1 = ContextCompat.getDrawable(this, pic1_id);
+            ImageView leftImage = (ImageView) findViewById(R.id.memory1left);
+            leftImage.setImageDrawable(pic1);
+
+            String memoryPicture2= "@drawable/" + last_x[card2];
+            int pic2_id = getResources().getIdentifier(memoryPicture2, null, getPackageName());
+            Drawable pic2 = ContextCompat.getDrawable(this, pic2_id);
+            ImageView rightImage = (ImageView) findViewById(R.id.memory1right);
+            rightImage.setImageDrawable(pic2);
+
+            String memoryquestion = "Which one is "+ last_x[card3];
+            t1.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
+        }
+    }
+
+    public void memoryGame1(View v) {
+        String clickedCard = (String) v.getTag();
+        int tagValue = Integer.parseInt(clickedCard);
+        String veryGood = "very Good! Clap Clap Clap";
+        String tryAgain = "try again";
+
+        if (tagValue == badvariable)
+        {
+            Log.e("correct ",clickedCard);
+            t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
+            setContentView(R.layout.activity_main);
+            mHandler = new Handler();
+            mHandler.post(mUpdate);
+        }
+        else {
+            Log.e("incorrect",clickedCard);
+            t1.speak(tryAgain, TextToSpeech.QUEUE_FLUSH, null);
+        }
+    }
+}

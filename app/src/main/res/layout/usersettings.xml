@@ -20,6 +20,15 @@
         android:onClick="selectionReset"
         />
 
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Memory Game?"
+        android:id="@+id/memoryGameCheckBox"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:checked="true" />
+
     <RelativeLayout
         android:id="@+id/options"
         android:layout_width="match_parent"
@@ -292,8 +301,6 @@
 
 
     </RelativeLayout>
-
-
 
 
 </RelativeLayout>
