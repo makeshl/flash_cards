@@ -18,7 +18,6 @@ import android.widget.TextView;
 import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
-import java.io.IOException;
 import java.util.Random;
 
 // TODO http://www.tutorialspoint.com/java/
@@ -114,7 +113,7 @@ public class MainActivity extends AppCompatActivity {
                 mHandler.postDelayed(this, currentDisplayTime);
                 Log.e("Request made for ", chosenLesson[stopCounter]);
                 if (memoryGame == 1) {
-                    memoryStore(stopCounter, gameFrequency);
+                    memoryStore(stopCounter, gameFrequency, currentDisplayTime);
                 }
                 stopCounter++;
                 if (stopCounter == chosenLesssonLength) {
@@ -287,7 +286,7 @@ public class MainActivity extends AppCompatActivity {
         }
         CheckBox temp1 = (CheckBox) findViewById(R.id.memoryGameCheckBox);
         if (temp1.isChecked()) {memoryGame = 1;} else {memoryGame = 0;}
-        Log.e("memory game =", " "+ memoryGame);
+        Log.e("memory game =", " " + memoryGame);
 
         setContentView(R.layout.activity_main);
         stopCounter = 0;
@@ -298,11 +297,11 @@ public class MainActivity extends AppCompatActivity {
         chosenLesssonLength = k;
         Log.e("chosen lesson length =", " " + chosenLesssonLength);
 
-        mHandler = new Handler();
+        //mHandler = new Handler();
         mHandler.post(mUpdate);
     }
 
-    public void memoryStore(int counter, int frequency) {
+    public void memoryStore(int counter, int frequency, long timeToWaitBeforeStartingGame) {
         // memory game
         //TODO: remove voice overlap from previous picture
         last_x[count_last_x] = chosenLesson[counter];
@@ -310,34 +309,13 @@ public class MainActivity extends AppCompatActivity {
         if (count_last_x != frequency -1) {
             count_last_x++;
         } else {
+            // cancel next slide in activity_main
             mHandler.removeCallbacksAndMessages(null);
             Log.e("removed callbacks","");
-            count_last_x = 0;
-            card1 = r1.nextInt(frequency);
-            card2 = r1.nextInt(frequency);
-            while (card1 == card2) {
-                card2 = r1.nextInt(frequency);
-            }
-            if (r1.nextInt(2) == 0) {card3 = card1; badvariable=0;} else {card3 = card2;badvariable=1;}
-            Log.e("r1= " + card1, "; r2 = " + card2 + "; sel = " + card3);
-            Log.e("c1 = " + last_x[card1], "; c2 = " + last_x[card2] + "; sel = " + last_x[card3]);
 
-            setContentView(R.layout.memory1);
-
-            String memoryPicture1= "@drawable/" + last_x[card1];
-            int pic1_id = getResources().getIdentifier(memoryPicture1, null, getPackageName());
-            Drawable pic1 = ContextCompat.getDrawable(this, pic1_id);
-            ImageView leftImage = (ImageView) findViewById(R.id.memory1left);
-            leftImage.setImageDrawable(pic1);
-
-            String memoryPicture2= "@drawable/" + last_x[card2];
-            int pic2_id = getResources().getIdentifier(memoryPicture2, null, getPackageName());
-            Drawable pic2 = ContextCompat.getDrawable(this, pic2_id);
-            ImageView rightImage = (ImageView) findViewById(R.id.memory1right);
-            rightImage.setImageDrawable(pic2);
-
-            String memoryquestion = "Which one is "+ last_x[card3];
-            t1.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
+            // go to memory1 layout after some delay
+            Runnable memoryGameObj = new memoryGameRunnable( frequency);
+            mHandler.postDelayed( memoryGameObj, timeToWaitBeforeStartingGame);
         }
     }
 
@@ -352,12 +330,55 @@ public class MainActivity extends AppCompatActivity {
             Log.e("correct ",clickedCard);
             t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
             setContentView(R.layout.activity_main);
-            mHandler = new Handler();
-            mHandler.post(mUpdate);
+            //mHandler = new Handler();
+            mHandler.postDelayed(mUpdate, 2*displayMinTime);
         }
         else {
             Log.e("incorrect",clickedCard);
             t1.speak(tryAgain, TextToSpeech.QUEUE_FLUSH, null);
         }
+    }
+
+    public class memoryGameRunnable implements Runnable { // http://stackoverflow.com/questions/9123272/is-there-a-way-to-pass-parameters-to-a-runnable
+        private int m_frequency;
+
+        public memoryGameRunnable(int _data) {
+            this.m_frequency= _data;
+        }
+
+        @Override
+        public void run() {
+            count_last_x = 0;
+            card1 = r1.nextInt(m_frequency);
+            card2 = r1.nextInt(m_frequency);
+            while (card1 == card2) {
+                card2 = r1.nextInt(m_frequency);
+            }
+            if (r1.nextInt(2) == 0) {card3 = card1; badvariable=0;} else {card3 = card2;badvariable=1;}
+            Log.e("r1= " + card1, "; r2 = " + card2 + "; sel = " + card3);
+            Log.e("c1 = " + last_x[card1], "; c2 = " + last_x[card2] + "; sel = " + last_x[card3]);
+
+            memoryGameUpdatePicture();
+
+            String memoryquestion = "Which one is "+ last_x[card3];
+            t1.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
+        }
+    }
+
+    public void memoryGameUpdatePicture() {
+        setContentView(R.layout.memory1);
+
+        String memoryPicture1= "@drawable/" + last_x[card1];
+        int pic1_id = getResources().getIdentifier(memoryPicture1, null, getPackageName());
+        Drawable pic1 = ContextCompat.getDrawable(this, pic1_id);
+        ImageView leftImage = (ImageView) findViewById(R.id.memory1left);
+        leftImage.setImageDrawable(pic1);
+
+        String memoryPicture2= "@drawable/" + last_x[card2];
+        int pic2_id = getResources().getIdentifier(memoryPicture2, null, getPackageName());
+        Drawable pic2 = ContextCompat.getDrawable(this, pic2_id);
+        ImageView rightImage = (ImageView) findViewById(R.id.memory1right);
+        rightImage.setImageDrawable(pic2);
+
     }
 }
