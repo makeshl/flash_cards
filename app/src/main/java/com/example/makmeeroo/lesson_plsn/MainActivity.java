@@ -118,7 +118,6 @@ public class MainActivity extends AppCompatActivity {
                 stopCounter++;
                 if (stopCounter == chosenLesssonLength) {
                     stopCounter = 0;
-                    count_last_x = 0;
                 } // Added for continuous looping
             }
         }
@@ -236,15 +235,30 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < selectedvalueofLessons.length; i++) {
             selectedvalueofLessons[i] = 0;
         }
+        position = 0;
     }
 
     public void selectionDone(View v) {
-        int j = 0;
+        int j = 0; // TODO rename j to numSelected
+        int numClicked = position;
+        int numSelected = 0;
         position = 0;
+
+        int [] positionArray = new int [numClicked];
+        for (int i = 0; i<numClicked; i++)
+            positionArray[i] = -1; // -1 means no lesson in that position
         for (int i = 0; i < masternoofLessons; i++) {
-            Log.e("masterlistofLessons = " + masterlistofLessons[i], "itemp2 = " + i);
-            if (selectedvalueofLessons[i] > 0) {// TODO use position here
-                System.arraycopy(masterlistofLessons, i, selectedlistofLessons, j, 1);
+            if (selectedvalueofLessons[i]>0) {
+                numSelected++;
+                positionArray[ selectedvalueofLessons[i]-1] = i;
+                Log.e("posArray", "[" + (selectedvalueofLessons[i]-1) + "] = "+ i);
+            }
+        }
+
+        for (int i = 0; i < numClicked; i++) {
+            if (positionArray[i] >= 0) {// valid lesson at this position
+                int cardIndex = positionArray[i];
+                System.arraycopy(masterlistofLessons, cardIndex, selectedlistofLessons, j, 1);
                 Log.e("slctdlistofLe[" + j + "] = " + selectedlistofLessons[j], "pos = " + j);
                 j++;
             }
@@ -307,7 +321,7 @@ public class MainActivity extends AppCompatActivity {
         last_x[count_last_x] = chosenLesson[counter];
         Log.e("stored card " + count_last_x + " = ", last_x[count_last_x]);
         if (count_last_x != frequency -1) {
-            count_last_x++;
+            count_last_x = (count_last_x+1)% frequency;
         } else {
             // cancel next slide in activity_main
             mHandler.removeCallbacksAndMessages(null);
