@@ -13,7 +13,7 @@
         android:tag="0"
         android:layout_alignParentTop="true"
         android:layout_centerHorizontal="true"
-        android:layout_marginTop="54dp" />
+        android:layout_marginTop="50dp" />
 
     <ImageView
         android:layout_width="wrap_content"
@@ -23,7 +23,9 @@
         android:clickable="true"
         android:onClick="memoryGame1"
         android:tag="1"
+        android:layout_marginBottom="50dp"
         android:layout_below="@+id/memory1left"
-        android:layout_centerHorizontal="true" />
+        android:layout_centerHorizontal="true"
+        android:layout_alignParentBottom="true"/>
 
 </RelativeLayout>
