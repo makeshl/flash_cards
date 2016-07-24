@@ -67,10 +67,10 @@ public class MainActivity extends AppCompatActivity {
 
     // added for memory game
     int memoryGame =1;
-    String[] last_x = new String[20];
+    int[] last_x = new int[20];
     int count_last_x = 0;
     Random r1 = new Random();
-    int card1, card2, card3, badvariable;
+    int card1, card2, card3, badvariable, memGameIncorrectAnswer;
     int gameFrequency =5;
 
     MediaPlayer pronouncePlay;
@@ -182,6 +182,8 @@ public class MainActivity extends AppCompatActivity {
                 if (pronouncePlay.isPlaying()) {
                     pronouncePlay.reset();
                 }
+                if (t1.isSpeaking())
+                    t1.stop();
                 mStartStop.setText(RESUME_STRING);
                 break;
             case RESUME_STRING:
@@ -318,8 +320,8 @@ public class MainActivity extends AppCompatActivity {
     public void memoryStore(int counter, int frequency, long timeToWaitBeforeStartingGame) {
         // memory game
         //TODO: remove voice overlap from previous picture
-        last_x[count_last_x] = chosenLesson[counter];
-        Log.e("stored card " + count_last_x + " = ", last_x[count_last_x]);
+        last_x[count_last_x] = counter;
+        Log.e("stored card " + count_last_x + " = ", last_x[count_last_x] + " i.e. " + chosenLesson[last_x[count_last_x]]);
         if (count_last_x != frequency -1) {
             count_last_x = (count_last_x+1)% frequency;
         } else {
@@ -336,20 +338,32 @@ public class MainActivity extends AppCompatActivity {
     public void memoryGame1(View v) {
         String clickedCard = (String) v.getTag();
         int tagValue = Integer.parseInt(clickedCard);
-        String veryGood = "very Good! Clap Clap Clap";
-        String tryAgain = "try again";
+        String veryGood = "Very Good! Clap Clap Clap !!";
+        String tryAgain = "Please try again. Which one is " + chosenLesson[last_x[card3]] + "???";
+        String giveTheAnswer = "Thanks for trying. This is " + chosenLesson[last_x[card3]] + "!";
 
-        if (tagValue == badvariable)
-        {
+        int endTheGame = 0;
+
+        if (tagValue == badvariable) {
             Log.e("correct ",clickedCard);
             t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
-            setContentView(R.layout.activity_main);
-            //mHandler = new Handler();
-            mHandler.postDelayed(mUpdate, 2*displayMinTime);
+            endTheGame = 1;
         }
         else {
-            Log.e("incorrect",clickedCard);
+            Log.e("incorrect", clickedCard);
             t1.speak(tryAgain, TextToSpeech.QUEUE_FLUSH, null);
+            memGameIncorrectAnswer++;
+        }
+        if (memGameIncorrectAnswer>=2) {
+            endTheGame = 1;
+            Log.e("... moving on", clickedCard);
+            t1.speak(giveTheAnswer, TextToSpeech.QUEUE_FLUSH, null);
+        }
+        if (endTheGame==1) {
+            setContentView(R.layout.activity_main);
+            nextImage(last_x[card3]);
+            //mHandler = new Handler();
+            mHandler.postDelayed(mUpdate, 2 * displayMinTime);
         }
     }
 
@@ -371,10 +385,14 @@ public class MainActivity extends AppCompatActivity {
             if (r1.nextInt(2) == 0) {card3 = card1; badvariable=0;} else {card3 = card2;badvariable=1;}
             Log.e("r1= " + card1, "; r2 = " + card2 + "; sel = " + card3);
             Log.e("c1 = " + last_x[card1], "; c2 = " + last_x[card2] + "; sel = " + last_x[card3]);
+            Log.e("c1 = " + chosenLesson[last_x[card1]], "; c2 = " + chosenLesson[last_x[card2]] + "; sel = " + chosenLesson[last_x[card3]]);
 
+            memGameIncorrectAnswer = 0;
             memoryGameUpdatePicture();
 
-            String memoryquestion = "Which one is "+ last_x[card3];
+            String memoryquestion = "Which one is "+ chosenLesson[last_x[card3]];
+            memoryquestion = memoryquestion.replaceAll("_", " ");
+
             t1.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
@@ -382,13 +400,13 @@ public class MainActivity extends AppCompatActivity {
     public void memoryGameUpdatePicture() {
         setContentView(R.layout.memory1);
 
-        String memoryPicture1= "@drawable/" + last_x[card1];
+        String memoryPicture1= "@drawable/" + chosenLesson[last_x[card1]];
         int pic1_id = getResources().getIdentifier(memoryPicture1, null, getPackageName());
         Drawable pic1 = ContextCompat.getDrawable(this, pic1_id);
         ImageView leftImage = (ImageView) findViewById(R.id.memory1left);
         leftImage.setImageDrawable(pic1);
 
-        String memoryPicture2= "@drawable/" + last_x[card2];
+        String memoryPicture2= "@drawable/" + chosenLesson[last_x[card2]];
         int pic2_id = getResources().getIdentifier(memoryPicture2, null, getPackageName());
         Drawable pic2 = ContextCompat.getDrawable(this, pic2_id);
         ImageView rightImage = (ImageView) findViewById(R.id.memory1right);
