@@ -74,10 +74,10 @@ public class MainActivity extends AppCompatActivity {
 
     // added for memory game
     int memoryGame =1;
-    String[] last_x = new String[20];
+    int[] last_x = new int[20];
     int count_last_x = 0;
     Random r1 = new Random();
-    int card1, card2, card3, badvariable;
+    int card1, card2, card3, badvariable, memGameIncorrectAnswer;
     int gameFrequency =5;
 
     MediaPlayer pronouncePlay;
@@ -126,7 +126,6 @@ public class MainActivity extends AppCompatActivity {
                 stopCounter++;
                 if (stopCounter == chosenLesssonLength) {
                     stopCounter = 0;
-                    count_last_x = 0;
                 } // Added for continuous looping
             }
         }
@@ -193,6 +192,8 @@ public class MainActivity extends AppCompatActivity {
                 if (pronouncePlay.isPlaying()) {
                     pronouncePlay.reset();
                 }
+                if (t1.isSpeaking())
+                    t1.stop();
                 mStartStop.setText(RESUME_STRING);
                 break;
             case RESUME_STRING:
@@ -246,15 +247,30 @@ public class MainActivity extends AppCompatActivity {
         for (int i = 0; i < selectedvalueofLessons.length; i++) {
             selectedvalueofLessons[i] = 0;
         }
+        position = 0;
     }
 
     public void selectionDone(View v) {
-        int j = 0;
+        int j = 0; // TODO rename j to numSelected
+        int numClicked = position;
+        int numSelected = 0;
         position = 0;
+
+        int [] positionArray = new int [numClicked];
+        for (int i = 0; i<numClicked; i++)
+            positionArray[i] = -1; // -1 means no lesson in that position
         for (int i = 0; i < masternoofLessons; i++) {
-            Log.e("masterlistofLessons = " + masterlistofLessons[i], "itemp2 = " + i);
-            if (selectedvalueofLessons[i] > 0) {// TODO use position here
-                System.arraycopy(masterlistofLessons, i, selectedlistofLessons, j, 1);
+            if (selectedvalueofLessons[i]>0) {
+                numSelected++;
+                positionArray[ selectedvalueofLessons[i]-1] = i;
+                Log.e("posArray", "[" + (selectedvalueofLessons[i]-1) + "] = "+ i);
+            }
+        }
+
+        for (int i = 0; i < numClicked; i++) {
+            if (positionArray[i] >= 0) {// valid lesson at this position
+                int cardIndex = positionArray[i];
+                System.arraycopy(masterlistofLessons, cardIndex, selectedlistofLessons, j, 1);
                 Log.e("slctdlistofLe[" + j + "] = " + selectedlistofLessons[j], "pos = " + j);
                 j++;
             }
@@ -315,10 +331,10 @@ public class MainActivity extends AppCompatActivity {
     public void memoryStore(int counter, int frequency, long timeToWaitBeforeStartingGame) {
         // memory game
         //TODO: remove voice overlap from previous picture
-        last_x[count_last_x] = chosenLesson[counter];
-        Log.e("stored card " + count_last_x + " = ", last_x[count_last_x]);
+        last_x[count_last_x] = counter;
+        Log.e("stored card " + count_last_x + " = ", last_x[count_last_x] + " i.e. " + chosenLesson[last_x[count_last_x]]);
         if (count_last_x != frequency -1) {
-            count_last_x++;
+            count_last_x = (count_last_x+1)% frequency;
         } else {
             // cancel next slide in activity_main
             mHandler.removeCallbacksAndMessages(null);
@@ -334,24 +350,38 @@ public class MainActivity extends AppCompatActivity {
         String clickedCard = (String) v.getTag();
         int tagValue = Integer.parseInt(clickedCard);
         String veryGood = "clapclapclap";
-        String tryAgain = "try again";
+        String tryAgain = "Please try again. Which one is " + chosenLesson[last_x[card3]] + "???";
+        String giveTheAnswer = "Thanks for trying. This is " + chosenLesson[last_x[card3]] + "!";
 
-        if (tagValue == badvariable)
-        {
+        int endTheGame = 0;
+
+        if (tagValue == badvariable) {
             Log.e("correct ",clickedCard);
 
             int resID = this.getResources().getIdentifier(veryGood, "raw", this.getPackageName());
             pronouncePlay = MediaPlayer.create(this, resID);
             pronouncePlay.start();
             long soundLength1 = pronouncePlay.getDuration();
+            endTheGame = 1;
             //t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
             mHandler.postDelayed(mUpdate, soundLength1 +500);
             //setContentView(R.layout.activity_main);
         }
         else {
-            Log.e("incorrect",clickedCard);
+            Log.e("incorrect", clickedCard);
             t1.speak(tryAgain, TextToSpeech.QUEUE_FLUSH, null);
-            //TODO Insert delay here so that voice doesnt overlap
+            memGameIncorrectAnswer++;
+        }
+        if (memGameIncorrectAnswer>=2) {
+            endTheGame = 1;
+            Log.e("... moving on", clickedCard);
+            t1.speak(giveTheAnswer, TextToSpeech.QUEUE_FLUSH, null);
+        }
+        if (endTheGame==1) {
+            setContentView(R.layout.activity_main);
+            nextImage(last_x[card3]);
+            //mHandler = new Handler();
+            mHandler.postDelayed(mUpdate, 2 * displayMinTime);
         }
     }
 
@@ -373,9 +403,13 @@ public class MainActivity extends AppCompatActivity {
             if (r1.nextInt(2) == 0) {card3 = card1; badvariable=0;} else {card3 = card2;badvariable=1;}
             Log.e("r1= " + card1, "; r2 = " + card2 + "; sel = " + card3);
             Log.e("c1 = " + last_x[card1], "; c2 = " + last_x[card2] + "; sel = " + last_x[card3]);
+            Log.e("c1 = " + chosenLesson[last_x[card1]], "; c2 = " + chosenLesson[last_x[card2]] + "; sel = " + chosenLesson[last_x[card3]]);
 
+            memGameIncorrectAnswer = 0;
             memoryGameUpdatePicture();
             String memoryquestion = "Which one is "+ last_x[card3].replaceAll("_", " ");
+            memoryquestion = memoryquestion.replaceAll("_", " ");
+
             t1.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
@@ -383,13 +417,13 @@ public class MainActivity extends AppCompatActivity {
     public void memoryGameUpdatePicture() {
         setContentView(R.layout.memory1);
 
-        String memoryPicture1= "@drawable/" + last_x[card1];
+        String memoryPicture1= "@drawable/" + chosenLesson[last_x[card1]];
         int pic1_id = getResources().getIdentifier(memoryPicture1, null, getPackageName());
         Drawable pic1 = ContextCompat.getDrawable(this, pic1_id);
         ImageView leftImage = (ImageView) findViewById(R.id.memory1left);
         leftImage.setImageDrawable(pic1);
 
-        String memoryPicture2= "@drawable/" + last_x[card2];
+        String memoryPicture2= "@drawable/" + chosenLesson[last_x[card2]];
         int pic2_id = getResources().getIdentifier(memoryPicture2, null, getPackageName());
         Drawable pic2 = ContextCompat.getDrawable(this, pic2_id);
         ImageView rightImage = (ImageView) findViewById(R.id.memory1right);
