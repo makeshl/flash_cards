@@ -354,7 +354,7 @@ public class MainActivity extends AppCompatActivity {
         tryAgain = tryAgain.replaceAll("_", " ");
         String giveTheAnswer = "Thanks for trying. This is " + chosenLesson[last_x[card3]] + "!";
         giveTheAnswer= giveTheAnswer.replaceAll("_", " ");
-        //TODO - need to stop the message once user clicks
+        //TODO - need to stop the current playing message once user clicks
 
         int endTheGame = 0;
 
@@ -365,7 +365,8 @@ public class MainActivity extends AppCompatActivity {
             pronouncePlay = MediaPlayer.create(this, resID);
             pronouncePlay.start();
             long soundLength1 = pronouncePlay.getDuration();
-            endTheGame = 1;
+            setContentView(R.layout.activity_main);
+            nextImage(last_x[card3]);
             //t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
             mHandler.postDelayed(mUpdate, soundLength1 +500);
             //setContentView(R.layout.activity_main);
