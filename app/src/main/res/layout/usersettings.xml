@@ -186,9 +186,9 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:id="@+id/image1011"
-                    android:src="@drawable/lion"
+                    android:src="@drawable/shoes"
                     android:onClick="selectSet"
-                    android:tag="1000"
+                    android:tag="1011"
                     android:alpha="1"
                     android:layout_alignLeft="@id/image1008"
                     android:layout_below="@id/image1008"/>
@@ -197,9 +197,9 @@
                     android:layout_width="80dp"
                     android:layout_height="80dp"
                     android:id="@+id/image1012"
-                    android:src="@drawable/lion"
+                    android:src="@drawable/pail"
                     android:onClick="selectSet"
-                    android:tag="1000"
+                    android:tag="1012"
                     android:alpha="1"
                     android:layout_below="@id/image1009"
                     android:layout_alignLeft="@id/image1009"/>

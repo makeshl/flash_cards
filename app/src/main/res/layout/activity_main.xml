@@ -42,7 +42,7 @@
         android:layout_height="match_parent"
         android:layout_above="@id/button1"
         android:id="@+id/imageView1"
-        android:src="@drawable/art"
+
         android:clickable="true"
         android:onClick="stopresume"
         />

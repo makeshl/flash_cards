@@ -1,5 +1,7 @@
 package com.example.makmeeroo.lesson_plsn;
 
+//android:src="@drawable/art"
+
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -36,30 +38,35 @@ public class MainActivity extends AppCompatActivity {
     public static final String LESSON_VEGETABLES = "vegetables";
     public static final String LESSON_DINNER = "dinner";
     public static final String LESSON_PARK = "park";
+    public static final String LESSON_CLOTHES = "clothes";
+    public static final String LESSON_BEACH = "beach";
     int stopCounter = 0;
     private Handler mHandler;
     long displayMinTime = 2000; // milliseconds
 
     String[] masterlistofLessons = {LESSON_WILD_ANIMALS, LESSON_FRUITS, LESSON_VEHICLES, LESSON_PETS, LESSON_BIRDS, LESSON_BODY_PARTS,
-            LESSON_SHAPES, LESSON_HOME, LESSON_VEGETABLES, LESSON_DINNER, LESSON_PARK};
-    int[] selectedvalueofLessons = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            LESSON_SHAPES, LESSON_HOME, LESSON_VEGETABLES, LESSON_DINNER, LESSON_PARK, LESSON_CLOTHES,LESSON_BEACH};
+    int[] selectedvalueofLessons = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
     String[] selectedlistofLessons = new String[3];
     int masternoofLessons = masterlistofLessons.length;
     int position;
     String[] fullList = new String[100];
 
-    String[] wildAnimals = {"bear", "bison", "cheetah", "crocodile", "deer", "elephant", "fox", "giraffe", "hippo", "kangaroo",
-            "koala", "lion", "monkey", "orangutan", "panda", "rhinoceros", "sheep", "snake", "tiger", "wolf", "zebra"};
+    String[] wildAnimals = {"bear", "bison", "butterfly", "cheetah", "crab", "crocodile", "deer", "dolphin", "elephant", "fox", "giraffe", "hippo",
+            "horse", "kangaroo", "koala", "lion", "monkey", "octopus", "orangutan", "panda", "rhinoceros", "shark", "sheep", "snake", "tiger",
+            "turtle", "wolf", "zebra"};
     String[] fruits = {"apple", "apricot", "banana", "grapes", "jack_fruit", "orange", "papaya", "peach", "pear", "plum", "strawberry", "watermelon",};
-    String[] vehicles = {"ambulance", "bus", "car", "motorcycle", "plane", "rocket", "train", "truck", "van"};
+    String[] vehicles = {"ambulance", "boat", "bus", "car", "fire_engine", "helicopter", "motorcycle", "plane", "rocket", "tractor", "train", "truck", "van"};
     String[] pets = {"cat", "cow", "dog", "pig", "rabbit"};
-    String[] birds = {"eagle", "flamingo", "hawk", "hen", "ostrich", "parrot", "sparrow"};
+    String[] birds = {"butterfly","duck","eagle", "flamingo", "hawk", "hen", "ostrich","owl", "parrot","sea_gull", "sparrow"};
     String[] bodyParts = {"eyes", "nose", "mouth", "teeth", "tongue", "chin", "ear", "head", "hair", "fingers", "hands", "feet", "shoulders"};
     String[] shapes = {"circle", "diamond", "hexagon", "rectangle", "square", "triangle"};
-    String[] home = {"carpet", "chair", "clock", "curtains", "fireplace", "lamp", "sofa", "speaker", "table", "tv"};
+    String[] home = {"carpet", "chair", "clock", "curtains","cycle", "fireplace", "lamp", "potty_seat", "sofa", "speaker", "table", "tv"};
     String[] vegetables = {"carrot", "cauliflower", "eggplant", "green_beans", "lemon", "onion", "peas", "pepper", "potato", "pumpkin", "tomato"};
-    String[] dinner = {"table", "chair", "spoon", "bowl", "bib", "pasta", "milk", "high_chair"};
-    String[] park = {"slide", "swing", "spinner", "roller_slide", "sand_pit"};
+    String[] dinner = {"table", "chair", "spoon", "fork", "bowl", "bib", "pasta", "milk", "high_chair"};
+    String[] park = {"bench","kite", "slide", "swing", "spinner", "roller_slide", "sand_pit","tree" };
+    String[] clothes = {"diaper","shorts","shirt","bib","shoes","socks","jacket","towel","bag"};
+    String[] beach = {"fish","pail","crab","shell","umbrella","beach_towel","sea_gull","surfboard","star_fish",};
 
     String[] chosenLesson = pets;
     int chosenLesssonLength = chosenLesson.length;
@@ -102,6 +109,7 @@ public class MainActivity extends AppCompatActivity {
     private Runnable mUpdate = new Runnable() {
         public void run() {
             Log.e("flash_card", " mUpdate called. stopCounter = " + stopCounter);
+            setContentView(R.layout.activity_main);
             nextTextMessage(stopCounter);
             nextImage(stopCounter);
             double soundLength = nextSound(stopCounter);
@@ -127,6 +135,7 @@ public class MainActivity extends AppCompatActivity {
     public void nextTextMessage(int counter) {
         String selectedWord = chosenLesson[counter];
         Log.e("flash_card ", " selectedWord " + selectedWord);
+        //TODO Show lessons name while switching lesson
         if (!selectedWord.isEmpty()) {
             TextView temp2 = (TextView) findViewById(R.id.textView);
             temp2.setText(selectedWord);
@@ -134,10 +143,11 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void nextImage(int counter) {
-// TODO if picture file is not available, then move to the next picture
+        // TODO if picture file is not available, then move to the next picture
+        //TODO add some basic animation
         String selectedPicture = "@drawable/" + chosenLesson[counter];
         int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
-//        Drawable pic = getResources().getDrawable(pic_id);  // take picture from that location and save it in a drawable pic
+        //Drawable pic = getResources().getDrawable(pic_id);  // take picture from that location and save it in a drawable pic
         Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
         ImageView temp1 = (ImageView) findViewById(R.id.imageView1);
         temp1.setImageDrawable(pic);        //display pic in the image
@@ -264,6 +274,8 @@ public class MainActivity extends AppCompatActivity {
         strtoArrMaps.put(LESSON_VEGETABLES, vegetables);
         strtoArrMaps.put(LESSON_DINNER, dinner);
         strtoArrMaps.put(LESSON_PARK, park);
+        strtoArrMaps.put(LESSON_CLOTHES, clothes);
+        strtoArrMaps.put(LESSON_BEACH, beach);
 
         int k = 0;
         if (j == 0) {
@@ -291,7 +303,6 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
         stopCounter = 0;
         count_last_x = 0;
-
 
         chosenLesson = fullList;
         chosenLesssonLength = k;
@@ -322,20 +333,25 @@ public class MainActivity extends AppCompatActivity {
     public void memoryGame1(View v) {
         String clickedCard = (String) v.getTag();
         int tagValue = Integer.parseInt(clickedCard);
-        String veryGood = "very Good! Clap Clap Clap";
+        String veryGood = "clapclapclap";
         String tryAgain = "try again";
 
         if (tagValue == badvariable)
         {
             Log.e("correct ",clickedCard);
-            t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
-            setContentView(R.layout.activity_main);
-            //mHandler = new Handler();
-            mHandler.postDelayed(mUpdate, 2*displayMinTime);
+
+            int resID = this.getResources().getIdentifier(veryGood, "raw", this.getPackageName());
+            pronouncePlay = MediaPlayer.create(this, resID);
+            pronouncePlay.start();
+            long soundLength1 = pronouncePlay.getDuration();
+            //t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
+            mHandler.postDelayed(mUpdate, soundLength1 +500);
+            //setContentView(R.layout.activity_main);
         }
         else {
             Log.e("incorrect",clickedCard);
             t1.speak(tryAgain, TextToSpeech.QUEUE_FLUSH, null);
+            //TODO Insert delay here so that voice doesnt overlap
         }
     }
 
@@ -359,8 +375,7 @@ public class MainActivity extends AppCompatActivity {
             Log.e("c1 = " + last_x[card1], "; c2 = " + last_x[card2] + "; sel = " + last_x[card3]);
 
             memoryGameUpdatePicture();
-
-            String memoryquestion = "Which one is "+ last_x[card3];
+            String memoryquestion = "Which one is "+ last_x[card3].replaceAll("_", " ");
             t1.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
