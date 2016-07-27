@@ -1,4 +1,4 @@
-package com.example.makmeeroo.lesson_plsn;
+package com.example.makmeeroo.flash_cards;
 
 //android:src="@drawable/art"
 
@@ -349,39 +349,31 @@ public class MainActivity extends AppCompatActivity {
     public void memoryGame1(View v) {
         String clickedCard = (String) v.getTag();
         int tagValue = Integer.parseInt(clickedCard);
-<<<<<<< HEAD
         String veryGood = "clapclapclap";
-        String tryAgain = "try again";
-=======
-        String veryGood = "Very Good! Clap Clap Clap !!";
-        String tryAgain = "Please try again. Which one is " + chosenLesson[last_x[card3]] + "???";
+        String tryAgain = "Try again. Which one is " + chosenLesson[last_x[card3]] + "???";
+        tryAgain = tryAgain.replaceAll("_", " ");
         String giveTheAnswer = "Thanks for trying. This is " + chosenLesson[last_x[card3]] + "!";
+        giveTheAnswer= giveTheAnswer.replaceAll("_", " ");
+        //TODO - need to stop the current playing message once user clicks
 
         int endTheGame = 0;
->>>>>>> 1f4fdd16894cd68ffe52d20693d9e8b5dd7f4ac1
 
         if (tagValue == badvariable) {
             Log.e("correct ",clickedCard);
-<<<<<<< HEAD
 
             int resID = this.getResources().getIdentifier(veryGood, "raw", this.getPackageName());
             pronouncePlay = MediaPlayer.create(this, resID);
             pronouncePlay.start();
             long soundLength1 = pronouncePlay.getDuration();
+            setContentView(R.layout.activity_main);
+            nextImage(last_x[card3]);
             //t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
             mHandler.postDelayed(mUpdate, soundLength1 +500);
             //setContentView(R.layout.activity_main);
-=======
-            t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
-            endTheGame = 1;
->>>>>>> 1f4fdd16894cd68ffe52d20693d9e8b5dd7f4ac1
         }
         else {
             Log.e("incorrect", clickedCard);
             t1.speak(tryAgain, TextToSpeech.QUEUE_FLUSH, null);
-<<<<<<< HEAD
-            //TODO Insert delay here so that voice doesnt overlap
-=======
             memGameIncorrectAnswer++;
         }
         if (memGameIncorrectAnswer>=2) {
@@ -394,7 +386,6 @@ public class MainActivity extends AppCompatActivity {
             nextImage(last_x[card3]);
             //mHandler = new Handler();
             mHandler.postDelayed(mUpdate, 2 * displayMinTime);
->>>>>>> 1f4fdd16894cd68ffe52d20693d9e8b5dd7f4ac1
         }
     }
 
@@ -420,14 +411,10 @@ public class MainActivity extends AppCompatActivity {
 
             memGameIncorrectAnswer = 0;
             memoryGameUpdatePicture();
-<<<<<<< HEAD
-            String memoryquestion = "Which one is "+ last_x[card3].replaceAll("_", " ");
-=======
-
             String memoryquestion = "Which one is "+ chosenLesson[last_x[card3]];
             memoryquestion = memoryquestion.replaceAll("_", " ");
+            Log.e(memoryquestion," ");
 
->>>>>>> 1f4fdd16894cd68ffe52d20693d9e8b5dd7f4ac1
             t1.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
