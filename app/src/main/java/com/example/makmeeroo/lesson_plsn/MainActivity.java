@@ -367,6 +367,7 @@ public class MainActivity extends AppCompatActivity {
             long soundLength1 = pronouncePlay.getDuration();
             setContentView(R.layout.activity_main);
             nextImage(last_x[card3]);
+            nextTextMessage(last_x[card3]);
             //t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
             mHandler.postDelayed(mUpdate, soundLength1 +500);
             //setContentView(R.layout.activity_main);
@@ -384,7 +385,7 @@ public class MainActivity extends AppCompatActivity {
         if (endTheGame==1) {
             setContentView(R.layout.activity_main);
             nextImage(last_x[card3]);
-            //mHandler = new Handler();
+            nextTextMessage(last_x[card3]);
             mHandler.postDelayed(mUpdate, 2 * displayMinTime);
         }
     }

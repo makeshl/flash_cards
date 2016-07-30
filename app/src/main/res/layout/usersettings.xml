@@ -27,7 +27,7 @@
         android:id="@+id/memoryGameCheckBox"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-        android:checked="true" />
+        />
 
     <RelativeLayout
         android:id="@+id/options"
