@@ -1,4 +1,4 @@
-package com.example.makmeeroo.lesson_plsn;
+package com.example.makmeeroo.flash_cards;
 
 //android:src="@drawable/art"
 
