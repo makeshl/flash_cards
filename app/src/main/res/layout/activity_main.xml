@@ -42,7 +42,6 @@
         android:layout_height="match_parent"
         android:layout_above="@id/button1"
         android:id="@+id/imageView1"
-
         android:clickable="true"
         android:onClick="stopresume"
         />
@@ -56,5 +55,19 @@
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
        />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:textAppearance="?android:attr/textAppearanceLarge"
+        android:text="Reading"
+        android:textSize="80sp"
+        android:id="@+id/textReading"
+        android:layout_centerVertical="true"
+        android:layout_centerHorizontal="true"
+        android:clickable="true"
+        android:onClick="stopresume"
+        android:textColor="#d52121"
+        android:visibility="visible" />
 
 </RelativeLayout>

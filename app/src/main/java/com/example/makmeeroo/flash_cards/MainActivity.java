@@ -40,13 +40,22 @@ public class MainActivity extends AppCompatActivity {
     public static final String LESSON_PARK = "park";
     public static final String LESSON_CLOTHES = "clothes";
     public static final String LESSON_BEACH = "beach";
+    public static final String LESSON_W_BODY_PARTS = "w_bodyParts";
+    public static final String LESSON_W_ACTIONS = "w_actions";
+    public static final String LESSON_W_WILDANIMALS = "w_wildAnimals";
+    public static final String LESSON_W_FRUITS ="w_fruits";
+    public static final String LESSON_W_VEHICLES ="w_vehicles";
+    public static final String LESSON_W_PETS= "w_pets";
+    public static final String LESSON_W_BIRDS ="w_birds";
+
     int stopCounter = 0;
     private Handler mHandler;
     long displayMinTime = 2000; // milliseconds
 
     String[] masterlistofLessons = {LESSON_WILD_ANIMALS, LESSON_FRUITS, LESSON_VEHICLES, LESSON_PETS, LESSON_BIRDS, LESSON_BODY_PARTS,
-            LESSON_SHAPES, LESSON_HOME, LESSON_VEGETABLES, LESSON_DINNER, LESSON_PARK, LESSON_CLOTHES,LESSON_BEACH};
-    int[] selectedvalueofLessons = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
+            LESSON_SHAPES, LESSON_HOME, LESSON_VEGETABLES, LESSON_DINNER, LESSON_PARK, LESSON_CLOTHES,LESSON_BEACH,
+            LESSON_W_BODY_PARTS, LESSON_W_ACTIONS,LESSON_W_WILDANIMALS, LESSON_W_FRUITS, LESSON_W_VEHICLES, LESSON_W_PETS, LESSON_W_BIRDS};
+    int[] selectedvalueofLessons = {0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0, 0,0,0,0};
     String[] selectedlistofLessons = new String[3];
     int masternoofLessons = masterlistofLessons.length;
     int position;
@@ -68,9 +77,20 @@ public class MainActivity extends AppCompatActivity {
     String[] clothes = {"diaper","shorts","shirt","bib","shoes","socks","jacket","towel","bag"};
     String[] beach = {"fish","pail","crab","shell","umbrella","beach_towel","sea_gull","surfboard","star_fish",};
 
+    String[] w_bodyParts = {"_eyes", "_nose", "_mouth", "_teeth", "_tongue", "_chin", "_ear", "_head", "_hair", "_fingers", "_hands", "_feet", "_shoulders"};
+    String[] w_actions ={"_sit","_stand","_come","_go","_walk","_run","_jump","_stop"};
+    String[] w_wildAnimals = {"_bear", "_bison", "_butterfly", "_cheetah", "_crab", "_crocodile", "_deer", "_dolphin", "_elephant", "_fox", "_giraffe", "_hippo",
+            "_horse", "_kangaroo", "_koala", "_lion", "_monkey", "_octopus", "_orangutan", "_panda", "_rhinoceros", "_shark", "_sheep", "_snake", "_tiger",
+            "_turtle", "_wolf", "_zebra"};
+    String[] w_fruits = {"_apple", "_apricot", "_banana", "_grapes", "_jack_fruit", "_orange", "_papaya", "_peach", "_pear", "_plum", "_strawberry", "_watermelon",};
+    String[] w_vehicles = {"_ambulance", "_boat", "_bus", "_car", "_fire_engine", "_helicopter", "_motorcycle", "_plane", "_rocket", "_tractor", "_train", "_truck", "_van"};
+    String[] w_pets = {"_cat", "_cow", "_dog", "_pig", "_rabbit"};
+    String[] w_birds = {"_butterfly","_duck","_eagle", "_flamingo", "_hawk", "_hen", "_ostrich","_owl", "_parrot","_sea_gull", "_sparrow"};
+
     String[] chosenLesson = pets;
     int chosenLesssonLength = chosenLesson.length;
     int nooflessons;
+    String wordMarker = "_";
 
     // added for memory game
     int memoryGame =1;
@@ -112,6 +132,7 @@ public class MainActivity extends AppCompatActivity {
             setContentView(R.layout.activity_main);
             nextTextMessage(stopCounter);
             nextImage(stopCounter);
+
             double soundLength = nextSound(stopCounter);
             long currentDisplayTime = (long) (soundLength + 500); // add 0.5 seconds margin
             if (currentDisplayTime<displayMinTime) // too short
@@ -137,20 +158,34 @@ public class MainActivity extends AppCompatActivity {
         //TODO Show lessons name while switching lesson
         if (!selectedWord.isEmpty()) {
             TextView temp2 = (TextView) findViewById(R.id.textView);
-            temp2.setText(selectedWord);
+            temp2.setText(selectedWord.replaceAll("_", " "));
         }
     }
 
     public void nextImage(int counter) {
         // TODO if picture file is not available, then move to the next picture
         //TODO add some basic animation
-        String selectedPicture = "@drawable/" + chosenLesson[counter];
-        int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
-        //Drawable pic = getResources().getDrawable(pic_id);  // take picture from that location and save it in a drawable pic
-        Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
         ImageView temp1 = (ImageView) findViewById(R.id.imageView1);
-        temp1.setImageDrawable(pic);        //display pic in the image
-        Log.e("selected picture = ", selectedPicture);
+        TextView temp3 = (TextView) findViewById(R.id.textReading);
+        String selectedWord = chosenLesson[counter];
+
+        if((selectedWord.substring(0, 1)).equals(wordMarker))
+        {
+            temp3.setVisibility(View.VISIBLE);
+            temp1.setVisibility(View.INVISIBLE);
+            temp3.setText(selectedWord.replaceAll("_", " "));
+        }
+        else {
+            temp1.setVisibility(View.VISIBLE);
+            temp3.setVisibility(View.INVISIBLE);
+            String selectedPicture = "@drawable/" + chosenLesson[counter];
+            int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
+            //Drawable pic = getResources().getDrawable(pic_id);  // take picture from that location and save it in a drawable pic
+            Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
+
+            temp1.setImageDrawable(pic);        //display pic in the image
+            Log.e("selected picture = ", selectedPicture);
+        }
     }
 
     public double nextSound(int counter) {
@@ -210,6 +245,8 @@ public class MainActivity extends AppCompatActivity {
             selectedvalueofLessons[i] = 0;
         }
         nooflessons = 0;
+        CheckBox temp1 = (CheckBox) findViewById(R.id.memoryGameCheckBox);
+        if (memoryGame ==1) {temp1.setChecked(true);} else {temp1.setChecked(false);}
     }
 
     public void selectSet(View v) {
@@ -292,6 +329,14 @@ public class MainActivity extends AppCompatActivity {
         strtoArrMaps.put(LESSON_PARK, park);
         strtoArrMaps.put(LESSON_CLOTHES, clothes);
         strtoArrMaps.put(LESSON_BEACH, beach);
+
+        strtoArrMaps.put(LESSON_W_BODY_PARTS,w_bodyParts);
+        strtoArrMaps.put(LESSON_W_ACTIONS,w_actions);
+        strtoArrMaps.put(LESSON_W_WILDANIMALS,w_wildAnimals);
+        strtoArrMaps.put(LESSON_W_FRUITS,w_fruits);
+        strtoArrMaps.put(LESSON_W_VEHICLES,w_vehicles);
+        strtoArrMaps.put(LESSON_W_PETS,w_pets);
+        strtoArrMaps.put(LESSON_W_BIRDS,w_birds);
 
         int k = 0;
         if (j == 0) {
