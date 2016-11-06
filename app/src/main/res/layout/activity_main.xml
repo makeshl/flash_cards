@@ -54,7 +54,7 @@
         android:textSize="12sp"
         android:layout_alignParentBottom="true"
         android:layout_centerHorizontal="true"
-       />
+        android:onClick="gridViewtest" />
 
     <TextView
         android:layout_width="wrap_content"

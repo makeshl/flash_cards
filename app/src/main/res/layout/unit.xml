@@ -1,5 +1,29 @@
 <?xml version="1.0" encoding="utf-8"?>
-<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent" android:layout_height="match_parent">
 
-</LinearLayout>
+    <ImageView
+        android:layout_width="50dp"
+        android:layout_height="100dp"
+        android:id="@+id/iconPicture"
+        android:src="@drawable/flamingo" />
+
+    <TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="flamingo"
+        android:id="@+id/iconText"
+        android:layout_below="@id/iconPicture"
+        android:textSize="15dp" />
+
+    <RatingBar
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:scaleX="0.25"
+        android:scaleY="0.25"
+        android:id="@+id/iconRating"
+        android:transformPivotX="0dp"
+        android:rating= "3"
+        android:layout_below="@+id/iconText"
+        android:numStars="5" />
+</RelativeLayout>
