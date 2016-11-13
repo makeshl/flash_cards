@@ -7,6 +7,8 @@ import android.database.sqlite.SQLiteDatabase;
 import android.database.sqlite.SQLiteOpenHelper;
 import android.support.annotation.StringDef;
 
+import java.io.InputStream;
+
 /**
  * Created by MakMeeRoo on 11/5/2016.
  */
@@ -83,3 +85,5 @@ public class dBsetup extends SQLiteOpenHelper {
     }
 
 }
+
+

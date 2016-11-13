@@ -34,6 +34,7 @@ import android.widget.TextView;
 
 import com.example.makmeeroo.flash_cards.DisplayData.DisplayDataUser;
 
+import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.HashMap;
@@ -526,23 +527,25 @@ public class MainActivity extends AppCompatActivity {
         mHandler.removeCallbacksAndMessages(null);
         setContentView(R.layout.usersetting_v2);
 
-//        String[] dummy = new String[]{"Wild Animals", "Pets", "Fruits", "Vehicles","Park", "Beach"};
-        List<String> dummy1 = Arrays.asList("Wild Animals", "Pets", "Fruits", "Vehicles","Park", "Beach", "Body","Shapes","Home","Clothes");
-        List<String> dummy2 = Arrays.asList("lion", "dog", "apple", "car","swing", "fish", "nose","circle","sofa","diaper");
-        List<Integer> dummy3 = Arrays.asList(10, 5,5,5,5,5,5,5,5,4);
-        List<Integer> dummy4 = Arrays.asList(3,3,3,3,3,3,3,3,3,3);
-        setContentView(R.layout.usersetting_v2);
+//        List<String> dummy1 = Arrays.asList("Wild Animals", "Pets", "Fruits", "Vehicles","Park", "Beach", "Body","Shapes","Home","Clothes");
+//        List<String> dummy2 = Arrays.asList("lion", "dog", "apple", "car","swing", "fish", "nose","circle","sofa","diaper");
+//        List<Integer> dummy3 = Arrays.asList(10, 5,5,5,5,5,5,5,5,4);
+//        List<Integer> dummy4 = Arrays.asList(3,3,3,3,3,3,3,3,3,3);
 
         //Create a list of objects of class type DisplayDataUser
-        List<DisplayDataUser> IconList = new ArrayList<>();
-        for(int i=0; i<9; i++) {
-            DisplayDataUser dummy5 = new DisplayDataUser();
-            dummy5.setLessonName(dummy1.get(i));
-            dummy5.setImage(dummy2.get(i));
-            dummy5.setNumberLessons(dummy3.get(i));
-            dummy5.setRating(dummy4.get(i));
-            IconList.add(dummy5);
-        }
+//        List<DisplayDataUser> IconList = new ArrayList<>();
+//        for(int i=0; i<9; i++) {
+//            DisplayDataUser dummy5 = new DisplayDataUser();
+//            dummy5.setLessonName(dummy1.get(i));
+//            dummy5.setImage(dummy2.get(i));
+//            dummy5.setNumberLessons(dummy3.get(i));
+//            dummy5.setRating(dummy4.get(i));
+//            IconList.add(dummy5);
+//        }
+
+        InputStream inputStream = getResources().openRawResource(R.raw.lesson);
+        CsvReader csvFile = new CsvReader(inputStream);
+        List<DisplayDataUser> IconList = csvFile.read();
 
         GridView gvdummy = (GridView) findViewById(R.id.gv1);
         // Need an array adapter to take the source into the Gridview
