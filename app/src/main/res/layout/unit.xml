@@ -1,12 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="match_parent" android:layout_height="match_parent">
+    android:layout_width="match_parent" android:layout_height="match_parent"
+    android:clickable="false"
+    android:descendantFocusability="blocksDescendants"
+    android:focusable="false"
+    android:focusableInTouchMode="false"
+    >
 
     <ImageView
         android:layout_width="50dp"
         android:layout_height="100dp"
         android:id="@+id/iconPicture"
-        android:src="@drawable/flamingo" />
+        android:src="@drawable/flamingo"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
 
     <TextView
         android:layout_width="wrap_content"
@@ -14,16 +23,11 @@
         android:text="flamingo"
         android:id="@+id/iconText"
         android:layout_below="@id/iconPicture"
-        android:textSize="15dp" />
+        android:textSize="15dp"
+        android:clickable="false"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
+        />
 
-    <RatingBar
-        android:layout_width="wrap_content"
-        android:layout_height="wrap_content"
-        android:scaleX="0.25"
-        android:scaleY="0.25"
-        android:id="@+id/iconRating"
-        android:transformPivotX="0dp"
-        android:rating= "3"
-        android:layout_below="@+id/iconText"
-        android:numStars="5" />
+
 </RelativeLayout>

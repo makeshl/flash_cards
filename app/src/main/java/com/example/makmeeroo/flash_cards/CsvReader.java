@@ -16,7 +16,7 @@ import java.util.List;
  */
 public class CsvReader {
     InputStream inputStream;
-    String csvFile = "C:\\Users\\Meera\\AndroidStudioProjects\\flash_cards\\app\\src\\main\\res\\raw";
+    //String csvFile = "C:\\Users\\Meera\\AndroidStudioProjects\\flash_cards\\app\\src\\main\\res\\raw";
 
     public CsvReader(InputStream inputStream){
         this.inputStream = inputStream;
@@ -24,18 +24,26 @@ public class CsvReader {
 
     public List read(){
         List<DisplayDataUser> TempList = new ArrayList<>();
+//        List TempList = new ArrayList<>();
+
         BufferedReader reader = new BufferedReader(new InputStreamReader(inputStream));
         try {
             String csvLine;
             while ((csvLine = reader.readLine()) != null) {
                 String[] row = csvLine.split(",");
-                DisplayDataUser dummy5 = new DisplayDataUser();
-                dummy5.setLessonName(row[0]);
-                dummy5.setImage(row[1]);
-                dummy5.setNumberLessons(Integer.valueOf(row[2]));
-                dummy5.setRating(Integer.valueOf(row[3]));
-                TempList.add(dummy5);
-                Log.d("0,1 " + row[0] + " "+ row[1], "2,3 "+ row[2] + " "+ row[3]);
+                DisplayDataUser dummy = new DisplayDataUser();
+                dummy.setLessonName(row[0]);
+                dummy.setImage(row[1]);
+                dummy.setNumberLessons(row.length - 3);
+                dummy.setRating(Integer.valueOf(row[2]));
+
+                List<String> dummy1 = new ArrayList<>();
+                for (int i = 3; i < row.length; i++) {dummy1.add(row[i]);}
+                dummy.setCards(dummy1);
+
+                TempList.add(dummy);
+
+                Log.d(dummy.getLessonName()+" "+ dummy.getImage()+dummy.getRating()+" "+dummy.getNumberLessons()," " +dummy.getCards().size());
             }
         }
         catch (IOException ex) {

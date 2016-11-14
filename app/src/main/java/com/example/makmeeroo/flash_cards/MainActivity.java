@@ -31,6 +31,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.makmeeroo.flash_cards.DisplayData.DisplayDataUser;
 
@@ -543,23 +544,39 @@ public class MainActivity extends AppCompatActivity {
 //            IconList.add(dummy5);
 //        }
 
-        InputStream inputStream = getResources().openRawResource(R.raw.lesson);
+        InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
         CsvReader csvFile = new CsvReader(inputStream);
-        List<DisplayDataUser> IconList = csvFile.read();
+        final List<DisplayDataUser> IconList = csvFile.read();
 
-        GridView gvdummy = (GridView) findViewById(R.id.gv1);
+        final GridView gvdummy = (GridView) findViewById(R.id.gv1);
         // Need an array adapter to take the source into the Gridview
+
         IconDisplayAdapter adapter = new IconDisplayAdapter(getApplicationContext(), R.layout.unit, IconList);
         gvdummy.setAdapter(adapter);
 
+        final List<String> SelectionList = new ArrayList<String>();
         //Turn ON item click listener. There seems to be something for scroll listener as well
+        ListView lvdummy = (ListView) findViewById(R.id.lv1);
+        final ArrayAdapter adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, SelectionList);
+        lvdummy.setAdapter(adapter2);
+
         gvdummy.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
                 //position = position of object
+                //Integer position1 = (Integer)view.getTag();// http://stackoverflow.com/questions/12734793/android-get-position-of-clicked-item-in-gridview
+                //Log.d("position =", " " + position);
+                //String value = gvdummy.getAdapter().getItem(position).toString();
+
+                Log.d("Arrived", " in grid view selection");
+                Log.d("pos = ", " " + position);
+                String selectedLesson = IconList.get(position).getLessonName();
+                Log.d("selected lesson = ", selectedLesson);
+                SelectionList.add(selectedLesson);
+                adapter2.notifyDataSetChanged();
             }
         });
-
+        
     }
 
     public class IconDisplayAdapter extends ArrayAdapter{
@@ -572,29 +589,70 @@ public class MainActivity extends AppCompatActivity {
             this.resource= resource;
             inflater = (LayoutInflater) getSystemService(LAYOUT_INFLATER_SERVICE);
         }
+        //ViewHolder improves performance while scrolling: https://developer.android.com/training/improving-layouts/smooth-scrolling.html
+        class ViewHolder {
+            TextView iconText;
+            ImageView iconPicture;
+            //RatingBar iconRating;
+            int position;
+        }
 
         @Override
         // getView class is required by the gridview display
         public View getView(int position, View convertView, ViewGroup parent) {
+
+            ViewHolder holder = null;
+
             if (convertView == null){
-                convertView = inflater.inflate(R.layout.unit, null);
+                holder = new ViewHolder();
+                //convertView = inflater.inflate(R.layout.unit, null);
+                convertView = inflater.inflate(resource, null);
+                holder.iconPicture = (ImageView) convertView.findViewById(R.id.iconPicture);
+                holder.iconText = (TextView) convertView.findViewById(R.id.iconText);
+                //holder.iconRating = (RatingBar) convertView.findViewById(R.id.iconRating);
+                convertView.setTag(holder);
+            } else {
+                holder = (ViewHolder) convertView.getTag();
             }
 
-            ImageView iconPicture = (ImageView) convertView.findViewById(R.id.iconPicture);
-            TextView iconText = (TextView) convertView.findViewById(R.id.iconText);
-            RatingBar iconRating = (RatingBar) convertView.findViewById(R.id.iconRating);
-
-            iconText.setText(iconModelList.get(position).getLessonName()+" ("+ iconModelList.get(position).getNumberLessons()+")");
-            iconRating.setRating(iconModelList.get(position).getRating());
+            holder.iconText.setText(iconModelList.get(position).getLessonName()+" ("+ iconModelList.get(position).getNumberLessons() + ")");
+            //holder.iconRating.setRating(iconModelList.get(position).getRating());
 
             String pic = "@drawable/" + iconModelList.get(position).getImage();
             int pic_id = getResources().getIdentifier(pic, null, getPackageName()); // get the location of where l1, l2, etc are stored
-//            //Drawable pic = getResources().getDrawable(pic_id);  // take picture from that location and save it in a drawable pic
             Drawable pic2 = getResources().getDrawable(pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
-            iconPicture.setImageDrawable(pic2);        //display pic in the image
+            holder.iconPicture.setImageDrawable(pic2);        //display pic in the image
 
+//            ImageView iconPicture = (ImageView) convertView.findViewById(R.id.iconPicture);
+//            TextView iconText = (TextView) convertView.findViewById(R.id.iconText);
+//            RatingBar iconRating = (RatingBar) convertView.findViewById(R.id.iconRating);
+
+//            iconText.setText(iconModelList.get(position).getLessonName()+" ("+ iconModelList.get(position).getNumberLessons()+")");
+//            iconRating.setRating(iconModelList.get(position).getRating());
+
+//            String pic = "@drawable/" + iconModelList.get(position).getImage();
+//            int pic_id = getResources().getIdentifier(pic, null, getPackageName()); // get the location of where l1, l2, etc are stored
+//            Drawable pic2 = getResources().getDrawable(pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
+//            iconPicture.setImageDrawable(pic2);        //display pic in the image
+
+            Log.d("position = ", " "+ position);
             return convertView;
         }
 
     }
 }
+
+//<RatingBar
+//android:layout_width="wrap_content"
+//        android:layout_height="wrap_content"
+//        android:scaleX="0.25"
+//        android:scaleY="0.25"
+//        android:id="@+id/iconRating"
+//        android:transformPivotX="0dp"
+//        android:rating= "3"
+//        android:layout_below="@+id/iconText"
+//        android:numStars="5"
+//        android:clickable="false"
+//        android:focusable="false"
+//        android:focusableInTouchMode="false"
+//        />

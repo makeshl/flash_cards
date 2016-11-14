@@ -1,5 +1,7 @@
 package com.example.makmeeroo.flash_cards.DisplayData;
 
+import java.util.List;
+
 /**
  * Created by MakMeeRoo on 11/5/2016.
  */
@@ -8,6 +10,15 @@ public class DisplayDataUser {
     private String lessonName;
     private int numberLessons;
     private int rating;
+    private List<String> cards;
+
+    public List<String> getCards(){
+        return cards;
+    }
+
+    public void setCards(List<String> cards){
+        this.cards = cards;
+    }
 
     public String getImage() {
         return image;
