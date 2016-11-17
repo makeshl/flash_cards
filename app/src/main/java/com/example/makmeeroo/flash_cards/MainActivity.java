@@ -49,6 +49,10 @@ import java.util.Random;
 // TODO http://www.tutorialspoint.com/java/
 public class MainActivity extends AppCompatActivity {
 
+    List<String> SelectionList = new ArrayList<String>();
+    List<String> DeckList = new ArrayList<>();
+    List<DisplayDataUser> IconList = new ArrayList<DisplayDataUser>();
+
     public static final String RESUME_STRING = "Resume";
     public static final String STOP_STRING = "Stop";
     public static final String LESSON_SHAPES = "shapes";
@@ -528,25 +532,10 @@ public class MainActivity extends AppCompatActivity {
         mHandler.removeCallbacksAndMessages(null);
         setContentView(R.layout.usersetting_v2);
 
-//        List<String> dummy1 = Arrays.asList("Wild Animals", "Pets", "Fruits", "Vehicles","Park", "Beach", "Body","Shapes","Home","Clothes");
-//        List<String> dummy2 = Arrays.asList("lion", "dog", "apple", "car","swing", "fish", "nose","circle","sofa","diaper");
-//        List<Integer> dummy3 = Arrays.asList(10, 5,5,5,5,5,5,5,5,4);
-//        List<Integer> dummy4 = Arrays.asList(3,3,3,3,3,3,3,3,3,3);
-
-        //Create a list of objects of class type DisplayDataUser
-//        List<DisplayDataUser> IconList = new ArrayList<>();
-//        for(int i=0; i<9; i++) {
-//            DisplayDataUser dummy5 = new DisplayDataUser();
-//            dummy5.setLessonName(dummy1.get(i));
-//            dummy5.setImage(dummy2.get(i));
-//            dummy5.setNumberLessons(dummy3.get(i));
-//            dummy5.setRating(dummy4.get(i));
-//            IconList.add(dummy5);
-//        }
-
         InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
         CsvReader csvFile = new CsvReader(inputStream);
-        final List<DisplayDataUser> IconList = csvFile.read();
+        //final List<DisplayDataUser> IconList = csvFile.read();
+        IconList = csvFile.read();
 
         final GridView gvdummy = (GridView) findViewById(R.id.gv1);
         // Need an array adapter to take the source into the Gridview
@@ -554,7 +543,6 @@ public class MainActivity extends AppCompatActivity {
         IconDisplayAdapter adapter = new IconDisplayAdapter(getApplicationContext(), R.layout.unit, IconList);
         gvdummy.setAdapter(adapter);
 
-        final List<String> SelectionList = new ArrayList<String>();
         //Turn ON item click listener. There seems to be something for scroll listener as well
         ListView lvdummy = (ListView) findViewById(R.id.lv1);
         final ArrayAdapter adapter2 = new ArrayAdapter<String>(this, android.R.layout.simple_list_item_1, SelectionList);
@@ -563,10 +551,6 @@ public class MainActivity extends AppCompatActivity {
         gvdummy.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                //position = position of object
-                //Integer position1 = (Integer)view.getTag();// http://stackoverflow.com/questions/12734793/android-get-position-of-clicked-item-in-gridview
-                //Log.d("position =", " " + position);
-                //String value = gvdummy.getAdapter().getItem(position).toString();
 
                 Log.d("Arrived", " in grid view selection");
                 Log.d("pos = ", " " + position);
@@ -576,7 +560,17 @@ public class MainActivity extends AppCompatActivity {
                 adapter2.notifyDataSetChanged();
             }
         });
-        
+
+        lvdummy.setOnItemClickListener(new AdapterView.OnItemClickListener() {
+            @Override
+            public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
+                Log.d("Arrived", " in list view deletion");
+                Log.d("pos = ", " " + position);
+                SelectionList.remove(position);
+                adapter2.notifyDataSetChanged();
+            }
+        });
+
     }
 
     public class IconDisplayAdapter extends ArrayAdapter{
@@ -616,32 +610,38 @@ public class MainActivity extends AppCompatActivity {
             }
 
             holder.iconText.setText(iconModelList.get(position).getLessonName()+" ("+ iconModelList.get(position).getNumberLessons() + ")");
-            //holder.iconRating.setRating(iconModelList.get(position).getRating());
-
             String pic = "@drawable/" + iconModelList.get(position).getImage();
             int pic_id = getResources().getIdentifier(pic, null, getPackageName()); // get the location of where l1, l2, etc are stored
             Drawable pic2 = getResources().getDrawable(pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
             holder.iconPicture.setImageDrawable(pic2);        //display pic in the image
-
-//            ImageView iconPicture = (ImageView) convertView.findViewById(R.id.iconPicture);
-//            TextView iconText = (TextView) convertView.findViewById(R.id.iconText);
-//            RatingBar iconRating = (RatingBar) convertView.findViewById(R.id.iconRating);
-
-//            iconText.setText(iconModelList.get(position).getLessonName()+" ("+ iconModelList.get(position).getNumberLessons()+")");
-//            iconRating.setRating(iconModelList.get(position).getRating());
-
-//            String pic = "@drawable/" + iconModelList.get(position).getImage();
-//            int pic_id = getResources().getIdentifier(pic, null, getPackageName()); // get the location of where l1, l2, etc are stored
-//            Drawable pic2 = getResources().getDrawable(pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
-//            iconPicture.setImageDrawable(pic2);        //display pic in the image
 
             Log.d("position = ", " "+ position);
             return convertView;
         }
 
     }
+
+    public void selectionComplete(View v) {
+        //TODO: Check error condition. Maybe use previous selection if blank?
+        DeckList.clear();
+        for (int i=0; i<SelectionList.size();i++ ){
+            for (int j =0; j<IconList.size(); j++){
+                if (SelectionList.get(i).equals(IconList.get(j).getLessonName()))
+                {
+                    for(int k=0; k< IconList.get(j).getCards().size();k++) {
+                        DeckList.add(IconList.get(j).getCards().get(k));
+                    }
+                }
+            }
+        }
+        Log.d("Length = ", " "+DeckList.size());
+        for (int i =0; i<DeckList.size(); i++) {
+            Log.d("Card "+ i, DeckList.get(i));
+        }
+    }
 }
 
+//TODO Bring back rating bar
 //<RatingBar
 //android:layout_width="wrap_content"
 //        android:layout_height="wrap_content"
