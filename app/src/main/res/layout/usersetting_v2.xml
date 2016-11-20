@@ -9,11 +9,19 @@
         android:text=" Let's go! "
         android:textColor="#fff"
         android:id="@+id/button3"
-        android:layout_marginLeft="20dp"
+        android:layout_marginLeft="5dp"
         android:layout_marginTop="5dp"
         android:layout_alignParentTop="true"
         android:background="#006400"
         android:onClick="selectionComplete"
+        />
+
+    <CheckBox
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:text="Quiz?"
+        android:id="@+id/quizcheckBox"
+        android:layout_toRightOf="@id/button3"
         />
 
     <LinearLayout
@@ -42,5 +50,7 @@
         android:numColumns="2"
         android:layout_toRightOf="@id/linearlay1"
         />
+
+
 
 </RelativeLayout>

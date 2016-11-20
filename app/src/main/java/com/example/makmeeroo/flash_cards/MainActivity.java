@@ -44,84 +44,31 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Random;
 
-
-
 // TODO http://www.tutorialspoint.com/java/
 public class MainActivity extends AppCompatActivity {
 
-    List<String> SelectionList = new ArrayList<String>();
+    List<String> SelectionList = new ArrayList<>();
     List<String> DeckList = new ArrayList<>();
-    List<DisplayDataUser> IconList = new ArrayList<DisplayDataUser>();
+    List<DisplayDataUser> IconList = new ArrayList<>();
+
+    List<String> Last_x_pictures= new ArrayList<>();
+    List<String> Last_x_words= new ArrayList<>();
 
     public static final String RESUME_STRING = "Resume";
     public static final String STOP_STRING = "Stop";
-    public static final String LESSON_SHAPES = "shapes";
-    public static final String LESSON_VEHICLES = "vehicles";
-    public static final String LESSON_BODY_PARTS = "bodyParts";
-    public static final String LESSON_BIRDS = "birds";
-    public static final String LESSON_PETS = "pets";
-    public static final String LESSON_WILD_ANIMALS = "wildAnimals";
-    public static final String LESSON_FRUITS = "fruits";
-    public static final String LESSON_HOME = "home";
-    public static final String LESSON_VEGETABLES = "vegetables";
-    public static final String LESSON_DINNER = "dinner";
-    public static final String LESSON_PARK = "park";
-    public static final String LESSON_CLOTHES = "clothes";
-    public static final String LESSON_BEACH = "beach";
-    public static final String LESSON_W_BODY_PARTS = "w_bodyParts";
-    public static final String LESSON_W_ACTIONS = "w_actions";
-    public static final String LESSON_W_WILDANIMALS = "w_wildAnimals";
-    public static final String LESSON_W_FRUITS = "w_fruits";
-    public static final String LESSON_W_VEHICLES = "w_vehicles";
-    public static final String LESSON_W_PETS = "w_pets";
-    public static final String LESSON_W_BIRDS = "w_birds";
+
+//  Map<String, String[]> strtoArrMaps = new HashMap<>();
+//  strtoArrMaps.put(LESSON_FRUITS, fruits);
 
     int stopCounter = 0;
     private Handler mHandler;
     long displayMinTime = 2000; // milliseconds
 
-    String[] masterlistofLessons = {LESSON_WILD_ANIMALS, LESSON_FRUITS, LESSON_VEHICLES, LESSON_PETS, LESSON_BIRDS, LESSON_BODY_PARTS,
-            LESSON_SHAPES, LESSON_HOME, LESSON_VEGETABLES, LESSON_DINNER, LESSON_PARK, LESSON_CLOTHES, LESSON_BEACH,
-            LESSON_W_BODY_PARTS, LESSON_W_ACTIONS, LESSON_W_WILDANIMALS, LESSON_W_FRUITS, LESSON_W_VEHICLES, LESSON_W_PETS, LESSON_W_BIRDS};
-    int[] selectedvalueofLessons = {0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0};
-    String[] selectedlistofLessons = new String[3];
-    int masternoofLessons = masterlistofLessons.length;
-    int position;
-    String[] fullList = new String[100];
-
-    String[] wildAnimals = {"bear", "bison", "butterfly", "cheetah", "crab", "crocodile", "deer", "dolphin", "elephant", "fox", "giraffe", "hippo",
-            "horse", "kangaroo", "koala", "lion", "monkey", "octopus", "orangutan", "panda", "rhinoceros", "shark", "sheep", "snake", "tiger",
-            "turtle", "wolf", "zebra"};
-    String[] fruits = {"apple", "apricot", "banana", "grapes", "jack_fruit", "orange", "papaya", "peach", "pear", "plum", "strawberry", "watermelon",};
-    String[] vehicles = {"ambulance", "boat", "bus", "car", "fire_engine", "helicopter", "motorcycle", "plane", "rocket", "tractor", "train", "truck", "van"};
-    String[] pets = {"cat", "cow", "dog", "pig", "rabbit"};
-    String[] birds = {"butterfly", "duck", "eagle", "flamingo", "hawk", "hen", "ostrich", "owl", "parrot", "sea_gull", "sparrow"};
-    String[] bodyParts = {"eyes", "nose", "mouth", "teeth", "tongue", "chin", "ear", "head", "hair", "fingers", "hands", "feet", "shoulders"};
-    String[] shapes = {"circle", "diamond", "hexagon", "rectangle", "square", "triangle"};
-    String[] home = {"carpet", "chair", "clock", "curtains", "cycle", "fireplace", "lamp", "potty_seat", "sofa", "speaker", "table", "tv"};
-    String[] vegetables = {"carrot", "cauliflower", "eggplant", "green_beans", "lemon", "onion", "peas", "pepper", "potato", "pumpkin", "tomato"};
-    String[] dinner = {"table", "chair", "spoon", "fork", "bowl", "bib", "pasta", "milk", "high_chair"};
-    String[] park = {"bench", "kite", "slide", "swing", "spinner", "roller_slide", "sand_pit", "tree"};
-    String[] clothes = {"diaper", "shorts", "shirt", "bib", "shoes", "socks", "jacket", "towel", "bag"};
-    String[] beach = {"fish", "pail", "crab", "shell", "umbrella", "beach_towel", "sea_gull", "surfboard", "star_fish",};
-
-    String[] w_bodyParts = {"_eyes", "_nose", "_mouth", "_teeth", "_tongue", "_chin", "_ear", "_head", "_hair", "_fingers", "_hands", "_feet", "_shoulders"};
-    String[] w_actions = {"_sit", "_stand", "_come", "_go", "_walk", "_run", "_jump", "_stop"};
-    String[] w_wildAnimals = {"_bear", "_bison", "_butterfly", "_cheetah", "_crab", "_crocodile", "_deer", "_dolphin", "_elephant", "_fox", "_giraffe", "_hippo",
-            "_horse", "_kangaroo", "_koala", "_lion", "_monkey", "_octopus", "_orangutan", "_panda", "_rhinoceros", "_shark", "_sheep", "_snake", "_tiger",
-            "_turtle", "_wolf", "_zebra"};
-    String[] w_fruits = {"_apple", "_apricot", "_banana", "_grapes", "_jack_fruit", "_orange", "_papaya", "_peach", "_pear", "_plum", "_strawberry", "_watermelon",};
-    String[] w_vehicles = {"_ambulance", "_boat", "_bus", "_car", "_fire_engine", "_helicopter", "_motorcycle", "_plane", "_rocket", "_tractor", "_train", "_truck", "_van"};
-    String[] w_pets = {"_cat", "_cow", "_dog", "_pig", "_rabbit"};
-    String[] w_birds = {"_butterfly", "_duck", "_eagle", "_flamingo", "_hawk", "_hen", "_ostrich", "_owl", "_parrot", "_sea_gull", "_sparrow"};
-
-    String[] chosenLesson = pets;
-    int chosenLesssonLength = chosenLesson.length;
-    int nooflessons;
+    int chosenLesssonLength;
     String wordMarker = "_";
+    int quiz = 0;
 
     // added for memory game
-    int memoryGame = 1;
     int[] last_x = new int[20];
     int count_last_x = 0;
     Random r1 = new Random();
@@ -136,7 +83,16 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
-        Log.e("flash_card", " arrived at onCreate");
+
+        InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
+        CsvReader csvFile = new CsvReader(inputStream);
+        IconList = csvFile.read();
+
+        DeckList.clear();
+        chosenLesssonLength = IconList.get(0).getCards().size();
+        for (int i=0; i<chosenLesssonLength; i++){
+            DeckList.add(IconList.get(0).getCards().get(i));
+        }
 
         t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
@@ -158,18 +114,19 @@ public class MainActivity extends AppCompatActivity {
         public void run() {
             Log.e("flash_card", " mUpdate called. stopCounter = " + stopCounter);
             setContentView(R.layout.activity_main);
+
             nextTextMessage(stopCounter);
             nextImage(stopCounter);
-
             double soundLength = nextSound(stopCounter);
+
             long currentDisplayTime = (long) (soundLength + 500); // add 0.5 seconds margin
             if (currentDisplayTime < displayMinTime) // too short
                 currentDisplayTime = displayMinTime;
 
             if (stopCounter < chosenLesssonLength) {
                 mHandler.postDelayed(this, currentDisplayTime);
-                Log.e("Request made for ", chosenLesson[stopCounter]);
-                if (memoryGame == 1) {
+                Log.e("Request made for ", DeckList.get(stopCounter));
+                if (quiz == 1) {
                     memoryStore(stopCounter, gameFrequency, currentDisplayTime);
                 }
                 stopCounter++;
@@ -181,7 +138,7 @@ public class MainActivity extends AppCompatActivity {
     };
 
     public void nextTextMessage(int counter) {
-        String selectedWord = chosenLesson[counter];
+        String selectedWord = DeckList.get(counter);
         Log.e("flash_card ", " selectedWord " + selectedWord);
         //TODO Show lessons name while switching lesson
         if (!selectedWord.isEmpty()) {
@@ -195,7 +152,7 @@ public class MainActivity extends AppCompatActivity {
         //TODO add some basic animation
         ImageView temp1 = (ImageView) findViewById(R.id.imageView1);
         TextView temp3 = (TextView) findViewById(R.id.textReading);
-        String selectedWord = chosenLesson[counter];
+        String selectedWord = DeckList.get(counter);
 
         if ((selectedWord.substring(0, 1)).equals(wordMarker)) {
             temp3.setVisibility(View.VISIBLE);
@@ -204,7 +161,7 @@ public class MainActivity extends AppCompatActivity {
         } else {
             temp1.setVisibility(View.VISIBLE);
             temp3.setVisibility(View.INVISIBLE);
-            String selectedPicture = "@drawable/" + chosenLesson[counter];
+            String selectedPicture = "@drawable/" + selectedWord;
             int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
             //Drawable pic = getResources().getDrawable(pic_id);  // take picture from that location and save it in a drawable pic
             Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
@@ -216,7 +173,7 @@ public class MainActivity extends AppCompatActivity {
 
     public double nextSound(int counter) {
 
-        String voiceFile = chosenLesson[counter];
+        String voiceFile = DeckList.get(counter);
 
         int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
         Log.e("flash_card ", "resID = " + resID);
@@ -264,161 +221,20 @@ public class MainActivity extends AppCompatActivity {
         }
     }
 
-    public void changeselections(View v) {
-        mHandler.removeCallbacksAndMessages(null);
-        setContentView(R.layout.usersettings);
-        for (int i = 0; i < selectedvalueofLessons.length; i++) {
-            selectedvalueofLessons[i] = 0;
-        }
-        nooflessons = 0;
-        CheckBox temp1 = (CheckBox) findViewById(R.id.memoryGameCheckBox);
-        if (memoryGame == 1) {
-            temp1.setChecked(true);
-        } else {
-            temp1.setChecked(false);
-        }
-    }
-
-    public void selectSet(View v) {
-        String clickedLesson = (String) v.getTag();
-        int tagValue = Integer.parseInt(clickedLesson) - 1000;
-        Log.e("clciked Tag =", " " + tagValue);
-
-        position++;
-        float alpha = v.getAlpha();
-        if (alpha == 1) {
-            alpha = alpha / 2;
-        } else {
-            alpha = alpha * 2;
-        }
-        v.setAlpha(alpha);
-
-        if (alpha != 1) {
-            selectedvalueofLessons[tagValue] = position;// TODO use the saved position
-        } else {
-            selectedvalueofLessons[tagValue] = 0;
-        }
-        ;
-        Log.e("tag= " + tagValue + ";a = " + alpha + ";pos= " + position, "selectedvalue[" + tagValue + "] =" + selectedvalueofLessons[tagValue]);
-    }
-
-    public void selectionReset(View v) {
-        int[] picIds = new int[]{R.id.image1000, R.id.image1001, R.id.image1002, R.id.image1003, R.id.image1004,
-                R.id.image1005, R.id.image1006, R.id.image1007, R.id.image1008, R.id.image1009, R.id.image1010,
-                R.id.image1011, R.id.image1012, R.id.image1013, R.id.image1014, R.id.image1015, R.id.image1016,
-                R.id.image1017, R.id.image1018, R.id.image1019, R.id.image1020};
-        for (int i = 0; i < 21; i++) {
-            ImageView temp1 = (ImageView) findViewById(picIds[i]);
-            temp1.setAlpha(1.0f);
-        }
-        for (int i = 0; i < selectedvalueofLessons.length; i++) {
-            selectedvalueofLessons[i] = 0;
-        }
-        position = 0;
-    }
-
-    public void selectionDone(View v) {
-        int j = 0; // TODO rename j to numSelected
-        int numClicked = position;
-        int numSelected = 0;
-        position = 0;
-
-        int[] positionArray = new int[numClicked];
-        for (int i = 0; i < numClicked; i++)
-            positionArray[i] = -1; // -1 means no lesson in that position
-        for (int i = 0; i < masternoofLessons; i++) {
-            if (selectedvalueofLessons[i] > 0) {
-                numSelected++;
-                positionArray[selectedvalueofLessons[i] - 1] = i;
-                Log.e("posArray", "[" + (selectedvalueofLessons[i] - 1) + "] = " + i);
-            }
-        }
-
-        for (int i = 0; i < numClicked; i++) {
-            if (positionArray[i] >= 0) {// valid lesson at this position
-                int cardIndex = positionArray[i];
-                System.arraycopy(masterlistofLessons, cardIndex, selectedlistofLessons, j, 1);
-                Log.e("slctdlistofLe[" + j + "] = " + selectedlistofLessons[j], "pos = " + j);
-                j++;
-            }
-            Log.e("i= " + i, "j =" + j);
-        }
-
-        Log.e("started ", " hashtags");
-        Map<String, String[]> strtoArrMaps = new HashMap<>();
-        strtoArrMaps.put(LESSON_FRUITS, fruits);
-        strtoArrMaps.put(LESSON_WILD_ANIMALS, wildAnimals);
-        strtoArrMaps.put(LESSON_PETS, pets);
-        strtoArrMaps.put(LESSON_BIRDS, birds);
-        strtoArrMaps.put(LESSON_BODY_PARTS, bodyParts);
-        strtoArrMaps.put(LESSON_VEHICLES, vehicles);
-        strtoArrMaps.put(LESSON_SHAPES, shapes);
-        strtoArrMaps.put(LESSON_HOME, home);
-        strtoArrMaps.put(LESSON_VEGETABLES, vegetables);
-        strtoArrMaps.put(LESSON_DINNER, dinner);
-        strtoArrMaps.put(LESSON_PARK, park);
-        strtoArrMaps.put(LESSON_CLOTHES, clothes);
-        strtoArrMaps.put(LESSON_BEACH, beach);
-
-        strtoArrMaps.put(LESSON_W_BODY_PARTS, w_bodyParts);
-        strtoArrMaps.put(LESSON_W_ACTIONS, w_actions);
-        strtoArrMaps.put(LESSON_W_WILDANIMALS, w_wildAnimals);
-        strtoArrMaps.put(LESSON_W_FRUITS, w_fruits);
-        strtoArrMaps.put(LESSON_W_VEHICLES, w_vehicles);
-        strtoArrMaps.put(LESSON_W_PETS, w_pets);
-        strtoArrMaps.put(LESSON_W_BIRDS, w_birds);
-
-        int k = 0;
-        if (j == 0) {
-            System.arraycopy(fruits, 0, fullList, 0, fruits.length);
-            k = fruits.length;
-        } else {
-            for (int i = 0; i < j; i++) {
-                if (i == 0) {
-                    System.arraycopy(strtoArrMaps.get(selectedlistofLessons[i]), 0, fullList, 0, strtoArrMaps.get(selectedlistofLessons[i]).length);
-                    k = k + strtoArrMaps.get(selectedlistofLessons[i]).length;
-                } else {
-                    System.arraycopy(strtoArrMaps.get(selectedlistofLessons[i]), 0, fullList, k, strtoArrMaps.get(selectedlistofLessons[i]).length);
-                    k = k + strtoArrMaps.get(selectedlistofLessons[i]).length;
-                }
-            }
-        }
-
-        for (int l = 0; l < k; l++) {
-            Log.e("fulllist[" + l + "] = ", fullList[l]);
-        }
-        CheckBox temp1 = (CheckBox) findViewById(R.id.memoryGameCheckBox);
-        if (temp1.isChecked()) {
-            memoryGame = 1;
-        } else {
-            memoryGame = 0;
-        }
-        Log.e("memory game =", " " + memoryGame);
-
-        setContentView(R.layout.activity_main);
-        stopCounter = 0;
-        count_last_x = 0;
-
-        chosenLesson = fullList;
-        chosenLesssonLength = k;
-        Log.e("chosen lesson length =", " " + chosenLesssonLength);
-
-        //mHandler = new Handler();
-        mHandler.post(mUpdate);
-    }
-
     public void memoryStore(int counter, int frequency, long timeToWaitBeforeStartingGame) {
         // memory game
         //TODO: remove voice overlap from previous picture
+        //TODO: make this work for reading as well
+        Last_x_pictures.add(DeckList.get(counter));
         last_x[count_last_x] = counter;
-        Log.e("stored card " + count_last_x + " = ", last_x[count_last_x] + " i.e. " + chosenLesson[last_x[count_last_x]]);
+        Log.d("stored card ", Last_x_pictures.get(Last_x_pictures.size() - 1));
+
         if (count_last_x != frequency - 1) {
             count_last_x = (count_last_x + 1) % frequency;
         } else {
             // cancel next slide in activity_main
             mHandler.removeCallbacksAndMessages(null);
             Log.e("removed callbacks", "");
-
             // go to memory1 layout after some delay
             Runnable memoryGameObj = new memoryGameRunnable(frequency);
             mHandler.postDelayed(memoryGameObj, timeToWaitBeforeStartingGame);
@@ -429,9 +245,9 @@ public class MainActivity extends AppCompatActivity {
         String clickedCard = (String) v.getTag();
         int tagValue = Integer.parseInt(clickedCard);
         String veryGood = "clapclapclap";
-        String tryAgain = "Try again. Which one is " + chosenLesson[last_x[card3]] + "???";
+        String tryAgain = "Try again. Which one is " + Last_x_pictures.get(card3) + "???";
         tryAgain = tryAgain.replaceAll("_", " ");
-        String giveTheAnswer = "Thanks for trying. This is " + chosenLesson[last_x[card3]] + "!";
+        String giveTheAnswer = "Thanks for trying. This is " + Last_x_pictures.get(card3)+ "!";
         giveTheAnswer = giveTheAnswer.replaceAll("_", " ");
         //TODO - need to stop the current playing message once user clicks
 
@@ -442,13 +258,17 @@ public class MainActivity extends AppCompatActivity {
 
             int resID = this.getResources().getIdentifier(veryGood, "raw", this.getPackageName());
             pronouncePlay = MediaPlayer.create(this, resID);
+            if (t1.isSpeaking()){
+                t1.stop();
+            }
             pronouncePlay.start();
             long soundLength1 = pronouncePlay.getDuration();
+            Last_x_pictures.clear();
             setContentView(R.layout.activity_main);
             nextImage(last_x[card3]);
             nextTextMessage(last_x[card3]);
-            //t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
             mHandler.postDelayed(mUpdate, soundLength1 + 500);
+            //t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
             //setContentView(R.layout.activity_main);
         } else {
             Log.e("incorrect", clickedCard);
@@ -461,6 +281,7 @@ public class MainActivity extends AppCompatActivity {
             t1.speak(giveTheAnswer, TextToSpeech.QUEUE_FLUSH, null);
         }
         if (endTheGame == 1) {
+            Last_x_pictures.clear();
             setContentView(R.layout.activity_main);
             nextImage(last_x[card3]);
             nextTextMessage(last_x[card3]);
@@ -492,14 +313,13 @@ public class MainActivity extends AppCompatActivity {
             }
             Log.e("r1= " + card1, "; r2 = " + card2 + "; sel = " + card3);
             Log.e("c1 = " + last_x[card1], "; c2 = " + last_x[card2] + "; sel = " + last_x[card3]);
-            Log.e("c1 = " + chosenLesson[last_x[card1]], "; c2 = " + chosenLesson[last_x[card2]] + "; sel = " + chosenLesson[last_x[card3]]);
+            Log.e("c1 = " + Last_x_pictures.get(card1), "; c2 = " + Last_x_pictures.get(card2) + "; sel = " + Last_x_pictures.get(card3));
 
             memGameIncorrectAnswer = 0;
             memoryGameUpdatePicture();
-            String memoryquestion = "Which one is " + chosenLesson[last_x[card3]];
+            String memoryquestion = "Which one is " + Last_x_pictures.get(card3);
             memoryquestion = memoryquestion.replaceAll("_", " ");
             Log.e(memoryquestion, " ");
-
             t1.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
@@ -507,35 +327,27 @@ public class MainActivity extends AppCompatActivity {
     public void memoryGameUpdatePicture() {
         setContentView(R.layout.memory1);
 
-        String memoryPicture1 = "@drawable/" + chosenLesson[last_x[card1]];
+        String memoryPicture1 = "@drawable/" + Last_x_pictures.get(card1);
         int pic1_id = getResources().getIdentifier(memoryPicture1, null, getPackageName());
         Drawable pic1 = ContextCompat.getDrawable(this, pic1_id);
         ImageView leftImage = (ImageView) findViewById(R.id.memory1left);
         leftImage.setImageDrawable(pic1);
 
-        String memoryPicture2 = "@drawable/" + chosenLesson[last_x[card2]];
+        String memoryPicture2 = "@drawable/" + Last_x_pictures.get(card2);
         int pic2_id = getResources().getIdentifier(memoryPicture2, null, getPackageName());
         Drawable pic2 = ContextCompat.getDrawable(this, pic2_id);
         ImageView rightImage = (ImageView) findViewById(R.id.memory1right);
         rightImage.setImageDrawable(pic2);
-
     }
 
-
-    public void dbasetest (View v) {
-        setContentView(R.layout.databasecreate);
-    }
-
-    //TODO: Should we set onclicklistener to the buttons of the memory game?
-
-    public void gridViewtest(View v) {
+    public void userSelections(View v) {
         mHandler.removeCallbacksAndMessages(null);
         setContentView(R.layout.usersetting_v2);
 
-        InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
-        CsvReader csvFile = new CsvReader(inputStream);
-        //final List<DisplayDataUser> IconList = csvFile.read();
-        IconList = csvFile.read();
+//        InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
+//        CsvReader csvFile = new CsvReader(inputStream);
+//        //final List<DisplayDataUser> IconList = csvFile.read();
+//        IconList = csvFile.read();
 
         final GridView gvdummy = (GridView) findViewById(R.id.gv1);
         // Need an array adapter to take the source into the Gridview
@@ -634,25 +446,25 @@ public class MainActivity extends AppCompatActivity {
                 }
             }
         }
-        Log.d("Length = ", " "+DeckList.size());
-        for (int i =0; i<DeckList.size(); i++) {
+        chosenLesssonLength = DeckList.size();
+        Log.d("Length = ", " "+ chosenLesssonLength);
+        for (int i =0; i<chosenLesssonLength; i++) {
             Log.d("Card "+ i, DeckList.get(i));
         }
+        CheckBox temp1 = (CheckBox) findViewById(R.id.quizcheckBox);
+        if (temp1.isChecked()) {
+            quiz = 1;
+        } else {
+            quiz = 0;
+        }
+
+        Log.d("quiz selection = ", " "+quiz);
+
+        setContentView(R.layout.activity_main);
+        stopCounter = 0;
+        mHandler.post(mUpdate);
+
     }
 }
 
 //TODO Bring back rating bar
-//<RatingBar
-//android:layout_width="wrap_content"
-//        android:layout_height="wrap_content"
-//        android:scaleX="0.25"
-//        android:scaleY="0.25"
-//        android:id="@+id/iconRating"
-//        android:transformPivotX="0dp"
-//        android:rating= "3"
-//        android:layout_below="@+id/iconText"
-//        android:numStars="5"
-//        android:clickable="false"
-//        android:focusable="false"
-//        android:focusableInTouchMode="false"
-//        />

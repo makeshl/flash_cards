@@ -19,7 +19,7 @@
         android:layout_alignParentBottom="true"
         android:layout_alignParentRight="true"
         android:clickable="true"
-        android:onClick="changeselections"
+        android:onClick="userSelections"
         android:textSize="12sp"
         android:background="#FFFFFF"
         />
@@ -53,14 +53,12 @@
         android:text="picture"
         android:textSize="12sp"
         android:layout_alignParentBottom="true"
-        android:layout_centerHorizontal="true"
-        android:onClick="gridViewtest" />
+        android:layout_centerHorizontal="true" />
 
     <TextView
         android:layout_width="wrap_content"
         android:layout_height="wrap_content"
         android:textAppearance="?android:attr/textAppearanceLarge"
-        android:text="Reading"
         android:textSize="80sp"
         android:id="@+id/textReading"
         android:layout_centerVertical="true"
