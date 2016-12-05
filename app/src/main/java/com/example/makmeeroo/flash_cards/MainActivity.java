@@ -3,6 +3,7 @@ package com.example.makmeeroo.flash_cards;
 //android:src="@drawable/art"
 
 import android.content.Context;
+import android.content.SharedPreferences;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.os.Bundle;
@@ -17,31 +18,19 @@ import android.view.ViewGroup;
 import android.view.WindowManager;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
-
-
-import android.widget.ImageView;
-
-import android.widget.RatingBar;
-import android.widget.TextView;
-
-
 import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
-import android.widget.Toast;
 
 import com.example.makmeeroo.flash_cards.DisplayData.DisplayDataUser;
 
 import java.io.InputStream;
 import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
-import java.util.Map;
 import java.util.Random;
 
 // TODO http://www.tutorialspoint.com/java/
@@ -60,6 +49,19 @@ public class MainActivity extends AppCompatActivity {
 //  Map<String, String[]> strtoArrMaps = new HashMap<>();
 //  strtoArrMaps.put(LESSON_FRUITS, fruits);
 
+
+    private static final int PREFERENCE_MODE_PRIVATE = 0;
+    private SharedPreferences preferenceSettings; // = super.getPreferences(PREFERENCE_MODE_PRIVATE);
+    private SharedPreferences.Editor preferenceEditor; // = preferenceSettings.edit();
+    boolean preferencesCreated = false;
+
+    public SharedPreferences getSharedPreference() {
+        return preferenceSettings;
+    }
+    public SharedPreferences.Editor getPreferenceEditor() {
+        return preferenceEditor;
+    }
+
     int stopCounter = 0;
     private Handler mHandler;
     long displayMinTime = 2000; // milliseconds
@@ -72,7 +74,7 @@ public class MainActivity extends AppCompatActivity {
     int[] last_x = new int[20];
     int count_last_x = 0;
     Random r1 = new Random();
-    int card1, card2, card3, badvariable, memGameIncorrectAnswer;
+    int card1, card2, card3, badVariable, memGameIncorrectAnswer;
     int gameFrequency = 5;
 
     MediaPlayer pronouncePlay;
@@ -87,6 +89,19 @@ public class MainActivity extends AppCompatActivity {
         InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
         CsvReader csvFile = new CsvReader(inputStream);
         IconList = csvFile.read();
+
+        /*
+        SharedPreferences.Editor prefEditor = getPreferenceEditor();
+        // test commit
+        Boolean prefExist = true;
+        prefEditor.putBoolean("prefExist",prefExist);
+        //prefEditor.apply();
+
+        SharedPreferences prefSettings = getSharedPreference();
+        Boolean testWrite = prefSettings.getBoolean("prefExist",false);
+        Log.d("flash_cards", "testWrite is " + testWrite);
+         */
+
 
         DeckList.clear();
         chosenLesssonLength = IconList.get(0).getCards().size();
@@ -176,21 +191,21 @@ public class MainActivity extends AppCompatActivity {
         String voiceFile = DeckList.get(counter);
 
         int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
-        Log.e("flash_card ", "resID = " + resID);
+        Log.d("flash_card ", "resID = " + resID);
 
         double soundLength = 0;
         if (resID == 0) {
-            Log.e("voice file not found ", voiceFile);
+            Log.d("flash_card ", "voice generated : " + voiceFile);
             voiceFile = voiceFile.replaceAll("_", " ");
             t1.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
         } else {
-            Log.e("voice file found ", voiceFile);
+            Log.d("flash_card ", "voice file found " + voiceFile);
             pronouncePlay = MediaPlayer.create(this, resID);
             pronouncePlay.start();
             soundLength = pronouncePlay.getDuration(); // returns duration in milliseconds
-            Log.e("voice file found ", voiceFile + soundLength);
+            Log.d("flash_card ", "voice file found " + voiceFile + soundLength);
         }
-        Log.e("Finished playing ", voiceFile);
+        Log.d("flash_card ", "Finished playing " + voiceFile);
 
         return soundLength;
 // TODO debug silent cat problem
@@ -199,7 +214,7 @@ public class MainActivity extends AppCompatActivity {
 // TODO MediaPlayer finalized without being released
     }
 
-    public void stopresume(View v) {
+    public void stopResume(View v) {
 
         Button mStartStop = (Button) findViewById(R.id.button2);
         String temp1 = mStartStop.getText().toString();
@@ -253,7 +268,7 @@ public class MainActivity extends AppCompatActivity {
 
         int endTheGame = 0;
 
-        if (tagValue == badvariable) {
+        if (tagValue == badVariable) {
             Log.e("correct ", clickedCard);
 
             int resID = this.getResources().getIdentifier(veryGood, "raw", this.getPackageName());
@@ -306,10 +321,10 @@ public class MainActivity extends AppCompatActivity {
             }
             if (r1.nextInt(2) == 0) {
                 card3 = card1;
-                badvariable = 0;
+                badVariable = 0;
             } else {
                 card3 = card2;
-                badvariable = 1;
+                badVariable = 1;
             }
             Log.e("r1= " + card1, "; r2 = " + card2 + "; sel = " + card3);
             Log.e("c1 = " + last_x[card1], "; c2 = " + last_x[card2] + "; sel = " + last_x[card3]);
@@ -342,7 +357,13 @@ public class MainActivity extends AppCompatActivity {
 
     public void userSelections(View v) {
         mHandler.removeCallbacksAndMessages(null);
+        if (pronouncePlay.isPlaying()) {
+            pronouncePlay.reset();
+        }
+        if (t1.isSpeaking())
+            t1.stop();
         setContentView(R.layout.usersetting_v2);
+
 
 //        InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
 //        CsvReader csvFile = new CsvReader(inputStream);
