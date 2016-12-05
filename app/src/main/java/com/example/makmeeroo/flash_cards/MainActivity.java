@@ -55,11 +55,18 @@ public class MainActivity extends AppCompatActivity {
     private SharedPreferences.Editor preferenceEditor; // = preferenceSettings.edit();
     boolean preferencesCreated = false;
 
+    public void setSharedPreference() {
+        preferenceSettings = super.getPreferences(PREFERENCE_MODE_PRIVATE);
+        return;
+    }
     public SharedPreferences getSharedPreference() {
         return preferenceSettings;
     }
     public SharedPreferences.Editor getPreferenceEditor() {
         return preferenceEditor;
+    }
+    public void setPreferenceEditor() {
+        preferenceEditor = preferenceSettings.edit();
     }
 
     int stopCounter = 0;
@@ -78,7 +85,26 @@ public class MainActivity extends AppCompatActivity {
     int gameFrequency = 5;
 
     MediaPlayer pronouncePlay;
-    TextToSpeech t1;
+    TextToSpeech textToSpeechObj;
+
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+//        SharedPreferences.Editor prefEditor = getPreferenceEditor();
+//        // test commit
+//        Boolean prefExist = true;
+//        prefEditor.putBoolean("prefExist",prefExist);
+//        prefEditor.apply();
+
+        SharedPreferences prefSettings = getSharedPreference();
+        Boolean testWrite = prefSettings.getBoolean("prefExist",false);
+        Log.d("flash_cards", "onPause: testWrite is " + testWrite);
+
+        // release media player
+        stopMediaPlayers();
+
+    }
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -90,17 +116,19 @@ public class MainActivity extends AppCompatActivity {
         CsvReader csvFile = new CsvReader(inputStream);
         IconList = csvFile.read();
 
-        /*
+        ///*
+        setSharedPreference();
+        setPreferenceEditor();
         SharedPreferences.Editor prefEditor = getPreferenceEditor();
         // test commit
         Boolean prefExist = true;
         prefEditor.putBoolean("prefExist",prefExist);
-        //prefEditor.apply();
+        prefEditor.apply();
 
         SharedPreferences prefSettings = getSharedPreference();
         Boolean testWrite = prefSettings.getBoolean("prefExist",false);
         Log.d("flash_cards", "testWrite is " + testWrite);
-         */
+         //*/
 
 
         DeckList.clear();
@@ -109,14 +137,14 @@ public class MainActivity extends AppCompatActivity {
             DeckList.add(IconList.get(0).getCards().get(i));
         }
 
-        t1 = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+        textToSpeechObj = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
             @Override
             public void onInit(int status) {
                 if (status == TextToSpeech.SUCCESS) {
                     Log.e("entered", " tts object");
-                    t1.setLanguage(Locale.US);
-                    t1.setSpeechRate(0.75f);
-                    t1.setPitch(1.0f);
+                    textToSpeechObj.setLanguage(Locale.US);
+                    textToSpeechObj.setSpeechRate(0.75f);
+                    textToSpeechObj.setPitch(1.0f);
                 }
             }
         });
@@ -193,11 +221,13 @@ public class MainActivity extends AppCompatActivity {
         int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
         Log.d("flash_card ", "resID = " + resID);
 
+        stopMediaPlayers();
+
         double soundLength = 0;
         if (resID == 0) {
             Log.d("flash_card ", "voice generated : " + voiceFile);
             voiceFile = voiceFile.replaceAll("_", " ");
-            t1.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
+            textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
         } else {
             Log.d("flash_card ", "voice file found " + voiceFile);
             pronouncePlay = MediaPlayer.create(this, resID);
@@ -208,10 +238,13 @@ public class MainActivity extends AppCompatActivity {
         Log.d("flash_card ", "Finished playing " + voiceFile);
 
         return soundLength;
-// TODO debug silent cat problem
-// TODO check voice file length, and set time based on that
-// TODO use voice if available, if not use text to speech - COMPLETE
-// TODO MediaPlayer finalized without being released
+    }
+
+    public void stopMediaPlayers () {
+        if ((null != pronouncePlay) && pronouncePlay.isPlaying())
+            pronouncePlay.reset();
+        if ((null != textToSpeechObj) && textToSpeechObj.isSpeaking())
+            textToSpeechObj.stop();
     }
 
     public void stopResume(View v) {
@@ -222,11 +255,8 @@ public class MainActivity extends AppCompatActivity {
         switch (temp1) {
             case STOP_STRING:
                 mHandler.removeCallbacksAndMessages(null); // fix this to stop only mUpdate; also stop media player first (perhaps add a function for mHandler)
-                if (pronouncePlay.isPlaying()) {
-                    pronouncePlay.reset();
-                }
-                if (t1.isSpeaking())
-                    t1.stop();
+                stopMediaPlayers();
+
                 mStartStop.setText(RESUME_STRING);
                 break;
             case RESUME_STRING:
@@ -272,10 +302,8 @@ public class MainActivity extends AppCompatActivity {
             Log.e("correct ", clickedCard);
 
             int resID = this.getResources().getIdentifier(veryGood, "raw", this.getPackageName());
+            stopMediaPlayers();
             pronouncePlay = MediaPlayer.create(this, resID);
-            if (t1.isSpeaking()){
-                t1.stop();
-            }
             pronouncePlay.start();
             long soundLength1 = pronouncePlay.getDuration();
             Last_x_pictures.clear();
@@ -283,21 +311,24 @@ public class MainActivity extends AppCompatActivity {
             nextImage(last_x[card3]);
             nextTextMessage(last_x[card3]);
             mHandler.postDelayed(mUpdate, soundLength1 + 500);
-            //t1.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
+            //textToSpeechObj.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
             //setContentView(R.layout.activity_main);
         } else {
             Log.e("incorrect", clickedCard);
-            t1.speak(tryAgain, TextToSpeech.QUEUE_FLUSH, null);
+            stopMediaPlayers();
+            textToSpeechObj.speak(tryAgain, TextToSpeech.QUEUE_FLUSH, null);
             memGameIncorrectAnswer++;
         }
         if (memGameIncorrectAnswer >= 2) {
             endTheGame = 1;
+            stopMediaPlayers();
             Log.e("... moving on", clickedCard);
-            t1.speak(giveTheAnswer, TextToSpeech.QUEUE_FLUSH, null);
+            textToSpeechObj.speak(giveTheAnswer, TextToSpeech.QUEUE_FLUSH, null);
         }
         if (endTheGame == 1) {
             Last_x_pictures.clear();
             setContentView(R.layout.activity_main);
+            stopMediaPlayers();
             nextImage(last_x[card3]);
             nextTextMessage(last_x[card3]);
             mHandler.postDelayed(mUpdate, 2 * displayMinTime);
@@ -335,7 +366,8 @@ public class MainActivity extends AppCompatActivity {
             String memoryquestion = "Which one is " + Last_x_pictures.get(card3);
             memoryquestion = memoryquestion.replaceAll("_", " ");
             Log.e(memoryquestion, " ");
-            t1.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
+            stopMediaPlayers();
+            textToSpeechObj.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
         }
     }
 
@@ -357,11 +389,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void userSelections(View v) {
         mHandler.removeCallbacksAndMessages(null);
-        if (pronouncePlay.isPlaying()) {
-            pronouncePlay.reset();
-        }
-        if (t1.isSpeaking())
-            t1.stop();
+        stopMediaPlayers();
         setContentView(R.layout.usersetting_v2);
 
 
