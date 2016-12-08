@@ -24,6 +24,7 @@ import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.example.makmeeroo.flash_cards.DisplayData.DisplayDataUser;
 
@@ -513,6 +514,10 @@ public class MainActivity extends AppCompatActivity {
 
     public void updateDeckList() {
         //TODO: Check error condition. Maybe use previous selection if blank?
+        if (SelectionList.isEmpty()) {
+            SelectionList.add(IconList.get(0).getLessonName());
+            Toast.makeText(getApplicationContext(),"selection was empty; defaulting to " + SelectionList.get(0),Toast.LENGTH_LONG).show();
+        }
         DeckList.clear();
         for (int i=0; i<SelectionList.size();i++ ){
             for (int j =0; j<IconList.size(); j++){
