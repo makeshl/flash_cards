@@ -112,12 +112,16 @@ public class MainActivity extends AppCompatActivity {
          //*/
 
 
+/*
         DeckList.clear();
+        DeckList.add("art");
         chosenLesssonLength = IconList.get(0).getCards().size();
         for (int i=0; i<chosenLesssonLength; i++){
             DeckList.add(IconList.get(0).getCards().get(i));
         }
-
+*/
+        SelectionList.add(IconList.get(0).getLessonName());
+        updateDeckList();
     }
 
     @Override
@@ -131,11 +135,16 @@ public class MainActivity extends AppCompatActivity {
 //        prefEditor.apply();
 
         SharedPreferences prefSettings = getSharedPreference();
-        Boolean testWrite = prefSettings.getBoolean("prefExist",false);
+        Boolean testWrite = prefSettings.getBoolean("prefExist", false);
         Log.d("flash_cards", "onPause: testWrite is " + testWrite);
 
         // release media player
         stopMediaPlayers();
+
+        // cancel other posts, and launch afresh
+        if (mHandler != null)
+            mHandler.removeCallbacksAndMessages(null);
+        Log.d("flash_cards", "onPause - remove callbacks on main handler");
 
     }
 
@@ -158,9 +167,16 @@ public class MainActivity extends AppCompatActivity {
             });
         Log.d("flash_cards", "onResume textToSpeech created ");
 
-        if (mHandler==null)
+        if (mHandler==null) {
             mHandler = new Handler();
+            Log.d("flash_cards", "onResume - create main handler");
+        }
+        else {        // cancel other posts, and launch afresh
+            mHandler.removeCallbacksAndMessages(null);
+            Log.d("flash_cards", "onResume - remove callbacks on main handler");
+        }
         mHandler.post(mUpdate);
+        //mHandler.postDelayed(mUpdate, displayMinTime);
 
     }
 
@@ -426,10 +442,10 @@ public class MainActivity extends AppCompatActivity {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
 
-                Log.d("Arrived", " in grid view selection");
-                Log.d("pos = ", " " + position);
+                Log.d("flash_cards", "Arrived in grid view selection");
+                Log.d("flash_cards", "pos = " + position);
                 String selectedLesson = IconList.get(position).getLessonName();
-                Log.d("selected lesson = ", selectedLesson);
+                Log.d("flash_cards", "selected lesson = " + selectedLesson);
                 SelectionList.add(selectedLesson);
                 adapter2.notifyDataSetChanged();
             }
@@ -438,8 +454,8 @@ public class MainActivity extends AppCompatActivity {
         lvdummy.setOnItemClickListener(new AdapterView.OnItemClickListener() {
             @Override
             public void onItemClick(AdapterView<?> parent, View view, int position, long id) {
-                Log.d("Arrived", " in list view deletion");
-                Log.d("pos = ", " " + position);
+                Log.d("flash_cards", "Arrived in list view deletion");
+                Log.d("flash_cards", "pos = " + position);
                 SelectionList.remove(position);
                 adapter2.notifyDataSetChanged();
             }
@@ -495,7 +511,7 @@ public class MainActivity extends AppCompatActivity {
 
     }
 
-    public void selectionComplete(View v) {
+    public void updateDeckList() {
         //TODO: Check error condition. Maybe use previous selection if blank?
         DeckList.clear();
         for (int i=0; i<SelectionList.size();i++ ){
@@ -509,10 +525,14 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         chosenLesssonLength = DeckList.size();
-        Log.d("Length = ", " "+ chosenLesssonLength);
+        Log.d("flash_cards", "Length = "+ chosenLesssonLength);
         for (int i =0; i<chosenLesssonLength; i++) {
-            Log.d("Card "+ i, DeckList.get(i));
+            Log.d("flash_cards", "Card "+ i + DeckList.get(i));
         }
+    }
+
+    public void selectionComplete(View v) {
+        updateDeckList();
         CheckBox temp1 = (CheckBox) findViewById(R.id.quizcheckBox);
         if (temp1.isChecked()) {
             quiz = 1;
@@ -520,10 +540,12 @@ public class MainActivity extends AppCompatActivity {
             quiz = 0;
         }
 
-        Log.d("quiz selection = ", " "+quiz);
+        Log.d("flash_cards","quiz selection = "+quiz);
 
         setContentView(R.layout.activity_main);
         stopCounter = 0;
+        mHandler.removeCallbacksAndMessages(mUpdate);
+        stopMediaPlayers();
         mHandler.post(mUpdate);
 
     }

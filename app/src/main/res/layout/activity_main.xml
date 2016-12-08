@@ -38,13 +38,16 @@
         />
 
     <ImageView
+        android:adjustViewBounds="true"
         android:layout_width= "match_parent"
         android:layout_height="match_parent"
         android:layout_above="@id/button1"
         android:id="@+id/imageView1"
         android:clickable="true"
         android:onClick="stopResume"
-        />
+        android:layout_alignParentTop="true"
+        android:layout_alignRight="@+id/button1"
+        android:layout_alignEnd="@+id/button1" />
 
     <TextView
         android:id="@+id/textView"
