@@ -70,7 +70,7 @@ public class MainActivity extends AppCompatActivity {
     }
 
     int stopCounter = 0;
-    private Handler mHandler;
+    private Handler mHandler = null;
     long displayMinTime = 2000; // milliseconds
 
     int chosenLesssonLength;
@@ -84,27 +84,8 @@ public class MainActivity extends AppCompatActivity {
     int card1, card2, card3, badVariable, memGameIncorrectAnswer;
     int gameFrequency = 5;
 
-    MediaPlayer pronouncePlay;
-    TextToSpeech textToSpeechObj;
-
-    @Override
-    protected void onPause() {
-        super.onPause();
-
-//        SharedPreferences.Editor prefEditor = getPreferenceEditor();
-//        // test commit
-//        Boolean prefExist = true;
-//        prefEditor.putBoolean("prefExist",prefExist);
-//        prefEditor.apply();
-
-        SharedPreferences prefSettings = getSharedPreference();
-        Boolean testWrite = prefSettings.getBoolean("prefExist",false);
-        Log.d("flash_cards", "onPause: testWrite is " + testWrite);
-
-        // release media player
-        stopMediaPlayers();
-
-    }
+    MediaPlayer pronouncePlay = null;
+    TextToSpeech textToSpeechObj = null;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
@@ -137,25 +118,55 @@ public class MainActivity extends AppCompatActivity {
             DeckList.add(IconList.get(0).getCards().get(i));
         }
 
-        textToSpeechObj = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-            @Override
-            public void onInit(int status) {
-                if (status == TextToSpeech.SUCCESS) {
-                    Log.e("entered", " tts object");
-                    textToSpeechObj.setLanguage(Locale.US);
-                    textToSpeechObj.setSpeechRate(0.75f);
-                    textToSpeechObj.setPitch(1.0f);
-                }
-            }
-        });
+    }
 
-        mHandler = new Handler();
+    @Override
+    protected void onPause() {
+        super.onPause();
+
+//        SharedPreferences.Editor prefEditor = getPreferenceEditor();
+//        // test commit
+//        Boolean prefExist = true;
+//        prefEditor.putBoolean("prefExist",prefExist);
+//        prefEditor.apply();
+
+        SharedPreferences prefSettings = getSharedPreference();
+        Boolean testWrite = prefSettings.getBoolean("prefExist",false);
+        Log.d("flash_cards", "onPause: testWrite is " + testWrite);
+
+        // release media player
+        stopMediaPlayers();
+
+    }
+
+    @Override
+    protected void onResume() {
+        super.onResume();
+        Log.d("flash_cards", "onResume is called");
+
+        if ( textToSpeechObj == null )
+            textToSpeechObj = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+                @Override
+                public void onInit(int status) {
+                    if (status == TextToSpeech.SUCCESS) {
+                        Log.d("flash_cards", "entered tts object");
+                        textToSpeechObj.setLanguage(Locale.US);
+                        textToSpeechObj.setSpeechRate(0.75f);
+                        textToSpeechObj.setPitch(1.0f);
+                    }
+                }
+            });
+        Log.d("flash_cards", "onResume textToSpeech created ");
+
+        if (mHandler==null)
+            mHandler = new Handler();
         mHandler.post(mUpdate);
+
     }
 
     private Runnable mUpdate = new Runnable() {
         public void run() {
-            Log.e("flash_card", " mUpdate called. stopCounter = " + stopCounter);
+            Log.d("flash_cards", " mUpdate called. stopCounter = " + stopCounter);
             setContentView(R.layout.activity_main);
 
             nextTextMessage(stopCounter);
@@ -168,7 +179,7 @@ public class MainActivity extends AppCompatActivity {
 
             if (stopCounter < chosenLesssonLength) {
                 mHandler.postDelayed(this, currentDisplayTime);
-                Log.e("Request made for ", DeckList.get(stopCounter));
+                Log.d("flash_cards", "Request made for " + DeckList.get(stopCounter));
                 if (quiz == 1) {
                     memoryStore(stopCounter, gameFrequency, currentDisplayTime);
                 }
@@ -182,7 +193,7 @@ public class MainActivity extends AppCompatActivity {
 
     public void nextTextMessage(int counter) {
         String selectedWord = DeckList.get(counter);
-        Log.e("flash_card ", " selectedWord " + selectedWord);
+        Log.d("flash_cards", " selectedWord " + selectedWord);
         //TODO Show lessons name while switching lesson
         if (!selectedWord.isEmpty()) {
             TextView temp2 = (TextView) findViewById(R.id.textView);
@@ -210,7 +221,7 @@ public class MainActivity extends AppCompatActivity {
             Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
 
             temp1.setImageDrawable(pic);        //display pic in the image
-            Log.e("selected picture = ", selectedPicture);
+            Log.d("flash_cards", "selected picture = " + selectedPicture);
         }
     }
 
@@ -241,8 +252,10 @@ public class MainActivity extends AppCompatActivity {
     }
 
     public void stopMediaPlayers () {
-        if ((null != pronouncePlay) && pronouncePlay.isPlaying())
+        if ((null != pronouncePlay) && pronouncePlay.isPlaying()) {
             pronouncePlay.reset();
+            //pronouncePlay.release();
+        }
         if ((null != textToSpeechObj) && textToSpeechObj.isSpeaking())
             textToSpeechObj.stop();
     }
@@ -251,7 +264,7 @@ public class MainActivity extends AppCompatActivity {
 
         Button mStartStop = (Button) findViewById(R.id.button2);
         String temp1 = mStartStop.getText().toString();
-        Log.e("flash_card", "startstop = " + temp1);
+        Log.d("flash_cards", "startstop = " + temp1);
         switch (temp1) {
             case STOP_STRING:
                 mHandler.removeCallbacksAndMessages(null); // fix this to stop only mUpdate; also stop media player first (perhaps add a function for mHandler)
@@ -272,14 +285,14 @@ public class MainActivity extends AppCompatActivity {
         //TODO: make this work for reading as well
         Last_x_pictures.add(DeckList.get(counter));
         last_x[count_last_x] = counter;
-        Log.d("stored card ", Last_x_pictures.get(Last_x_pictures.size() - 1));
+        Log.d("flash_cards", "stored card " + Last_x_pictures.get(Last_x_pictures.size() - 1));
 
         if (count_last_x != frequency - 1) {
             count_last_x = (count_last_x + 1) % frequency;
         } else {
             // cancel next slide in activity_main
             mHandler.removeCallbacksAndMessages(null);
-            Log.e("removed callbacks", "");
+            Log.d("flash_cards", "removed callbacks");
             // go to memory1 layout after some delay
             Runnable memoryGameObj = new memoryGameRunnable(frequency);
             mHandler.postDelayed(memoryGameObj, timeToWaitBeforeStartingGame);
@@ -299,7 +312,7 @@ public class MainActivity extends AppCompatActivity {
         int endTheGame = 0;
 
         if (tagValue == badVariable) {
-            Log.e("correct ", clickedCard);
+            Log.d("flash_cards", "correct " + clickedCard);
 
             int resID = this.getResources().getIdentifier(veryGood, "raw", this.getPackageName());
             stopMediaPlayers();
@@ -314,7 +327,7 @@ public class MainActivity extends AppCompatActivity {
             //textToSpeechObj.speak(veryGood, TextToSpeech.QUEUE_FLUSH, null);
             //setContentView(R.layout.activity_main);
         } else {
-            Log.e("incorrect", clickedCard);
+            Log.d("flash_cards", "incorrect" + clickedCard);
             stopMediaPlayers();
             textToSpeechObj.speak(tryAgain, TextToSpeech.QUEUE_FLUSH, null);
             memGameIncorrectAnswer++;
@@ -322,7 +335,7 @@ public class MainActivity extends AppCompatActivity {
         if (memGameIncorrectAnswer >= 2) {
             endTheGame = 1;
             stopMediaPlayers();
-            Log.e("... moving on", clickedCard);
+            Log.d("flash_cards", "... moving on" + clickedCard);
             textToSpeechObj.speak(giveTheAnswer, TextToSpeech.QUEUE_FLUSH, null);
         }
         if (endTheGame == 1) {
@@ -357,15 +370,15 @@ public class MainActivity extends AppCompatActivity {
                 card3 = card2;
                 badVariable = 1;
             }
-            Log.e("r1= " + card1, "; r2 = " + card2 + "; sel = " + card3);
-            Log.e("c1 = " + last_x[card1], "; c2 = " + last_x[card2] + "; sel = " + last_x[card3]);
-            Log.e("c1 = " + Last_x_pictures.get(card1), "; c2 = " + Last_x_pictures.get(card2) + "; sel = " + Last_x_pictures.get(card3));
+            Log.d("flash_cards", "r1= " + card1 + "; r2 = " + card2 + "; sel = " + card3);
+            Log.d("flash_cards", "c1 = " + last_x[card1] + "; c2 = " + last_x[card2] + "; sel = " + last_x[card3]);
+            Log.d("flash_cards", "c1 = " + Last_x_pictures.get(card1) + "; c2 = " + Last_x_pictures.get(card2) + "; sel = " + Last_x_pictures.get(card3));
 
             memGameIncorrectAnswer = 0;
             memoryGameUpdatePicture();
             String memoryquestion = "Which one is " + Last_x_pictures.get(card3);
             memoryquestion = memoryquestion.replaceAll("_", " ");
-            Log.e(memoryquestion, " ");
+            Log.d("flash_cards", memoryquestion);
             stopMediaPlayers();
             textToSpeechObj.speak(memoryquestion, TextToSpeech.QUEUE_FLUSH, null);
         }
