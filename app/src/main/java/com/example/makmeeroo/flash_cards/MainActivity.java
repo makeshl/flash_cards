@@ -23,6 +23,7 @@ import android.widget.CheckBox;
 import android.widget.GridView;
 import android.widget.ImageView;
 import android.widget.ListView;
+import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -415,6 +416,21 @@ public class MainActivity extends AppCompatActivity {
         Drawable pic2 = ContextCompat.getDrawable(this, pic2_id);
         ImageView rightImage = (ImageView) findViewById(R.id.memory1right);
         rightImage.setImageDrawable(pic2);
+
+        RelativeLayout.LayoutParams paramsleft = (RelativeLayout.LayoutParams)leftImage.getLayoutParams();
+        RelativeLayout.LayoutParams paramsright = (RelativeLayout.LayoutParams)rightImage.getLayoutParams();
+
+        if (r1.nextInt(2) == 1) {
+            paramsleft.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+            paramsright.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+        } else{
+            paramsleft.addRule(RelativeLayout.ALIGN_PARENT_LEFT);
+            paramsright.addRule(RelativeLayout.ALIGN_PARENT_RIGHT);
+        }
+        ;
+        leftImage.setLayoutParams(paramsleft);
+        rightImage.setLayoutParams(paramsright);
+
     }
 
     public void userSelections(View v) {
