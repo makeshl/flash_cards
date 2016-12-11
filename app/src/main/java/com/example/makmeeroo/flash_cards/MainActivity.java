@@ -4,8 +4,11 @@ package com.example.makmeeroo.flash_cards;
 
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.graphics.Bitmap;
+import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
+import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
 import android.speech.tts.TextToSpeech;
@@ -29,6 +32,11 @@ import android.widget.Toast;
 
 import com.example.makmeeroo.flash_cards.DisplayData.DisplayDataUser;
 
+import java.io.File;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
 import java.io.InputStream;
 import java.util.ArrayList;
 import java.util.List;
@@ -113,7 +121,6 @@ public class MainActivity extends AppCompatActivity {
         Log.d("flash_cards", "testWrite is " + testWrite);
          //*/
 
-
 /*
         DeckList.clear();
         DeckList.add("art");
@@ -124,6 +131,7 @@ public class MainActivity extends AppCompatActivity {
 */
         SelectionList.add(IconList.get(0).getLessonName());
         updateDeckList();
+
     }
 
     @Override
@@ -234,11 +242,19 @@ public class MainActivity extends AppCompatActivity {
             temp1.setVisibility(View.VISIBLE);
             temp3.setVisibility(View.INVISIBLE);
             String selectedPicture = "@drawable/" + selectedWord;
-            int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
-            //Drawable pic = getResources().getDrawable(pic_id);  // take picture from that location and save it in a drawable pic
-            Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
+            //int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
+            //Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
 
-            temp1.setImageDrawable(pic);        //display pic in the image
+            File imgFile = new File(getFilesDir(),selectedWord +".jpg");
+            Log.d("file loc =", imgFile.getAbsolutePath());
+
+            try {
+                Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile));
+                temp1.setImageBitmap(bmp); //display pic in the image
+            } catch (FileNotFoundException e)
+            {
+                e.printStackTrace();
+            }
             Log.d("flash_cards", "selected picture = " + selectedPicture);
         }
     }
@@ -550,6 +566,20 @@ public class MainActivity extends AppCompatActivity {
         for (int i =0; i<chosenLesssonLength; i++) {
             Log.d("flash_cards", "Card "+ i + DeckList.get(i));
         }
+
+        //Temporarily added to move all files to internal memory
+        for (int i =0; i<chosenLesssonLength; i++) {
+            String sP = "@drawable/" +  DeckList.get(i);
+            int pic_id = getResources().getIdentifier(sP, null, getPackageName());
+            Bitmap bm = BitmapFactory.decodeResource( getResources(), pic_id);
+            Log.d(DeckList.get(i) + ".jpg" + " location = ", internalMemoryStorage(DeckList.get(i)+".jpg",bm));
+        }
+
+        File dirFiles = this.getFilesDir();  //http://stackoverflow.com/questions/11871925/how-to-get-list-of-files-from-a-specific-folder-in-internal-storage
+        for (String strFile : dirFiles.list())
+        {
+            Log.d("file", strFile);
+        }
     }
 
     public void selectionComplete(View v) {
@@ -569,6 +599,25 @@ public class MainActivity extends AppCompatActivity {
         stopMediaPlayers();
         mHandler.post(mUpdate);
 
+    }
+
+    public String internalMemoryStorage(String filename, Bitmap bm){
+        File filelocation = new File(getFilesDir(),filename);
+        FileOutputStream fos = null;
+        try{
+            fos = new FileOutputStream(filelocation);
+            bm.compress(Bitmap.CompressFormat.PNG, 100, fos);
+        }
+        catch (Exception e){
+            e.printStackTrace();
+        } finally {
+            try {
+                fos.close();
+            } catch (IOException e){
+                e.printStackTrace();
+            }
+        }
+        return filelocation.getAbsolutePath();
     }
 }
 
