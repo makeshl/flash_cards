@@ -38,6 +38,7 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -262,25 +263,53 @@ public class MainActivity extends AppCompatActivity {
     public double nextSound(int counter) {
 
         String voiceFile = DeckList.get(counter);
+        double soundLength = 0;
 
-        int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
-        Log.d("flash_card ", "resID = " + resID);
+        File f = new File(getFilesDir(), voiceFile +".mp3");
+        String path = f.getPath();
+        Log.d("File path = " , " "+ f.exists());
+
+        MediaPlayer player = new MediaPlayer();
+
+        /// /if(f.exists() && !f.isDirectory()) {
+        if(f.exists()) {
+            Log.d("voice file found",f.getPath());
+            try {
+                Log.d("voice file found","");
+                player.setDataSource(path);
+                player.prepare();
+                player.start();
+                soundLength = player.getDuration();
+            } catch (IllegalArgumentException e) {
+                e.printStackTrace();
+            } catch (Exception e) {
+                e.printStackTrace();
+            }
+        } else
+        {
+            voiceFile = voiceFile.replaceAll("_", " ");
+            textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
+            Log.d("voice file not found", "");
+        }
+
+        //int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
+        //Log.d("flash_card ", "resID = " + resID);
 
         stopMediaPlayers();
 
-        double soundLength = 0;
-        if (resID == 0) {
-            Log.d("flash_card ", "voice generated : " + voiceFile);
-            voiceFile = voiceFile.replaceAll("_", " ");
-            textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
-        } else {
-            Log.d("flash_card ", "voice file found " + voiceFile);
-            pronouncePlay = MediaPlayer.create(this, resID);
-            pronouncePlay.start();
-            soundLength = pronouncePlay.getDuration(); // returns duration in milliseconds
-            Log.d("flash_card ", "voice file found " + voiceFile + soundLength);
-        }
-        Log.d("flash_card ", "Finished playing " + voiceFile);
+//        double soundLength = 0;
+//        if (resID == 0) {
+//            Log.d("flash_card ", "voice generated : " + voiceFile);
+//            voiceFile = voiceFile.replaceAll("_", " ");
+//            textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
+//        } else {
+//            Log.d("flash_card ", "voice file found " + voiceFile);
+//            pronouncePlay = MediaPlayer.create(this, resID);
+//            pronouncePlay.start();
+//            soundLength = pronouncePlay.getDuration(); // returns duration in milliseconds
+//            Log.d("flash_card ", "voice file found " + voiceFile + soundLength);
+//        }
+//        Log.d("flash_card ", "Finished playing " + voiceFile);
 
         return soundLength;
     }
@@ -562,7 +591,7 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         chosenLesssonLength = DeckList.size();
-        Log.d("flash_cards", "Length = "+ chosenLesssonLength);
+        Log.d("flash_cards", "Length = " + chosenLesssonLength);
         for (int i =0; i<chosenLesssonLength; i++) {
             Log.d("flash_cards", "Card "+ i + DeckList.get(i));
         }
@@ -573,6 +602,9 @@ public class MainActivity extends AppCompatActivity {
             int pic_id = getResources().getIdentifier(sP, null, getPackageName());
             Bitmap bm = BitmapFactory.decodeResource( getResources(), pic_id);
             Log.d(DeckList.get(i) + ".jpg" + " location = ", internalMemoryStorage(DeckList.get(i)+".jpg",bm));
+
+            //String respath = "android.resource://" + getPackageName() + "/"+ DeckList.get(i) ;
+            internalMemoryAudio(DeckList.get(i));
         }
 
         File dirFiles = this.getFilesDir();  //http://stackoverflow.com/questions/11871925/how-to-get-list-of-files-from-a-specific-folder-in-internal-storage
@@ -619,6 +651,46 @@ public class MainActivity extends AppCompatActivity {
         }
         return filelocation.getAbsolutePath();
     }
+
+    public void internalMemoryAudio(String voicecard) {
+        // http://stackoverflow.com/questions/19218775/android-copy-assets-to-internal-storage
+        File outfilelocation = new File(getFilesDir(), voicecard + ".mp3");
+        FileOutputStream fout = null;
+
+        int resID = this.getResources().getIdentifier(voicecard, "raw", this.getPackageName());
+        Log.d("res id ) for " + voicecard, "= " + resID);
+        if (resID != 0) {
+            InputStream inStream = this.getResources().openRawResource(resID);
+            //FileInputStream fin = null;
+            //Uri uri=Uri.parse("android.resource://"+getPackageName()+"/raw/"+reslocation+".mp3");
+            //File file = new File("android.resource://"+getPackageName()+"/raw/",reslocation);
+            try {
+                fout = new FileOutputStream(outfilelocation);
+                //fin = new FileInputStream(file);
+                copyFile(inStream, fout);
+
+                inStream.close();
+                inStream = null;
+                fout.flush();
+                fout.close();
+                fout = null;
+            } catch (IOException e) {
+                Log.e("IOerror", " Fail", e);
+            }
+        } else {outfilelocation.delete();
+
+        }
+        //return outfilelocation.getAbsolutePath();
+    }
+
+    private void copyFile(InputStream fin, OutputStream fout) throws IOException {
+        byte[] buffer = new byte[1024];
+        int read;
+        while((read = fin.read(buffer)) != -1){
+            fout.write(buffer, 0, read);
+        }
+    }
+
 }
 
 //TODO Bring back rating bar
