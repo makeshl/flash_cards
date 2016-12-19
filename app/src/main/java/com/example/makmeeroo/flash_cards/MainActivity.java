@@ -11,6 +11,7 @@ import android.media.MediaPlayer;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.StrictMode;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.content.ContextCompat;
 import android.support.v7.app.AppCompatActivity;
@@ -32,6 +33,7 @@ import android.widget.Toast;
 
 import com.example.makmeeroo.flash_cards.DisplayData.DisplayDataUser;
 
+import java.io.BufferedInputStream;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -39,10 +41,16 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.io.OutputStream;
+import java.net.HttpURLConnection;
+import java.net.MalformedURLException;
+import java.net.URL;
+import java.net.URLConnection;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
+
+import javax.net.ssl.HttpsURLConnection;
 
 // TODO http://www.tutorialspoint.com/java/
 public class MainActivity extends AppCompatActivity {
@@ -103,6 +111,12 @@ public class MainActivity extends AppCompatActivity {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         getWindow().addFlags(WindowManager.LayoutParams.FLAG_KEEP_SCREEN_ON);
+
+        //Should remove this and make it an async task per android best practices
+        if (android.os.Build.VERSION.SDK_INT > 9) {
+            StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
+            StrictMode.setThreadPolicy(policy);
+        }
 
         InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
         CsvReader csvFile = new CsvReader(inputStream);
@@ -242,21 +256,29 @@ public class MainActivity extends AppCompatActivity {
         } else {
             temp1.setVisibility(View.VISIBLE);
             temp3.setVisibility(View.INVISIBLE);
-            String selectedPicture = "@drawable/" + selectedWord;
+            //String selectedPicture = "@drawable/" + selectedWord;
             //int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
             //Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
 
-            File imgFile = new File(getFilesDir(),selectedWord +".jpg");
-            Log.d("file loc =", imgFile.getAbsolutePath());
+            File imgFile = new File(getFilesDir(),selectedWord+".jpg");
+            Log.d("file loc =", imgFile.getPath());
 
+            //http://www.e-nature.ch/tech/saving-loading-bitmaps-to-the-android-device-storage-internal-external/
+            
+            //Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile));
+            Bitmap bmp = null;
             try {
-                Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile));
-                temp1.setImageBitmap(bmp); //display pic in the image
-            } catch (FileNotFoundException e)
-            {
+                FileInputStream fis = new FileInputStream(imgFile);
+                //fis.reset();
+                bmp = BitmapFactory.decodeStream(fis);
+                temp1.setImageBitmap(bmp); //display pic in the image  FileNotFoundException
+            } catch (FileNotFoundException e) {
+                e.printStackTrace();
+                Log.d("File not found bitmap", "..test");
+            } catch (IOException e) {
                 e.printStackTrace();
             }
-            Log.d("flash_cards", "selected picture = " + selectedPicture);
+            //Log.d("flash_cards", "selected picture = " + selectedPicture);
         }
     }
 
@@ -272,7 +294,12 @@ public class MainActivity extends AppCompatActivity {
         MediaPlayer player = new MediaPlayer();
 
         /// /if(f.exists() && !f.isDirectory()) {
-        if(f.exists()) {
+        if(f.exists()== false) {
+            Log.d("voice file not found", "");
+            voiceFile = voiceFile.replaceAll("_", " ");
+            textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
+        } else
+        {
             Log.d("voice file found",f.getPath());
             try {
                 Log.d("voice file found","");
@@ -285,11 +312,6 @@ public class MainActivity extends AppCompatActivity {
             } catch (Exception e) {
                 e.printStackTrace();
             }
-        } else
-        {
-            voiceFile = voiceFile.replaceAll("_", " ");
-            textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
-            Log.d("voice file not found", "");
         }
 
         //int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
@@ -598,13 +620,13 @@ public class MainActivity extends AppCompatActivity {
 
         //Temporarily added to move all files to internal memory
         for (int i =0; i<chosenLesssonLength; i++) {
-            String sP = "@drawable/" +  DeckList.get(i);
-            int pic_id = getResources().getIdentifier(sP, null, getPackageName());
-            Bitmap bm = BitmapFactory.decodeResource( getResources(), pic_id);
-            Log.d(DeckList.get(i) + ".jpg" + " location = ", internalMemoryStorage(DeckList.get(i)+".jpg",bm));
-
-            //String respath = "android.resource://" + getPackageName() + "/"+ DeckList.get(i) ;
-            internalMemoryAudio(DeckList.get(i));
+            //String sP = "@drawable/" +  DeckList.get(i);
+            //int pic_id = getResources().getIdentifier(sP, null, getPackageName());
+            //Bitmap bm = BitmapFactory.decodeResource( getResources(), pic_id);
+            //Log.d(DeckList.get(i) + ".jpg" + " location = ", internalMemoryStorage(DeckList.get(i)+".jpg",bm));
+            //internalMemoryAudio(DeckList.get(i));
+            copyImagetoInternalMemory(DeckList.get(i));
+            copytoInternalMemory(DeckList.get(i),".mp3");
         }
 
         File dirFiles = this.getFilesDir();  //http://stackoverflow.com/questions/11871925/how-to-get-list-of-files-from-a-specific-folder-in-internal-storage
@@ -688,6 +710,76 @@ public class MainActivity extends AppCompatActivity {
         int read;
         while((read = fin.read(buffer)) != -1){
             fout.write(buffer, 0, read);
+        }
+    }
+
+    public void copyImagetoInternalMemory(String cardname){
+        String link = "https://github.com/makeshl/flash_cards/tree/master/app/src/main/res/drawable/"+cardname + ".jpg";
+        File outfilelocation = new File(getFilesDir(), cardname + ".jpg");
+        FileOutputStream fout = null;
+
+        Log.d("outfile =", outfilelocation.getPath());
+
+        try {
+            //http://stackoverflow.com/questions/17674634/saving-and-reading-bitmaps-images-from-internal-memory-in-android
+
+            URL url = new URL(link);
+            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            urlConnection.setDoInput(true);
+            urlConnection.connect();
+            InputStream fin = urlConnection.getInputStream();
+            fout = new FileOutputStream(outfilelocation);
+
+            Log.d("url path = ", url.getPath());
+            Log.d("fin path = ",fin.toString());
+            Log.d("fout path = ", fout.toString());
+
+            Bitmap bm = BitmapFactory.decodeStream(fin);
+            bm.compress(Bitmap.CompressFormat.JPEG, 100, fout);
+            fout.flush();
+            fout.close();
+            //fin.close();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Log.d("Malformed Exc","");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d("IO Exc", "");
+        }
+    }
+
+    public void copytoInternalMemory(String cardname, String filetype)  {
+        // TODO: change this to get the deck of cards to be downloaded from memory?
+        String link = null;
+        if (filetype == ".mp3"){
+            link = "https://github.com/makeshl/flash_cards/app/src/main/res/raw/"+cardname + filetype;
+        }else{
+            link = "https://github.com/makeshl/flash_cards/tree/master/app/src/main/res/drawable/"+cardname + filetype;
+        }
+
+        Log.d("path = ", link);
+        File outfilelocation = new File(getFilesDir(), cardname + filetype);
+        Log.d("outfile =", outfilelocation.getPath());
+        FileOutputStream fout = null;
+
+        try {
+            URL url = new URL(link);
+            Log.d("url path = ", url.getPath());
+            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+            BufferedInputStream fin = new BufferedInputStream(urlConnection.getInputStream());
+            Log.d("fin path = ",fin.toString());
+            fout = new FileOutputStream(outfilelocation);
+            Log.d("fout path = ", fout.toString());
+            copyFile(fin, fout);
+            fout.flush();
+            fout.close();
+            fin.close();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+            Log.d("Malformed Exc","");
+        } catch (IOException e) {
+            e.printStackTrace();
+            Log.d("IO Exc", "");
         }
     }
 
