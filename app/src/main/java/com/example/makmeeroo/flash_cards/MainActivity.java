@@ -9,6 +9,7 @@ import android.graphics.BitmapFactory;
 import android.graphics.drawable.Drawable;
 import android.media.MediaPlayer;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.os.Handler;
 import android.os.StrictMode;
@@ -146,7 +147,7 @@ public class MainActivity extends AppCompatActivity {
 */
         SelectionList.add(IconList.get(0).getLessonName());
         updateDeckList();
-
+        new Datadownloader().execute(DeckList.get(0));
     }
 
     @Override
@@ -264,7 +265,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("file loc =", imgFile.getPath());
 
             //http://www.e-nature.ch/tech/saving-loading-bitmaps-to-the-android-device-storage-internal-external/
-            
+
             //Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile));
             Bitmap bmp = null;
             try {
@@ -618,21 +619,22 @@ public class MainActivity extends AppCompatActivity {
             Log.d("flash_cards", "Card "+ i + DeckList.get(i));
         }
 
+
         //Temporarily added to move all files to internal memory
-        for (int i =0; i<chosenLesssonLength; i++) {
-            //String sP = "@drawable/" +  DeckList.get(i);
-            //int pic_id = getResources().getIdentifier(sP, null, getPackageName());
-            //Bitmap bm = BitmapFactory.decodeResource( getResources(), pic_id);
-            //Log.d(DeckList.get(i) + ".jpg" + " location = ", internalMemoryStorage(DeckList.get(i)+".jpg",bm));
-            //internalMemoryAudio(DeckList.get(i));
-            copyImagetoInternalMemory(DeckList.get(i));
-            copytoInternalMemory(DeckList.get(i),".mp3");
-        }
+//        for (int i =0; i<chosenLesssonLength; i++) {
+//            //String sP = "@drawable/" +  DeckList.get(i);
+//            //int pic_id = getResources().getIdentifier(sP, null, getPackageName());
+//            //Bitmap bm = BitmapFactory.decodeResource( getResources(), pic_id);
+//            //Log.d(DeckList.get(i) + ".jpg" + " location = ", internalMemoryStorage(DeckList.get(i)+".jpg",bm));
+//            //internalMemoryAudio(DeckList.get(i));
+//            copyImagetoInternalMemory(DeckList.get(i));
+//            copytoInternalMemory(DeckList.get(i),".mp3");
+//        }
 
         File dirFiles = this.getFilesDir();  //http://stackoverflow.com/questions/11871925/how-to-get-list-of-files-from-a-specific-folder-in-internal-storage
         for (String strFile : dirFiles.list())
         {
-            Log.d("file", strFile);
+            Log.d("file ", strFile);
         }
     }
 
@@ -731,11 +733,12 @@ public class MainActivity extends AppCompatActivity {
             fout = new FileOutputStream(outfilelocation);
 
             Log.d("url path = ", url.getPath());
-            Log.d("fin path = ",fin.toString());
+            Log.d("fin path = ", fin.toString());
             Log.d("fout path = ", fout.toString());
 
             Bitmap bm = BitmapFactory.decodeStream(fin);
-            bm.compress(Bitmap.CompressFormat.JPEG, 100, fout);
+            Log.d("bytecount = "+ bm.getHeight(), " .."+bm.getDensity());
+            bm.compress(Bitmap.CompressFormat.PNG, 100, fout);
             fout.flush();
             fout.close();
             //fin.close();
@@ -780,6 +783,45 @@ public class MainActivity extends AppCompatActivity {
         } catch (IOException e) {
             e.printStackTrace();
             Log.d("IO Exc", "");
+        }
+    }
+
+    public class Datadownloader extends AsyncTask<String, Integer, Integer>{
+        @Override
+        protected Integer doInBackground(String... params){
+            String link = "https://raw.githubusercontent.com/makeshl/flash_cards/master/app/src/main/res/drawable/"+params[0]+".jpg";
+            Log.d("path = ", link);
+            File outfilelocation = new File(getFilesDir(), params[0]+".jpg");
+            Log.d("outfile =", outfilelocation.getPath());
+            FileOutputStream fout = null;
+
+            try {
+                URL url = new URL(link);
+                HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+                BufferedInputStream fin = new BufferedInputStream(urlConnection.getInputStream());
+                fout = new FileOutputStream(outfilelocation);
+                Bitmap bm = BitmapFactory.decodeStream(fin);
+                Log.d("bytecount = " + bm.getHeight(), " .." + bm.getDensity());
+                bm.compress(Bitmap.CompressFormat.PNG, 100, fout);
+                fout.flush();
+                fout.close();
+                fin.close();
+            } catch (MalformedURLException e) {
+                e.printStackTrace();
+                Log.d("Malformed Exc","");
+            } catch (IOException e) {
+                e.printStackTrace();
+                Log.d("IO Exc", "");
+            }
+            return 1;
+        }
+
+        protected void onProgressUpdate(Integer... progress) {
+        }
+
+        protected void onPostExecute(Integer a){
+            Log.e("Async task complete!", "" + a);
+            Toast.makeText(getApplicationContext(), "Done",Toast.LENGTH_LONG);
         }
     }
 
