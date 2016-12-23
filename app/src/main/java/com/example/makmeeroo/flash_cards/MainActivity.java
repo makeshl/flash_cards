@@ -59,6 +59,8 @@ public class MainActivity extends AppCompatActivity {
     List<String> SelectionList = new ArrayList<>();
     List<String> DeckList = new ArrayList<>();
     List<DisplayDataUser> IconList = new ArrayList<>();
+    List<String> ListofAllCards = new ArrayList<>();
+    List<String> ListofAllUrls  = new ArrayList<>();
 
     List<String> Last_x_pictures= new ArrayList<>();
     List<String> Last_x_words= new ArrayList<>();
@@ -147,7 +149,19 @@ public class MainActivity extends AppCompatActivity {
 */
         SelectionList.add(IconList.get(0).getLessonName());
         updateDeckList();
-        new Datadownloader().execute(DeckList.get(0));
+
+        // Create a list of all URLs to be executed by the Async task
+        //Should update this to remove files that are already stored
+        for (int i=0; i <IconList.size(); i++){
+            for (int j =0; j < IconList.get(i).getCards().size(); j++){
+                ListofAllUrls.add(IconList.get(i).getCards().get(j)+ ".jpg");
+                ListofAllUrls.add(IconList.get(i).getCards().get(j)+ ".mp3");
+                ListofAllCards.add(IconList.get(i).getCards().get(j));
+            }
+        }
+        String[] datatodownloadarray = new String[ListofAllUrls.size()];
+        datatodownloadarray = ListofAllUrls.toArray(datatodownloadarray);
+        new Datadownloader().execute(datatodownloadarray);
     }
 
     @Override
@@ -584,13 +598,13 @@ public class MainActivity extends AppCompatActivity {
                 holder = (ViewHolder) convertView.getTag();
             }
 
-            holder.iconText.setText(iconModelList.get(position).getLessonName()+" ("+ iconModelList.get(position).getNumberLessons() + ")");
+            holder.iconText.setText(iconModelList.get(position).getLessonName() + " (" + iconModelList.get(position).getNumberLessons() + ")");
             String pic = "@drawable/" + iconModelList.get(position).getImage();
             int pic_id = getResources().getIdentifier(pic, null, getPackageName()); // get the location of where l1, l2, etc are stored
             Drawable pic2 = getResources().getDrawable(pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
             holder.iconPicture.setImageDrawable(pic2);        //display pic in the image
 
-            Log.d("position = ", " "+ position);
+            Log.d("position = ", " " + position);
             return convertView;
         }
 
@@ -619,18 +633,6 @@ public class MainActivity extends AppCompatActivity {
             Log.d("flash_cards", "Card "+ i + DeckList.get(i));
         }
 
-
-        //Temporarily added to move all files to internal memory
-//        for (int i =0; i<chosenLesssonLength; i++) {
-//            //String sP = "@drawable/" +  DeckList.get(i);
-//            //int pic_id = getResources().getIdentifier(sP, null, getPackageName());
-//            //Bitmap bm = BitmapFactory.decodeResource( getResources(), pic_id);
-//            //Log.d(DeckList.get(i) + ".jpg" + " location = ", internalMemoryStorage(DeckList.get(i)+".jpg",bm));
-//            //internalMemoryAudio(DeckList.get(i));
-//            copyImagetoInternalMemory(DeckList.get(i));
-//            copytoInternalMemory(DeckList.get(i),".mp3");
-//        }
-
         File dirFiles = this.getFilesDir();  //http://stackoverflow.com/questions/11871925/how-to-get-list-of-files-from-a-specific-folder-in-internal-storage
         for (String strFile : dirFiles.list())
         {
@@ -647,7 +649,7 @@ public class MainActivity extends AppCompatActivity {
             quiz = 0;
         }
 
-        Log.d("flash_cards","quiz selection = "+quiz);
+        Log.d("flash_cards", "quiz selection = " + quiz);
 
         setContentView(R.layout.activity_main);
         stopCounter = 0;
@@ -789,29 +791,48 @@ public class MainActivity extends AppCompatActivity {
     public class Datadownloader extends AsyncTask<String, Integer, Integer>{
         @Override
         protected Integer doInBackground(String... params){
-            String link = "https://raw.githubusercontent.com/makeshl/flash_cards/master/app/src/main/res/drawable/"+params[0]+".jpg";
-            Log.d("path = ", link);
-            File outfilelocation = new File(getFilesDir(), params[0]+".jpg");
-            Log.d("outfile =", outfilelocation.getPath());
-            FileOutputStream fout = null;
 
-            try {
-                URL url = new URL(link);
-                HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-                BufferedInputStream fin = new BufferedInputStream(urlConnection.getInputStream());
-                fout = new FileOutputStream(outfilelocation);
-                Bitmap bm = BitmapFactory.decodeStream(fin);
-                Log.d("bytecount = " + bm.getHeight(), " .." + bm.getDensity());
-                bm.compress(Bitmap.CompressFormat.PNG, 100, fout);
-                fout.flush();
-                fout.close();
-                fin.close();
-            } catch (MalformedURLException e) {
-                e.printStackTrace();
-                Log.d("Malformed Exc","");
-            } catch (IOException e) {
-                e.printStackTrace();
-                Log.d("IO Exc", "");
+            String link1 = "https://raw.githubusercontent.com/makeshl/flash_cards/master/app/src/main/res/drawable/";
+            String link2= "https://raw.githubusercontent.com/makeshl/flash_cards/master/app/src/main/res/raw/";
+            String link;
+
+            for (int i =0; i< params.length; i++){
+                if (params[i].substring(params[i].length() -1).equals("g")) {
+                    link = link1+params[i];
+                } else {
+                    link = link2+params[i];
+                }
+
+                Log.d("path = ", link);
+                File outfilelocation = new File(getFilesDir(), params[i]);
+                Log.d("outfile =", outfilelocation.getPath());
+                FileOutputStream fout = null;
+
+                try {
+                    URL url = new URL(link);
+                    HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
+                    BufferedInputStream fin = new BufferedInputStream(urlConnection.getInputStream());
+                    fout = new FileOutputStream(outfilelocation);
+
+                    byte[] buffer = new byte[1024];
+                    int read;
+                    while((read = fin.read(buffer)) != -1){
+                        fout.write(buffer, 0, read);
+                    }
+
+                    //Bitmap bm = BitmapFactory.decodeStream(fin);
+                    //Log.d("bytecount = " + bm.getHeight(), " .." + bm.getDensity());
+                    //bm.compress(Bitmap.CompressFormat.PNG, 100, fout);
+                    fout.flush();
+                    fout.close();
+                    fin.close();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                    Log.d("Malformed Exc","");
+                } catch (IOException e) {
+                    e.printStackTrace();
+                    Log.d("IO Exc", "");
+                }
             }
             return 1;
         }
