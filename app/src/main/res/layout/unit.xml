@@ -11,7 +11,7 @@
         android:layout_width="50dp"
         android:layout_height="100dp"
         android:id="@+id/iconPicture"
-        android:src="@drawable/flamingo"
+        android:src="@drawable/zebra"
         android:clickable="false"
         android:focusable="false"
         android:focusableInTouchMode="false"

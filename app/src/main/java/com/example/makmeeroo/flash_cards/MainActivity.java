@@ -106,7 +106,8 @@ public class MainActivity extends AppCompatActivity {
     int card1, card2, card3, badVariable, memGameIncorrectAnswer;
     int gameFrequency = 5;
 
-    MediaPlayer pronouncePlay = null;
+    MediaPlayer pronouncePlay = new MediaPlayer();
+    //MediaPlayer pronouncePlay = null;
     TextToSpeech textToSpeechObj = null;
 
     @Override
@@ -120,6 +121,21 @@ public class MainActivity extends AppCompatActivity {
             StrictMode.ThreadPolicy policy = new StrictMode.ThreadPolicy.Builder().permitAll().build();
             StrictMode.setThreadPolicy(policy);
         }
+
+//        if ( textToSpeechObj == null )
+//            textToSpeechObj = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
+//                @Override
+//                public void onInit(int status) {
+//                    if (status == TextToSpeech.SUCCESS) {
+//                        Log.d("flash_cards", "entered tts object");
+//                        textToSpeechObj.setLanguage(Locale.US);
+//                        textToSpeechObj.setSpeechRate(0.75f);
+//                        textToSpeechObj.setPitch(1.0f);
+//                        Log.d("flash_cards", "tts initiated ");
+//                    }
+//                }
+//            });
+//        Log.d("flash_cards", "onCreate textToSpeech created ");
 
         InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
         CsvReader csvFile = new CsvReader(inputStream);
@@ -202,6 +218,7 @@ public class MainActivity extends AppCompatActivity {
                         textToSpeechObj.setLanguage(Locale.US);
                         textToSpeechObj.setSpeechRate(0.75f);
                         textToSpeechObj.setPitch(1.0f);
+                        Log.d("flash_cards", "tts initiated ");
                     }
                 }
             });
@@ -271,29 +288,28 @@ public class MainActivity extends AppCompatActivity {
         } else {
             temp1.setVisibility(View.VISIBLE);
             temp3.setVisibility(View.INVISIBLE);
-            //String selectedPicture = "@drawable/" + selectedWord;
-            //int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
-            //Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
 
-            File imgFile = new File(getFilesDir(),selectedWord+".jpg");
-            Log.d("file loc =", imgFile.getPath());
+            String selectedPicture = "@drawable/" + selectedWord;
+            int pic_id = getResources().getIdentifier(selectedPicture, null, getPackageName()); // get the location of where l1, l2, etc are stored
 
-            //http://www.e-nature.ch/tech/saving-loading-bitmaps-to-the-android-device-storage-internal-external/
+            if (pic_id !=0){
+                Log.d(selectedWord, " displayed from resource XXX");
+                Drawable pic = ContextCompat.getDrawable(this, pic_id); // http://stackoverflow.com/questions/29041027/android-getresources-getdrawable-deprecated-api-22
+                temp1.setImageDrawable(pic);
 
-            //Bitmap bmp = BitmapFactory.decodeStream(new FileInputStream(imgFile));
-            Bitmap bmp = null;
-            try {
-                FileInputStream fis = new FileInputStream(imgFile);
-                //fis.reset();
-                bmp = BitmapFactory.decodeStream(fis);
-                temp1.setImageBitmap(bmp); //display pic in the image  FileNotFoundException
-            } catch (FileNotFoundException e) {
-                e.printStackTrace();
-                Log.d("File not found bitmap", "..test");
-            } catch (IOException e) {
-                e.printStackTrace();
+            } else{
+                File imgFile = new File(getFilesDir(),selectedWord+".jpg");
+                Log.d(selectedWord + " is from loc:XXX ", imgFile.getPath());
+                Bitmap bmp = null;
+                try {
+                    FileInputStream fis = new FileInputStream(imgFile);
+                    bmp = BitmapFactory.decodeStream(fis);
+                    temp1.setImageBitmap(bmp); //display pic in the image  FileNotFoundException, //http://www.e-nature.ch/tech/saving-loading-bitmaps-to-the-android-device-storage-internal-external/
+                } catch (FileNotFoundException e) {
+                    e.printStackTrace();
+                    Log.d("Bitmap not found XXX", "..");
+                }
             }
-            //Log.d("flash_cards", "selected picture = " + selectedPicture);
         }
     }
 
@@ -304,35 +320,55 @@ public class MainActivity extends AppCompatActivity {
 
         File f = new File(getFilesDir(), voiceFile +".mp3");
         String path = f.getPath();
-        Log.d("File path = " , " "+ f.exists());
 
         MediaPlayer player = new MediaPlayer();
 
-        /// /if(f.exists() && !f.isDirectory()) {
-        if(f.exists()== false) {
-            Log.d("voice file not found", "");
-            voiceFile = voiceFile.replaceAll("_", " ");
-            textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
-        } else
-        {
-            Log.d("voice file found",f.getPath());
+        int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
+        if (resID !=0){
+            Log.d("voice file "+ voiceFile, " is from res XXX");
+            player = MediaPlayer.create(this,resID);
+            player.start();
+            soundLength = player.getDuration();
+            Log.d("Sound length for " + voiceFile," = " + soundLength);
+        } else {
             try {
-                Log.d("voice file found","");
                 player.setDataSource(path);
+                Log.d("voice file " + voiceFile, " from memory XXX");
                 player.prepare();
                 player.start();
                 soundLength = player.getDuration();
-            } catch (IllegalArgumentException e) {
-                e.printStackTrace();
+                Log.d("Sound length for " + voiceFile," = " + soundLength);
             } catch (Exception e) {
                 e.printStackTrace();
+                Log.d("voice file " + voiceFile, " not present XXX");
+                stopMediaPlayers();
+                textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
+                soundLength = 3000;
             }
         }
 
+//        if(f.exists()== false) {
+//            Log.d("voice file not found", "");
+//            voiceFile = voiceFile.replaceAll("_", " ");
+//            textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
+//        } else
+//        {
+//            Log.d("voice file found",f.getPath());
+//            try {
+//                Log.d("voice file found","");
+//                player.setDataSource(path);
+//                player.prepare();
+//                player.start();
+//                soundLength = player.getDuration();
+//            } catch (IllegalArgumentException e) {
+//                e.printStackTrace();
+//            } catch (Exception e) {
+//                e.printStackTrace();
+//            }
+//        }
+
         //int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
         //Log.d("flash_card ", "resID = " + resID);
-
-        stopMediaPlayers();
 
 //        double soundLength = 0;
 //        if (resID == 0) {
@@ -348,6 +384,7 @@ public class MainActivity extends AppCompatActivity {
 //        }
 //        Log.d("flash_card ", "Finished playing " + voiceFile);
 
+        stopMediaPlayers();
         return soundLength;
     }
 
@@ -520,6 +557,13 @@ public class MainActivity extends AppCompatActivity {
         stopMediaPlayers();
         setContentView(R.layout.usersetting_v2);
 
+        CheckBox temp1 = (CheckBox) findViewById(R.id.quizcheckBox);
+        if (quiz ==1) {
+            temp1.setChecked(true);
+        } else {
+            temp1.setChecked(false);
+        }
+
 
 //        InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
 //        CsvReader csvFile = new CsvReader(inputStream);
@@ -645,8 +689,10 @@ public class MainActivity extends AppCompatActivity {
         CheckBox temp1 = (CheckBox) findViewById(R.id.quizcheckBox);
         if (temp1.isChecked()) {
             quiz = 1;
+            temp1.setChecked(true);
         } else {
             quiz = 0;
+            temp1.setChecked(false);
         }
 
         Log.d("flash_cards", "quiz selection = " + quiz);
