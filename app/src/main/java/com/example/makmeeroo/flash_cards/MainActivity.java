@@ -61,6 +61,7 @@ public class MainActivity extends AppCompatActivity {
     List<DisplayDataUser> IconList = new ArrayList<>();
     List<String> ListofAllCards = new ArrayList<>();
     List<String> ListofAllUrls  = new ArrayList<>();
+    List<String> ListofAllUrlstoDownload  = new ArrayList<>();
 
     List<String> Last_x_pictures= new ArrayList<>();
     List<String> Last_x_words= new ArrayList<>();
@@ -168,15 +169,29 @@ public class MainActivity extends AppCompatActivity {
 
         // Create a list of all URLs to be executed by the Async task
         //Should update this to remove files that are already stored
+        String cardtemp;
+
         for (int i=0; i <IconList.size(); i++){
             for (int j =0; j < IconList.get(i).getCards().size(); j++){
-                ListofAllUrls.add(IconList.get(i).getCards().get(j)+ ".jpg");
-                ListofAllUrls.add(IconList.get(i).getCards().get(j)+ ".mp3");
-                ListofAllCards.add(IconList.get(i).getCards().get(j));
+                cardtemp = IconList.get(i).getCards().get(j);
+                ListofAllUrls.add(cardtemp+ ".jpg");
+                ListofAllUrls.add(cardtemp + ".mp3");
+                ListofAllCards.add(cardtemp);
+                // if file exists in res, don't add to list of URLs to download
+                if (!doesFileExistInMemory(cardtemp,".jpg")){
+                    ListofAllUrlstoDownload.add(cardtemp+ ".jpg");
+                }
+                if (!doesFileExistInMemory(cardtemp,".mp3")){
+                    ListofAllUrlstoDownload.add(cardtemp+ ".mp3");
+                }
             }
         }
-        String[] datatodownloadarray = new String[ListofAllUrls.size()];
-        datatodownloadarray = ListofAllUrls.toArray(datatodownloadarray);
+
+        for (int k =0; k< ListofAllUrlstoDownload.size(); k++){Log.d("YYYY Need from URL ", ListofAllUrlstoDownload.get(k));}
+
+        String[] datatodownloadarray = new String[ListofAllUrlstoDownload.size()];
+        datatodownloadarray = ListofAllUrlstoDownload.toArray(datatodownloadarray);
+        //TODO: Maybe we can pass a list instead of having to convert to a string array
         new Datadownloader().execute(datatodownloadarray);
     }
 
@@ -272,6 +287,28 @@ public class MainActivity extends AppCompatActivity {
             TextView temp2 = (TextView) findViewById(R.id.textView);
             temp2.setText(selectedWord.replaceAll("_", " "));
         }
+    }
+
+    public boolean doesFileExistInMemory (String card, String type) {
+        boolean answer = true;
+        int resId;
+        File fileName;
+        if (type.equals(".jpg")){
+            resId = getResources().getIdentifier("@drawable/"+card, null, getPackageName());
+            fileName = new File(getFilesDir(),card +".jpg");
+            //Log.d("YYYY"+ card + type + " filename = "+ fileName, " resId = "+ resId);
+        } else {
+            resId = this.getResources().getIdentifier(card,"raw",this.getPackageName());
+            fileName = new File(getFilesDir(),card +".mp3");
+            //Log.d("YYYY"+ card + type + " filename = "+ fileName, " resId = "+ resId);
+        }
+
+        if ((resId == 0) &&(!fileName.exists())) {
+            //Log.d("YYYY" + card + type, " Not Found in Memory");
+            answer = false;
+        }
+
+        return answer;
     }
 
     public void nextImage(int counter) {
@@ -564,12 +601,6 @@ public class MainActivity extends AppCompatActivity {
             temp1.setChecked(false);
         }
 
-
-//        InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
-//        CsvReader csvFile = new CsvReader(inputStream);
-//        //final List<DisplayDataUser> IconList = csvFile.read();
-//        IconList = csvFile.read();
-
         final GridView gvdummy = (GridView) findViewById(R.id.gv1);
         // Need an array adapter to take the source into the Gridview
 
@@ -672,16 +703,55 @@ public class MainActivity extends AppCompatActivity {
             }
         }
         chosenLesssonLength = DeckList.size();
-        Log.d("flash_cards", "Length = " + chosenLesssonLength);
+
+        // Kick off an async task to prioritize the user selected lessons first
+        // Then dd the remaining lessons to be downloaded
+        // Kill the previous async task if it's still running, and start a new one
+
+        List<String> NewListofAllUrlstoDownload  = new ArrayList<>();
+        String cardtemp;
         for (int i =0; i<chosenLesssonLength; i++) {
-            Log.d("flash_cards", "Card "+ i + DeckList.get(i));
+            cardtemp = DeckList.get(i);
+            if (!doesFileExistInMemory(cardtemp,".jpg")){
+                NewListofAllUrlstoDownload.add(cardtemp+ ".jpg");
+                Log.d("ZZZ1 Added ", cardtemp+ ".jpg");
+            }
+            if (!doesFileExistInMemory(cardtemp,".mp3")){
+                NewListofAllUrlstoDownload.add(cardtemp+ ".mp3");
+                Log.d("ZZZ1 Added ", cardtemp + ".mp3");
+            }
         }
 
-        File dirFiles = this.getFilesDir();  //http://stackoverflow.com/questions/11871925/how-to-get-list-of-files-from-a-specific-folder-in-internal-storage
-        for (String strFile : dirFiles.list())
-        {
-            Log.d("file ", strFile);
+        for (int k =0; k< NewListofAllUrlstoDownload.size(); k++){
+            Log.d("ZZZ1 Reprioritizd list", NewListofAllUrlstoDownload.get(k));
         }
+
+        for (int i = 0; i < ListofAllCards.size(); i++){
+            cardtemp = ListofAllCards.get(i);
+            if (!NewListofAllUrlstoDownload.contains(cardtemp+".jpg")) {
+                if (!doesFileExistInMemory(cardtemp, ".jpg")) {
+                    NewListofAllUrlstoDownload.add(cardtemp + ".jpg");
+                    Log.d("ZZZ2 jpg Added ", cardtemp + ".jpg");
+                }
+            }
+
+            if (!NewListofAllUrlstoDownload.contains(cardtemp+".mp3")) {
+                if (!doesFileExistInMemory(cardtemp,".mp3")){
+                    NewListofAllUrlstoDownload.add(cardtemp+ ".mp3");
+                    Log.d("ZZZ2 mp3 Added ", cardtemp + ".mp3");
+                }
+            }
+        }
+
+        for (int k =0; k< NewListofAllUrlstoDownload.size(); k++){
+            Log.d("ZZZ2 Reprioritizd list", NewListofAllUrlstoDownload.get(k));
+        }
+
+        //String[] datatodownloadarray = new String[NewListofAllUrlstoDownload.size()];
+        //datatodownloadarray = NewListofAllUrlstoDownload.toArray(datatodownloadarray);
+        //TODO: Maybe we can pass a list instead of having to convert to a string array
+
+        //new Datadownloader().execute(datatodownloadarray);
     }
 
     public void selectionComplete(View v) {
