@@ -46,6 +46,7 @@ import java.net.HttpURLConnection;
 import java.net.MalformedURLException;
 import java.net.URL;
 import java.net.URLConnection;
+import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Locale;
@@ -60,8 +61,7 @@ public class MainActivity extends AppCompatActivity {
     List<String> DeckList = new ArrayList<>();
     List<DisplayDataUser> IconList = new ArrayList<>();
     List<String> ListofAllCards = new ArrayList<>();
-    List<String> ListofAllUrls  = new ArrayList<>();
-    List<String> ListofAllUrlstoDownload  = new ArrayList<>();
+    Datadownloader getDatafromURL = new Datadownloader();
 
     List<String> Last_x_pictures= new ArrayList<>();
     List<String> Last_x_words= new ArrayList<>();
@@ -123,21 +123,6 @@ public class MainActivity extends AppCompatActivity {
             StrictMode.setThreadPolicy(policy);
         }
 
-//        if ( textToSpeechObj == null )
-//            textToSpeechObj = new TextToSpeech(getApplicationContext(), new TextToSpeech.OnInitListener() {
-//                @Override
-//                public void onInit(int status) {
-//                    if (status == TextToSpeech.SUCCESS) {
-//                        Log.d("flash_cards", "entered tts object");
-//                        textToSpeechObj.setLanguage(Locale.US);
-//                        textToSpeechObj.setSpeechRate(0.75f);
-//                        textToSpeechObj.setPitch(1.0f);
-//                        Log.d("flash_cards", "tts initiated ");
-//                    }
-//                }
-//            });
-//        Log.d("flash_cards", "onCreate textToSpeech created ");
-
         InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
         CsvReader csvFile = new CsvReader(inputStream);
         IconList = csvFile.read();
@@ -156,43 +141,13 @@ public class MainActivity extends AppCompatActivity {
         Log.d("flash_cards", "testWrite is " + testWrite);
          //*/
 
-/*
-        DeckList.clear();
-        DeckList.add("art");
-        chosenLesssonLength = IconList.get(0).getCards().size();
-        for (int i=0; i<chosenLesssonLength; i++){
-            DeckList.add(IconList.get(0).getCards().get(i));
-        }
-*/
-        SelectionList.add(IconList.get(0).getLessonName());
-        updateDeckList();
-
-        // Create a list of all URLs to be executed by the Async task
-        //Should update this to remove files that are already stored
-        String cardtemp;
-
-        for (int i=0; i <IconList.size(); i++){
-            for (int j =0; j < IconList.get(i).getCards().size(); j++){
-                cardtemp = IconList.get(i).getCards().get(j);
-                ListofAllUrls.add(cardtemp+ ".jpg");
-                ListofAllUrls.add(cardtemp + ".mp3");
-                ListofAllCards.add(cardtemp);
-                // if file exists in res, don't add to list of URLs to download
-                if (!doesFileExistInMemory(cardtemp,".jpg")){
-                    ListofAllUrlstoDownload.add(cardtemp+ ".jpg");
-                }
-                if (!doesFileExistInMemory(cardtemp,".mp3")){
-                    ListofAllUrlstoDownload.add(cardtemp+ ".mp3");
-                }
+        for (int i =0; i< IconList.size(); i++){
+            for (int j=0;j< IconList.get(i).getCards().size(); j++) {
+                ListofAllCards.add(IconList.get(i).getCards().get(j));
             }
         }
-
-        for (int k =0; k< ListofAllUrlstoDownload.size(); k++){Log.d("YYYY Need from URL ", ListofAllUrlstoDownload.get(k));}
-
-        String[] datatodownloadarray = new String[ListofAllUrlstoDownload.size()];
-        datatodownloadarray = ListofAllUrlstoDownload.toArray(datatodownloadarray);
-        //TODO: Maybe we can pass a list instead of having to convert to a string array
-        new Datadownloader().execute(datatodownloadarray);
+        SelectionList.add(IconList.get(0).getLessonName());
+        updateDeckList();
     }
 
     @Override
@@ -287,28 +242,6 @@ public class MainActivity extends AppCompatActivity {
             TextView temp2 = (TextView) findViewById(R.id.textView);
             temp2.setText(selectedWord.replaceAll("_", " "));
         }
-    }
-
-    public boolean doesFileExistInMemory (String card, String type) {
-        boolean answer = true;
-        int resId;
-        File fileName;
-        if (type.equals(".jpg")){
-            resId = getResources().getIdentifier("@drawable/"+card, null, getPackageName());
-            fileName = new File(getFilesDir(),card +".jpg");
-            //Log.d("YYYY"+ card + type + " filename = "+ fileName, " resId = "+ resId);
-        } else {
-            resId = this.getResources().getIdentifier(card,"raw",this.getPackageName());
-            fileName = new File(getFilesDir(),card +".mp3");
-            //Log.d("YYYY"+ card + type + " filename = "+ fileName, " resId = "+ resId);
-        }
-
-        if ((resId == 0) &&(!fileName.exists())) {
-            //Log.d("YYYY" + card + type, " Not Found in Memory");
-            answer = false;
-        }
-
-        return answer;
     }
 
     public void nextImage(int counter) {
@@ -704,14 +637,44 @@ public class MainActivity extends AppCompatActivity {
         }
         chosenLesssonLength = DeckList.size();
 
+        //Kickoff data downloaer
+        String[] datatodownloadarray = new String[DeckList.size()];
+        datatodownloadarray = DeckList.toArray(datatodownloadarray);
+        prioritizeDataFetch(datatodownloadarray);
+    }
+
+    public boolean doesFileExistInMemory (String card, String type) {
+        boolean answer = true;
+        int resId;
+        File fileName;
+        if (type.equals(".jpg")){
+            resId = getResources().getIdentifier("@drawable/"+card, null, getPackageName());
+            fileName = new File(getFilesDir(),card +".jpg");
+            //Log.d("YYYY"+ card + type + " filename = "+ fileName, " resId = "+ resId);
+        } else {
+            resId = this.getResources().getIdentifier(card,"raw",this.getPackageName());
+            fileName = new File(getFilesDir(),card +".mp3");
+            //Log.d("YYYY"+ card + type + " filename = "+ fileName, " resId = "+ resId);
+        }
+
+        if ((resId == 0) &&(!fileName.exists())) {
+            //Log.d("YYYY" + card + type, " Not Found in Memory");
+            answer = false;
+        }
+
+        return answer;
+    }
+
+    public void prioritizeDataFetch (String[] cardlist){
         // Kick off an async task to prioritize the user selected lessons first
         // Then dd the remaining lessons to be downloaded
         // Kill the previous async task if it's still running, and start a new one
 
         List<String> NewListofAllUrlstoDownload  = new ArrayList<>();
         String cardtemp;
-        for (int i =0; i<chosenLesssonLength; i++) {
-            cardtemp = DeckList.get(i);
+
+        for (int i =0; i<cardlist.length; i++) {
+            cardtemp = cardlist[i];
             if (!doesFileExistInMemory(cardtemp,".jpg")){
                 NewListofAllUrlstoDownload.add(cardtemp+ ".jpg");
                 Log.d("ZZZ1 Added ", cardtemp+ ".jpg");
@@ -744,14 +707,21 @@ public class MainActivity extends AppCompatActivity {
         }
 
         for (int k =0; k< NewListofAllUrlstoDownload.size(); k++){
-            Log.d("ZZZ2 Reprioritizd list", NewListofAllUrlstoDownload.get(k));
+            Log.d("ZZZ3 Reprioritizd "+ k + " ", NewListofAllUrlstoDownload.get(k));
         }
 
-        //String[] datatodownloadarray = new String[NewListofAllUrlstoDownload.size()];
-        //datatodownloadarray = NewListofAllUrlstoDownload.toArray(datatodownloadarray);
-        //TODO: Maybe we can pass a list instead of having to convert to a string array
+        if (getDatafromURL.getStatus() == AsyncTask.Status.RUNNING){
+            Log.d("Async task", "running");
+            getDatafromURL.cancel(true);
+            Log.d("Async task", "cancelled");
+        }
 
-        //new Datadownloader().execute(datatodownloadarray);
+        String[] datatodownloadarray = new String[NewListofAllUrlstoDownload.size()];
+        datatodownloadarray = NewListofAllUrlstoDownload.toArray(datatodownloadarray);
+
+        getDatafromURL = new Datadownloader();
+        getDatafromURL.execute(datatodownloadarray);
+        //TODO: Maybe we can pass a list instead of having to convert to a string array
     }
 
     public void selectionComplete(View v) {
@@ -773,135 +743,6 @@ public class MainActivity extends AppCompatActivity {
         stopMediaPlayers();
         mHandler.post(mUpdate);
 
-    }
-
-    public String internalMemoryStorage(String filename, Bitmap bm){
-        File filelocation = new File(getFilesDir(),filename);
-        FileOutputStream fos = null;
-        try{
-            fos = new FileOutputStream(filelocation);
-            bm.compress(Bitmap.CompressFormat.PNG, 100, fos);
-        }
-        catch (Exception e){
-            e.printStackTrace();
-        } finally {
-            try {
-                fos.close();
-            } catch (IOException e){
-                e.printStackTrace();
-            }
-        }
-        return filelocation.getAbsolutePath();
-    }
-
-    public void internalMemoryAudio(String voicecard) {
-        // http://stackoverflow.com/questions/19218775/android-copy-assets-to-internal-storage
-        File outfilelocation = new File(getFilesDir(), voicecard + ".mp3");
-        FileOutputStream fout = null;
-
-        int resID = this.getResources().getIdentifier(voicecard, "raw", this.getPackageName());
-        Log.d("res id ) for " + voicecard, "= " + resID);
-        if (resID != 0) {
-            InputStream inStream = this.getResources().openRawResource(resID);
-            //FileInputStream fin = null;
-            //Uri uri=Uri.parse("android.resource://"+getPackageName()+"/raw/"+reslocation+".mp3");
-            //File file = new File("android.resource://"+getPackageName()+"/raw/",reslocation);
-            try {
-                fout = new FileOutputStream(outfilelocation);
-                //fin = new FileInputStream(file);
-                copyFile(inStream, fout);
-
-                inStream.close();
-                inStream = null;
-                fout.flush();
-                fout.close();
-                fout = null;
-            } catch (IOException e) {
-                Log.e("IOerror", " Fail", e);
-            }
-        } else {outfilelocation.delete();
-
-        }
-        //return outfilelocation.getAbsolutePath();
-    }
-
-    private void copyFile(InputStream fin, OutputStream fout) throws IOException {
-        byte[] buffer = new byte[1024];
-        int read;
-        while((read = fin.read(buffer)) != -1){
-            fout.write(buffer, 0, read);
-        }
-    }
-
-    public void copyImagetoInternalMemory(String cardname){
-        String link = "https://github.com/makeshl/flash_cards/tree/master/app/src/main/res/drawable/"+cardname + ".jpg";
-        File outfilelocation = new File(getFilesDir(), cardname + ".jpg");
-        FileOutputStream fout = null;
-
-        Log.d("outfile =", outfilelocation.getPath());
-
-        try {
-            //http://stackoverflow.com/questions/17674634/saving-and-reading-bitmaps-images-from-internal-memory-in-android
-
-            URL url = new URL(link);
-            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-            urlConnection.setDoInput(true);
-            urlConnection.connect();
-            InputStream fin = urlConnection.getInputStream();
-            fout = new FileOutputStream(outfilelocation);
-
-            Log.d("url path = ", url.getPath());
-            Log.d("fin path = ", fin.toString());
-            Log.d("fout path = ", fout.toString());
-
-            Bitmap bm = BitmapFactory.decodeStream(fin);
-            Log.d("bytecount = "+ bm.getHeight(), " .."+bm.getDensity());
-            bm.compress(Bitmap.CompressFormat.PNG, 100, fout);
-            fout.flush();
-            fout.close();
-            //fin.close();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            Log.d("Malformed Exc","");
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d("IO Exc", "");
-        }
-    }
-
-    public void copytoInternalMemory(String cardname, String filetype)  {
-        // TODO: change this to get the deck of cards to be downloaded from memory?
-        String link = null;
-        if (filetype == ".mp3"){
-            link = "https://github.com/makeshl/flash_cards/app/src/main/res/raw/"+cardname + filetype;
-        }else{
-            link = "https://github.com/makeshl/flash_cards/tree/master/app/src/main/res/drawable/"+cardname + filetype;
-        }
-
-        Log.d("path = ", link);
-        File outfilelocation = new File(getFilesDir(), cardname + filetype);
-        Log.d("outfile =", outfilelocation.getPath());
-        FileOutputStream fout = null;
-
-        try {
-            URL url = new URL(link);
-            Log.d("url path = ", url.getPath());
-            HttpsURLConnection urlConnection = (HttpsURLConnection) url.openConnection();
-            BufferedInputStream fin = new BufferedInputStream(urlConnection.getInputStream());
-            Log.d("fin path = ",fin.toString());
-            fout = new FileOutputStream(outfilelocation);
-            Log.d("fout path = ", fout.toString());
-            copyFile(fin, fout);
-            fout.flush();
-            fout.close();
-            fin.close();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-            Log.d("Malformed Exc","");
-        } catch (IOException e) {
-            e.printStackTrace();
-            Log.d("IO Exc", "");
-        }
     }
 
     public class Datadownloader extends AsyncTask<String, Integer, Integer>{
