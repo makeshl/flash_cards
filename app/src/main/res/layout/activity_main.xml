@@ -37,7 +37,7 @@
         android:background="#FFFFFF"
         />
 
-    <ImageView
+    <com.example.makmeeroo.flash_cards.ImageViewWithGesture
         android:adjustViewBounds="true"
         android:layout_width= "match_parent"
         android:layout_height="match_parent"
