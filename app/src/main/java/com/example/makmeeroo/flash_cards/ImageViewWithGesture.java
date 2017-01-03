@@ -13,6 +13,19 @@ import android.widget.ImageView;
  */
 public class ImageViewWithGesture extends ImageView implements GestureDetector.OnGestureListener {
 
+    MainActivity pMainActivity;
+    private float x1, y1; // coordinates at start of gesture (i.e. at onDown)
+    //private int swipeDet = 0; // 0 not a swipe, 1 right, 2 left,
+    static final int MIN_DIST = 150; // px
+    static final int MAX_TIME = 400; // ms
+    static final int SWIPE_NONE = 0;
+    static final int SWIPE_FWD = 1;
+    static final int SWIPE_BACK = 2;
+
+    public void setMainActivity (MainActivity activity) { // set function
+        pMainActivity = activity;
+    }
+
     public ImageViewWithGesture(Context context) {
         super(context);
         init(context);
@@ -43,7 +56,9 @@ public class ImageViewWithGesture extends ImageView implements GestureDetector.O
                    case MotionEvent.ACTION_DOWN:
                        return onDown(event);
                        //break;
-
+                   case MotionEvent.ACTION_UP:
+                       return onUp(v, event);
+                        // break;
                    case MotionEvent.ACTION_MOVE:
                        //code here
                        break;
@@ -58,9 +73,53 @@ public class ImageViewWithGesture extends ImageView implements GestureDetector.O
         );
     }
 
+    private boolean onUp(View v, MotionEvent e) {
+        float x2 = e.getX();
+        float xDiff = x2-x1;
+        int swipeDet = SWIPE_NONE;
+        float t1 = e.getDownTime();
+        float t2 = e.getEventTime();
+        float tDiff = t2-t1; // ms
+        if (tDiff < MAX_TIME) {
+            if (xDiff > MIN_DIST) {
+                swipeDet = SWIPE_BACK; // map right swipe to back
+                //Toast.makeText(getApplicationContext(),"selection was empty; defaulting to " + SelectionList.get(0),Toast.LENGTH_LONG).show();
+            }
+            if (xDiff < -MIN_DIST) {
+                swipeDet = SWIPE_FWD;
+            }
+            if (pMainActivity!=null) {
+                switch (swipeDet) {
+                    case SWIPE_NONE:
+                        pMainActivity.stopResume(v);
+                        break;
+                    case SWIPE_FWD:
+                        pMainActivity.slideBack(false);
+                        break;
+                    case SWIPE_BACK:
+                        pMainActivity.slideBack(true);
+                        break;
+                    default: // do nothing
+                        Log.d("imageviewwithGesture ", " unsupported value for swipeDet=" + swipeDet );
+                        break;
+                }
+            }
+        }
+
+        Log.d("imageviewwithGesture ", " onUp detected x2=" + x2 + " t2=" + t2);
+        Log.d("imageviewwithGesture ", " onUp x2-x1=" + (x2-x1) + " t2-t1=" + (t2-t1));
+        Log.d("imageviewwithGesture ", " swipeDet=" + swipeDet );
+
+        return true;
+    }
+
     @Override
     public boolean onDown(MotionEvent e) {
-        Log.d("flash_cards", " imageviewwithGesture onDown detected");
+
+        x1 = e.getX();
+        y1 = e.getY();
+        float t1 = e.getDownTime();
+        Log.d("flash_cards", " imageviewwithGesture onDown detected x1,y1=("+x1+","+y1+") t1="+t1);
         return true;
     }
 
