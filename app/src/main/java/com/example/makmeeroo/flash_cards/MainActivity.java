@@ -248,6 +248,7 @@ public class MainActivity extends Activity {
         // TODO if picture file is not available, then move to the next picture
         //TODO add some basic animation
         ImageViewWithGesture temp1 = (ImageViewWithGesture) findViewById(R.id.imageView1);
+        temp1.setMainActivity(this);
         TextView temp3 = (TextView) findViewById(R.id.textReading);
         String selectedWord = DeckList.get(counter);
 
@@ -365,6 +366,17 @@ public class MainActivity extends Activity {
         }
         if ((null != textToSpeechObj) && textToSpeechObj.isSpeaking())
             textToSpeechObj.stop();
+    }
+
+    public void slideBack(boolean slideBack) {
+        mHandler.removeCallbacksAndMessages(null); // fix this to stop only mUpdate;
+        stopMediaPlayers();
+        if (slideBack) {
+            stopCounter = stopCounter - 2;
+            while (stopCounter < 0)
+                stopCounter = stopCounter + chosenLesssonLength;
+        }
+        mHandler.post(mUpdate); // skip fwd one slide
     }
 
     public void stopResume(View v) {
