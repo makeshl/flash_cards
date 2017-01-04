@@ -2,6 +2,7 @@ package com.example.makmeeroo.flash_cards;
 
 //android:src="@drawable/art"
 
+import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
@@ -15,7 +16,6 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.content.ContextCompat;
-import android.support.v7.app.AppCompatActivity;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -55,7 +55,7 @@ import java.util.Random;
 import javax.net.ssl.HttpsURLConnection;
 
 // TODO http://www.tutorialspoint.com/java/
-public class MainActivity extends AppCompatActivity {
+public class MainActivity extends Activity {
 
     List<String> SelectionList = new ArrayList<>();
     List<String> DeckList = new ArrayList<>();
@@ -247,7 +247,8 @@ public class MainActivity extends AppCompatActivity {
     public void nextImage(int counter) {
         // TODO if picture file is not available, then move to the next picture
         //TODO add some basic animation
-        ImageView temp1 = (ImageView) findViewById(R.id.imageView1);
+        ImageViewWithGesture temp1 = (ImageViewWithGesture) findViewById(R.id.imageView1);
+        temp1.setMainActivity(this);
         TextView temp3 = (TextView) findViewById(R.id.textReading);
         String selectedWord = DeckList.get(counter);
 
@@ -365,6 +366,17 @@ public class MainActivity extends AppCompatActivity {
         }
         if ((null != textToSpeechObj) && textToSpeechObj.isSpeaking())
             textToSpeechObj.stop();
+    }
+
+    public void slideBack(boolean slideBack) {
+        mHandler.removeCallbacksAndMessages(null); // fix this to stop only mUpdate;
+        stopMediaPlayers();
+        if (slideBack) {
+            stopCounter = stopCounter - 2;
+            while (stopCounter < 0)
+                stopCounter = stopCounter + chosenLesssonLength;
+        }
+        mHandler.post(mUpdate); // skip fwd one slide
     }
 
     public void stopResume(View v) {
