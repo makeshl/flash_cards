@@ -714,6 +714,7 @@ public class MainActivity extends AppCompatActivity {
             Log.d("Async task", "running");
             getDatafromURL.cancel(true);
             Log.d("Async task", "cancelled");
+            //TODO: Best practices in AsyncTask: http://www.shanekirk.com/2012/04/asynctask-missteps/
         }
 
         String[] datatodownloadarray = new String[NewListofAllUrlstoDownload.size()];
