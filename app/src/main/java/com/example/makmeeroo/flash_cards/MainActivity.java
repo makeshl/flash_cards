@@ -16,6 +16,7 @@ import android.os.Handler;
 import android.os.StrictMode;
 import android.speech.tts.TextToSpeech;
 import android.support.v4.content.ContextCompat;
+import android.text.Html;
 import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
@@ -33,6 +34,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.example.makmeeroo.flash_cards.DisplayData.DisplayDataUser;
+import com.example.makmeeroo.flash_cards.CsvReaderV2;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -60,8 +62,13 @@ public class MainActivity extends Activity {
     List<String> SelectionList = new ArrayList<>();
     List<String> DeckList = new ArrayList<>();
     List<DisplayDataUser> IconList = new ArrayList<>();
+    List<DisplayDataUser> IconList2 = new ArrayList<>();
     List<String> ListofAllCards = new ArrayList<>();
     Datadownloader getDatafromURL = new Datadownloader();
+
+    List<Lesson> masterLessonList = new ArrayList<>();
+
+
 
     List<String> Last_x_pictures= new ArrayList<>();
     List<String> Last_x_words= new ArrayList<>();
@@ -94,10 +101,12 @@ public class MainActivity extends Activity {
 
     int stopCounter = 0;
     private Handler mHandler = null;
-    long displayMinTime = 2000; // milliseconds
+    private Handler sHandler = null;
+    long displayMinTime = 1000; // milliseconds
 
     int chosenLesssonLength;
     String wordMarker = "_";
+    String plusMarker = "!";
     int quiz = 0;
 
     // added for memory game
@@ -126,6 +135,51 @@ public class MainActivity extends Activity {
         InputStream inputStream = getResources().openRawResource(R.raw.lesson2);
         CsvReader csvFile = new CsvReader(inputStream);
         IconList = csvFile.read();
+
+        // Breaking out spelling lessons into components
+        for (int i =0; i< IconList.size(); i++) {
+
+            DisplayDataUser dummyVar = new DisplayDataUser();
+            List<String> SpellingList = new ArrayList<>();
+
+            dummyVar.setLessonName(IconList.get(i).getLessonName());
+            dummyVar.setImage(IconList.get(i).getImage());
+            dummyVar.setNumberLessons(IconList.get(i).getNumberLessons());
+
+            String l1 = IconList.get(i).getLessonName().substring(0, 1);
+            //Log.d("+++ lesson Name = " + i + " = " + IconList.get(i).getLessonName(), l1);
+
+            if (l1.equals(plusMarker)) {
+                Log.d("!entered here", plusMarker);
+                for (int j = 0; j < IconList.get(i).getCards().size(); j++) {
+                    String tempWord = IconList.get(i).getCards().get(j);
+                    SpellingList.add(wordMarker+tempWord.substring(1,tempWord.length()));
+                    for (int k = 2;k<=tempWord.length(); k++){
+                        SpellingList.add(plusMarker + tempWord.substring(1,k));
+                    }
+                    SpellingList.add(wordMarker+tempWord.substring(1,tempWord.length()));
+                }
+                dummyVar.setCards(SpellingList);
+            }
+            else {
+                dummyVar.setCards(IconList.get(i).getCards());
+            }
+
+            IconList2.add(dummyVar);
+        }
+
+        for (int i =0; i< IconList2.size(); i++){
+            for (int j=0;j< IconList2.get(i).getCards().size(); j++) {
+                Log.d("++ row "+i+ " word" + j+ " ", IconList2.get(i).getCards().get(j));
+            }
+        }
+
+        IconList = IconList2;
+
+        // Added 1/15 to create a new instance of lessons (and cards) with more parameters
+//        InputStream inputStream2 = getResources().openRawResource(R.raw.lesson2);
+//        CsvReaderV2 csvFilev2 = new CsvReaderV2(inputStream2);
+//        masterLessonList = csvFilev2.read();
 
         ///*
         setSharedPreference();
@@ -204,7 +258,6 @@ public class MainActivity extends Activity {
         }
         mHandler.post(mUpdate);
         //mHandler.postDelayed(mUpdate, displayMinTime);
-
     }
 
     private Runnable mUpdate = new Runnable() {
@@ -216,7 +269,7 @@ public class MainActivity extends Activity {
             nextImage(stopCounter);
             double soundLength = nextSound(stopCounter);
 
-            long currentDisplayTime = (long) (soundLength + 500); // add 0.5 seconds margin
+            long currentDisplayTime = (long) (soundLength); // add 0.5 seconds margin
             if (currentDisplayTime < displayMinTime) // too short
                 currentDisplayTime = displayMinTime;
 
@@ -233,6 +286,12 @@ public class MainActivity extends Activity {
             }
         }
     };
+
+    private Runnable sUpdate = new Runnable() {
+        public void run() {
+        }
+    };
+
 
     public void nextTextMessage(int counter) {
         String selectedWord = DeckList.get(counter);
@@ -256,7 +315,15 @@ public class MainActivity extends Activity {
             temp3.setVisibility(View.VISIBLE);
             temp1.setVisibility(View.INVISIBLE);
             temp3.setText(selectedWord.replaceAll("_", " "));
-        } else {
+        } else if((selectedWord.substring(0, 1)).equals(plusMarker))   {
+            temp3.setVisibility(View.VISIBLE);
+            temp1.setVisibility(View.INVISIBLE);
+            String dummy = selectedWord.replaceAll("!", " ");
+            String dummy2 = "<font color=#ff0000>"+dummy.substring(1,dummy.length()-1)+
+                    "</font><font color=#000080>"+dummy.substring(dummy.length()-1,dummy.length())+"</font>";
+            temp3.setText(Html.fromHtml(dummy2));
+        }
+        else {
             temp1.setVisibility(View.VISIBLE);
             temp3.setVisibility(View.INVISIBLE);
 
@@ -286,7 +353,24 @@ public class MainActivity extends Activity {
 
     public double nextSound(int counter) {
 
-        String voiceFile = DeckList.get(counter);
+        String voiceFile1 = DeckList.get(counter);
+        String voiceFile2; //dummy variable for removing first underscore
+        String voiceFile;
+        int spelling =0;
+
+        if (voiceFile1.substring(0,1).equals(wordMarker)) {
+            voiceFile2 = voiceFile1.substring(1,voiceFile1.length());
+        }
+
+        else if (voiceFile1.substring(0,1).equals(plusMarker)) {
+            voiceFile2= voiceFile1.substring(voiceFile1.length()-1,voiceFile1.length());
+            spelling =1;
+        }
+        else {
+        voiceFile2 = voiceFile1;
+        }
+        voiceFile = voiceFile2.replaceAll(wordMarker," "); //convert all subsequent underscores to spaces for TTS object to read
+
         double soundLength = 0;
 
         File f = new File(getFilesDir(), voiceFile +".mp3");
@@ -296,10 +380,10 @@ public class MainActivity extends Activity {
 
         int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
         if (resID !=0){
-            Log.d("voice file "+ voiceFile, " is from res XXX");
+            Log.d("voice file "+ voiceFile, " is from res XXX" + resID);
             player = MediaPlayer.create(this,resID);
             player.start();
-            soundLength = player.getDuration();
+            soundLength = player.getDuration()+500;
             Log.d("Sound length for " + voiceFile," = " + soundLength);
         } else {
             try {
@@ -314,48 +398,13 @@ public class MainActivity extends Activity {
                 Log.d("voice file " + voiceFile, " not present XXX");
                 stopMediaPlayers();
                 textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
-                soundLength = 3000;
+                if (spelling == 1){
+                    soundLength =1000;
+                } else {
+                    soundLength = 1000;
+                }
             }
         }
-
-//        if(f.exists()== false) {
-//            Log.d("voice file not found", "");
-//            voiceFile = voiceFile.replaceAll("_", " ");
-//            textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
-//        } else
-//        {
-//            Log.d("voice file found",f.getPath());
-//            try {
-//                Log.d("voice file found","");
-//                player.setDataSource(path);
-//                player.prepare();
-//                player.start();
-//                soundLength = player.getDuration();
-//            } catch (IllegalArgumentException e) {
-//                e.printStackTrace();
-//            } catch (Exception e) {
-//                e.printStackTrace();
-//            }
-//        }
-
-        //int resID = this.getResources().getIdentifier(voiceFile, "raw", this.getPackageName());
-        //Log.d("flash_card ", "resID = " + resID);
-
-//        double soundLength = 0;
-//        if (resID == 0) {
-//            Log.d("flash_card ", "voice generated : " + voiceFile);
-//            voiceFile = voiceFile.replaceAll("_", " ");
-//            textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
-//        } else {
-//            Log.d("flash_card ", "voice file found " + voiceFile);
-//            pronouncePlay = MediaPlayer.create(this, resID);
-//            pronouncePlay.start();
-//            soundLength = pronouncePlay.getDuration(); // returns duration in milliseconds
-//            Log.d("flash_card ", "voice file found " + voiceFile + soundLength);
-//        }
-//        Log.d("flash_card ", "Finished playing " + voiceFile);
-
-        stopMediaPlayers();
         return soundLength;
     }
 
@@ -364,8 +413,10 @@ public class MainActivity extends Activity {
             pronouncePlay.reset();
             //pronouncePlay.release();
         }
-        if ((null != textToSpeechObj) && textToSpeechObj.isSpeaking())
+        if ((null != textToSpeechObj) && textToSpeechObj.isSpeaking()) {
             textToSpeechObj.stop();
+            Log.d("text2speech", "XXX reset");
+        }
     }
 
     public void slideBack(boolean slideBack) {
@@ -652,7 +703,7 @@ public class MainActivity extends Activity {
         //Kickoff data downloaer
         String[] datatodownloadarray = new String[DeckList.size()];
         datatodownloadarray = DeckList.toArray(datatodownloadarray);
-        prioritizeDataFetch(datatodownloadarray);
+        //prioritizeDataFetch(datatodownloadarray);
     }
 
     public boolean doesFileExistInMemory (String card, String type) {

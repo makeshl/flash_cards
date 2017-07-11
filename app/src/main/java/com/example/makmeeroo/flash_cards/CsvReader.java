@@ -45,6 +45,7 @@ public class CsvReader {
 
                 Log.d(dummy.getLessonName()+" "+ dummy.getImage()+dummy.getRating()+" "+dummy.getNumberLessons()," " +dummy.getCards().size());
             }
+            reader.close();
         }
         catch (IOException ex) {
             throw new RuntimeException("Error in reading CSV file: "+ex);
