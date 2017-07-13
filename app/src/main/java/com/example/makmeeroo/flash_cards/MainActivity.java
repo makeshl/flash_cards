@@ -66,9 +66,7 @@ public class MainActivity extends Activity {
     List<String> ListofAllCards = new ArrayList<>();
     Datadownloader getDatafromURL = new Datadownloader();
 
-    List<Lesson> masterLessonList = new ArrayList<>();
-
-
+//    List<Lesson> masterLessonList = new ArrayList<>();
 
     List<String> Last_x_pictures= new ArrayList<>();
     List<String> Last_x_words= new ArrayList<>();
@@ -107,6 +105,7 @@ public class MainActivity extends Activity {
     int chosenLesssonLength;
     String wordMarker = "_";
     String plusMarker = "!";
+    String tildaMarker = "~";
     int quiz = 0;
 
     // added for memory game
@@ -150,12 +149,12 @@ public class MainActivity extends Activity {
             //Log.d("+++ lesson Name = " + i + " = " + IconList.get(i).getLessonName(), l1);
 
             if (l1.equals(plusMarker)) {
-                Log.d("!entered here", plusMarker);
                 for (int j = 0; j < IconList.get(i).getCards().size(); j++) {
                     String tempWord = IconList.get(i).getCards().get(j);
                     SpellingList.add(wordMarker+tempWord.substring(1,tempWord.length()));
                     for (int k = 2;k<=tempWord.length(); k++){
                         SpellingList.add(plusMarker + tempWord.substring(1,k));
+                        //SpellingList.add(plusMarker + tempWord.substring(1,k)+tildaMarker + (tempWord.length()-k));
                     }
                     SpellingList.add(wordMarker+tempWord.substring(1,tempWord.length()));
                 }
@@ -164,7 +163,6 @@ public class MainActivity extends Activity {
             else {
                 dummyVar.setCards(IconList.get(i).getCards());
             }
-
             IconList2.add(dummyVar);
         }
 
@@ -363,6 +361,7 @@ public class MainActivity extends Activity {
         }
 
         else if (voiceFile1.substring(0,1).equals(plusMarker)) {
+            //int tildaLoc = voiceFile1.indexOf(tildaMarker);
             voiceFile2= voiceFile1.substring(voiceFile1.length()-1,voiceFile1.length());
             spelling =1;
         }
@@ -401,7 +400,7 @@ public class MainActivity extends Activity {
                 if (spelling == 1){
                     soundLength =1000;
                 } else {
-                    soundLength = 1000;
+                    soundLength = 2000;
                 }
             }
         }
