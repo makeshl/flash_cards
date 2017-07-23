@@ -35,6 +35,7 @@ import android.widget.Toast;
 
 import com.example.makmeeroo.flash_cards.DisplayData.DisplayDataUser;
 import com.example.makmeeroo.flash_cards.CsvReaderV2;
+import com.example.makmeeroo.flash_cards.DisplayData.SentenceElements;
 
 import java.io.BufferedInputStream;
 import java.io.File;
@@ -103,9 +104,12 @@ public class MainActivity extends Activity {
     long displayMinTime = 1000; // milliseconds
 
     int chosenLesssonLength;
-    String wordMarker = "_";
-    String plusMarker = "!";
-    String tildaMarker = "~";
+    String wordMarker = "_"; //indicates words to be read
+    String plusMarker = "!"; //indicates words to be spelled out
+    String tildaMarker = "~"; // indicates sentences to be read out word by word
+    String wordStartMarker = "&";   // indidates beginning of each word in a sentence
+    String wordEndMarker ="$"; // indicates end of each word
+    String spaceMarker=" ";
     int quiz = 0;
 
     // added for memory game
@@ -140,6 +144,7 @@ public class MainActivity extends Activity {
 
             DisplayDataUser dummyVar = new DisplayDataUser();
             List<String> SpellingList = new ArrayList<>();
+            List<String> WordList = new ArrayList<>();
 
             dummyVar.setLessonName(IconList.get(i).getLessonName());
             dummyVar.setImage(IconList.get(i).getImage());
@@ -159,6 +164,34 @@ public class MainActivity extends Activity {
                     SpellingList.add(wordMarker+tempWord.substring(1,tempWord.length()));
                 }
                 dummyVar.setCards(SpellingList);
+            }
+            else if (l1.equals(tildaMarker)){
+                // lesson with senteneces
+                // add identifiers to beginning & end of each word
+                for (int j=0;j< IconList.get(i).getCards().size(); j++) {
+                    String sentence = IconList.get(i).getCards().get(j);
+                    Log.d("sentnce in file = ", sentence);
+                    int startingPoint = 0;
+                    String strabc = null;
+                    for (int k=0;k< sentence.length(); k++){
+                        Log.d("k = " + k, " length = " + sentence.length());
+                        if (sentence.charAt(k) == ' '){
+                        //if (sentence.substring(k,k+1).equals(spaceMarker)) {
+                            if (startingPoint == 0){
+                                strabc = tildaMarker + wordStartMarker + sentence.substring(0, k) + wordEndMarker + sentence.substring(k + 1);
+                            } else {
+                                strabc = tildaMarker + sentence.substring(0, startingPoint) + wordStartMarker + sentence.substring(startingPoint + 1, k) + wordEndMarker + sentence.substring(k + 1);
+                            }
+                            startingPoint = k;
+                            Log.d("sentence", strabc);
+                            WordList.add(strabc);
+                        }
+                    }
+                    strabc = tildaMarker+ sentence.substring(0,startingPoint)+ wordStartMarker + sentence.substring(startingPoint+1) + wordEndMarker;
+                    Log.d("sentence", strabc);
+                    WordList.add(strabc);
+                }
+                dummyVar.setCards(WordList);
             }
             else {
                 dummyVar.setCards(IconList.get(i).getCards());
@@ -320,6 +353,19 @@ public class MainActivity extends Activity {
             String dummy2 = "<font color=#ff0000>"+dummy.substring(1,dummy.length()-1)+
                     "</font><font color=#000080>"+dummy.substring(dummy.length()-1,dummy.length())+"</font>";
             temp3.setText(Html.fromHtml(dummy2));
+        } else if((selectedWord.substring(0, 1)).equals(tildaMarker))   {
+            temp3.setVisibility(View.VISIBLE);
+            temp1.setVisibility(View.INVISIBLE);
+            String dummy = selectedWord.replaceAll("~", " ");
+            int a = dummy.indexOf(wordStartMarker);
+            int b= dummy.indexOf(wordEndMarker);
+            String dummy3 =dummy.replace("&"," ");
+            String dummy4 = dummy3.replace("$"," ");
+
+            Log.d("a = "+ a, "b = "+b);
+            String dummy2 = "<font color=#ff0000>"+dummy4.substring(1,a)+
+                    "</font><font color=#000080>"+dummy4.substring(a,b)+"</font>"+ "<font color=#ff0000>"+dummy4.substring(b);
+            temp3.setText(Html.fromHtml(dummy2));
         }
         else {
             temp1.setVisibility(View.VISIBLE);
@@ -365,6 +411,15 @@ public class MainActivity extends Activity {
             voiceFile2= voiceFile1.substring(voiceFile1.length()-1,voiceFile1.length());
             spelling =1;
         }
+
+        else if (voiceFile1.substring(0,1).equals(tildaMarker)) {
+            //int tildaLoc = voiceFile1.indexOf(tildaMarker);
+            int a = voiceFile1.indexOf(wordStartMarker);
+            int b= voiceFile1.indexOf(wordEndMarker);
+            voiceFile2= voiceFile1.substring(a+1,b);
+            spelling =2;
+        }
+
         else {
         voiceFile2 = voiceFile1;
         }
@@ -399,7 +454,10 @@ public class MainActivity extends Activity {
                 textToSpeechObj.speak(voiceFile, TextToSpeech.QUEUE_FLUSH, null);
                 if (spelling == 1){
                     soundLength =1000;
-                } else {
+                } else if (spelling == 2) {
+                    soundLength = 1000;
+                }
+                else {
                     soundLength = 2000;
                 }
             }
