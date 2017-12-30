@@ -51,6 +51,7 @@ import java.net.URL;
 import java.net.URLConnection;
 import java.nio.channels.DatagramChannel;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
 import java.util.Locale;
 import java.util.Random;
@@ -359,7 +360,8 @@ public class MainActivity extends Activity {
             String dummy = selectedWord.replaceAll("~", " ");
             int a = dummy.indexOf(wordStartMarker);
             int b= dummy.indexOf(wordEndMarker);
-            String dummy3 =dummy.replace("&"," ");
+            String dummy5 =dummy.replace("_"," ");
+            String dummy3 =dummy5.replace("&"," ");
             String dummy4 = dummy3.replace("$"," ");
 
             Log.d("a = "+ a, "b = "+b);
@@ -746,11 +748,27 @@ public class MainActivity extends Activity {
         }
         DeckList.clear();
         for (int i=0; i<SelectionList.size();i++ ){
-            for (int j =0; j<IconList.size(); j++){
-                if (SelectionList.get(i).equals(IconList.get(j).getLessonName()))
-                {
-                    for(int k=0; k< IconList.get(j).getCards().size();k++) {
-                        DeckList.add(IconList.get(j).getCards().get(k));
+            for (int j =0; j<IconList.size(); j++) {
+                if (SelectionList.get(i).equals(IconList.get(j).getLessonName())) {
+                    String lesson_transiton_1 = tildaMarker + wordStartMarker + "Next  " + wordEndMarker + SelectionList.get(i);
+                    DeckList.add(lesson_transiton_1);
+                    String lesson_transiton_2 = tildaMarker + "Next  " + wordStartMarker + SelectionList.get(i) + wordEndMarker;
+                    DeckList.add(lesson_transiton_2);
+
+                    List<String> CurrentLessonList = new ArrayList<>();
+                    for (int k = 0; k < IconList.get(j).getCards().size(); k++) {
+                        CurrentLessonList.add(IconList.get(j).getCards().get(k));
+                    }
+                    String lessonNameTemp = SelectionList.get(i);
+                    String number = "number";
+                    if ((lessonNameTemp.contains(number) || (lessonNameTemp.contains(plusMarker)) || (lessonNameTemp.contains(tildaMarker))))
+                    {
+                    }
+                    else{
+                        Collections.shuffle(CurrentLessonList);
+                    }
+                    for (int k = 0; k < CurrentLessonList.size(); k++) {
+                        DeckList.add(CurrentLessonList.get(k));
                     }
                 }
             }
